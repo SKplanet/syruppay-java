@@ -13,10 +13,6 @@
 
 ### Gradle 빌드 시
 ```groovy
-repositories {
-    maven { url "http://mvn.skplanet.com/content/groups/public" }
-}
-
 dependencies {
      compile 'com.skplanet.syruppay:syruppay-token:1.2.30'
 }
@@ -32,20 +28,6 @@ dependencies {
 		<version>1.2.30</version>
 	</dependency>
 </dependencies>
-
-<repositories>
-	<repository>
-		<id>skp-public</id>
-		<name>skplanet public repository</name>
-		<url>http://mvn.skplanet.com/content/groups/public/</url>
-		<releases>
-			<enabled>true</enabled>
-		</releases>
-		<snapshots>
-			<enabled>true</enabled>
-		</snapshots>
-	</repository>
-</repositories>
 ```
 
 ### 회원가입, 로그인, 설정과 같은 사용자 정보에 접근하기 위한 Syrup Pay Token 생성

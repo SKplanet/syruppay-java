@@ -194,7 +194,7 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
     }
 
     public static enum AcceptType {
-        CARD
+        CARD, SYRUP_PAY_COUPON
     }
 
     public static enum DeliveryType {

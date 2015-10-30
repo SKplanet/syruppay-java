@@ -194,7 +194,7 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
     }
 
     public static enum AcceptType {
-        CARD
+        CARD, SYRUP_PAY_COUPON
     }
 
     public static enum DeliveryType {
@@ -319,17 +319,6 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
 
         public Offer setUserActionCode(String userActionCode) {
             this.userActionCode = userActionCode;
-            return this;
-        }
-
-        public Offer addAcceptCardCondition(String cardCode, int minPaymentAmt) {
-            Accept a = new Accept();
-            a.type = AcceptType.CARD;
-            Map<String, Object> m = new HashMap<String, Object>();
-            m.put("cardCode", cardCode);
-            m.put("minPaymentAmt", minPaymentAmt);
-            a.conditions.add(m);
-            accepted.add(a);
             return this;
         }
 

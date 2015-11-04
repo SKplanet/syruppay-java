@@ -614,5 +614,12 @@ public class SyrupPayTokenBuilderTest {
     @Test
     public void 하위버전_1_2_30_호환_테스트() throws IOException {
         Token t = SyrupPayTokenBuilder.verify(TokenHistories.VERSION_1_2_30.token, TokenHistories.VERSION_1_2_30.key);
+        System.out.println(new ObjectMapper().writeValueAsString(t));
+    }
+
+    @Test
+    public void C_샵버전_0_0_1_호환_테스트() throws IOException {
+        Token t = SyrupPayTokenBuilder.verify(TokenHistories.C_SHARP_0_0_1.token, TokenHistories.C_SHARP_0_0_1.key);
+        System.out.println(new ObjectMapper().writeValueAsString(t));
     }
 }

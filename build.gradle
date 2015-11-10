@@ -156,18 +156,12 @@ project(':syruppay-jose') {
     apply plugin: 'maven'
     apply plugin: 'signing'
 
-    ext {
-        javaVersion = '1.5'
-    }
-
     [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
 
-    group = 'com.skplanet.syruppay'
     archivesBaseName = 'jose_jdk' + targetCompatibility
-    version = '0.3.6'
 
     jar {
         manifest {

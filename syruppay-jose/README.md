@@ -1,2 +1,141 @@
-## Overview
-시럽페이에서 무결성과 암호화를 위해 사용하는 JOSE 규격을 지원한다.
+## JOSE for SyrupPay
+
+Java로 구현한 JOSE(Javascript Object Signing and Encryption) - [RFC 7516](https://tools.ietf.org/html/rfc7516), [RFC 7515](https://tools.ietf.org/html/rfc7515) 규격입니다. 
+JOSE 규격은 SyrupPay 결제 데이터 암복호화 및 AccessToken 발행 등에 사용되며 SyrupPay 서비스의 가맹점에 배포하기 위한 목적으로 라이브러리가 구현되었습니다.
+
+## Required
+JDK Framework 1.5 or later
+
+## Installation
+### maven
+```
+<dependency>
+	<groupId>com.skplanet.syruppay</groupId>
+	<artifactId>jose_jdk1.5</artifactId>
+	<version>0.3.6</version>
+</dependency>
+```
+### Gradle
+```
+compile 'com.skplanet.syruppay:jose_jdk1.5:0.3.6'
+```
+
+## Usage
+### JWE
+``` java
+import com.skplanet.jose.Jose;
+import com.skplanet.jose.JoseHeader;
+import com.skplanet.jose.jwa.Jwa;
+
+import static com.skplanet.jose.JoseBuilders.*;
+
+//암호화 할 데이터
+String payload = "apple";
+//SyrupPay가 발급하는 iss
+String kid = "sample";
+//SyrupPay가 발급하는 secret
+String key = "12345678901234561234567890123456";
+
+/*
+ * JWE header 규격
+ * alg : key wrap encryption algorithm. 아래 Supported JOSE encryption algorithms 참조
+ * enc : content encryption algorithm. 아래 Supported JOSE encryption algorithms 참조
+ */
+//1. encryption
+String jweToken = new Jose().configuration(
+        JsonEncryptionCompactSerializationBuilder()
+            .header(new JoseHeader(Jwa.A256KW, Jwa.A128CBC_HS256, kid))
+            .payload(payload)
+            .key(key)
+    ).serialization();
+
+//2. verify and decryption		
+String decryptedText = new Jose().configuration(
+        compactDeserializationBuilder()
+            .serializedSource(jweToken)
+            .key(key)
+        ).deserialization();	
+```
+
+### JWS
+```java
+import com.skplanet.jose.Jose;
+import com.skplanet.jose.JoseHeader;
+import com.skplanet.jose.jwa.Jwa;
+
+import static com.skplanet.jose.JoseBuilders.*;
+
+//암호화 할 데이터
+String payload = "apple";
+//SyrupPay가 발급하는 iss
+String kid = "sample";
+//SyrupPay가 발급하는 secret
+String key = "12345678901234561234567890123456";
+
+/*
+ * JWS header 규격
+ * alg : signature algorithm. 아래 Supported JOSE encryption algorithms 참조
+ */
+//1. sign
+JoseHeader joseHeader = new JoseHeader(Jwa.HS256);
+joseHeader.setHeader(JoseHeader.JoseHeaderKeySpec.TYPE, "JWT");
+
+String token = new Jose().configuration(
+        JsonSignatureCompactSerializationBuilder()
+            .header(joseHeader)
+            .payload(payload)
+            .key(key)
+		).serialization();
+
+//2. verify
+String json = new Jose().configuration(
+        compactDeserializationBuilder()
+            .serializedSource(token)
+            .key(key)
+        ).deserialization();	
+```
+
+## Supported JOSE encryption algorithms
+
+### "alg" (Algorithm) Header Parameter Values For JWE
+alg Param Value|Key Management Algorithm
+------|------
+A128KW|AES Key Wrap with default initial value using 128 bit key
+A256KW|AES Key Wrap with default initial value using 256 bit key
+RSA1_5|RSAES-PKCS1-v1_5
+RSA-OAEP|RSAES OAEP using default parameters
+dir|Direct use of a shared symmetric key as the CEK
+
+### "enc" (Encryption Algorithm) Header Parameter Values for JWE
+enc Param Value|Content Encryption Algorithm
+-------------|------
+A128CBC-HS256|AES_128_CBC_HMAC_SHA_256 authenticated encryption algorithm
+
+### "alg" (Algorithm) Header Parameter Values for JWS
+alg Param Value|Digital Signature or MAC Algorithm
+-----|-------
+HS256|HMAC using SHA-256
+RS256|RSASSA-PKCS1-v1_5 using SHA-256
+ES256|ECDSA using P-256 and SHA-256
+
+## 0.2.x 버전 이하
+0.2.x 에서 제공하는 JweSupport는 0.3.x 버전 이상에서 제공하지 않습니다.
+소스 변경없이 0.3.x로 업그레이드를 하려면 jose_bridge library를 추가로 다운로드 받으시기 바랍니다. 
+
+### maven
+```
+<dependency>
+  <groupId>com.skplanet.syruppay</groupId>
+  <artifactId>jose_bridge</artifactId>
+  <version>0.0.2</version>
+</dependency>
+```
+
+## Gradle
+```
+compile 'com.skplanet.syruppay:jose_bridge:0.0.2'
+```
+
+## 0.3.x 버전 이상
+0.2.x 에서 제공하던 JweSupport의 기능을 JoseSupport를 사용하여 이용할 수 있습니다.
+그러나 JoseSupport에서 사용할 수 있는 알고리즘은 제한적입니다. 또한 추후 deprecated 될 예정이니 JoseSupport 사용을 권고하지 않습니다.

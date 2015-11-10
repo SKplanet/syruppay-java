@@ -80,7 +80,7 @@ public class Mocks {
         add(new OrderConfigurer.Offer().setId("Offer-03").setName("추가할인").setAmountOff(300).setUserSelectable(false).setOrderApplied(3));
         add(new OrderConfigurer.Offer().setId("Offer-04").setName("보너스할인").setAmountOff(700).setUserSelectable(false).setOrderApplied(4));
         add(new OrderConfigurer.Offer().setId("Offer-05").setName("임직원할인").setAmountOff(100).setUserSelectable(false).setOrderApplied(5));
-        add(new OrderConfigurer.Offer().setId("Offer-06").setName("카드사할인").setAmountOff(1000).setUserSelectable(true).setOrderApplied(6).addAcceptCardCondition("17", 10).addAcceptCardCondition("02", 10));
+        add(new OrderConfigurer.Offer().setId("Offer-06").setName("카드사할인").setAmountOff(1000).setUserSelectable(true).setOrderApplied(6));
         add(new OrderConfigurer.Offer().setId("Offer-07").setName("플러스쿠폰").setAmountOff(500).setUserSelectable(true).setOrderApplied(7));
         add(new OrderConfigurer.Offer().setId("Offer-08").setType(OrderConfigurer.OfferType.DELIVERY_COUPON).setName("배송비쿠폰").setAmountOff(2500).setUserSelectable(true).setOrderApplied(8));
     }};

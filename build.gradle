@@ -28,7 +28,7 @@ buildscript {
 
 configure(allprojects) { project ->
     ext.javaVersion = '1.5'
-    ext.projectVersion = '1.2.32'
+    ext.projectVersion = '1.3.0'
 
     version = projectVersion
     group = 'com.skplanet.syruppay'
@@ -161,3 +161,112 @@ project(':syruppay-token') {
 //        }
 //    }
 }
+
+project(':syruppay-jose') {
+    apply plugin: 'maven'
+    apply plugin: 'signing'
+
+    [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+
+    archivesBaseName = 'jose_jdk' + targetCompatibility
+
+    jar {
+        manifest {
+            attributes("Implementation-Title": "SyrupPay Jose", "Implementation-Version": version)
+        }
+    }
+
+    repositories {
+        maven { url "http://mvn.skplanet.com/content/groups/public" }
+    }
+
+    dependencies {
+        testCompile 'junit:junit:4.11'
+        compile 'org.bouncycastle:bcprov-jdk15on:1.47'
+        compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
+    }
+
+    javadoc {
+        configure(options) {
+            charSet = 'UTF-8'
+            encoding = 'UTF-8'
+            docEncoding = 'UTF-8'
+        }
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) { // (1)
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    task sourceJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives jar
+        archives sourceJar
+        archives javadocJar
+    }
+
+    signing {
+        sign configurations.archives
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment {
+                    MavenDeployment deployment -> signing.signPom(deployment)
+                }
+
+//            repository(url: "http://mvn.skplanet.com/content/repositories/releases")
+//            snapshotRepository(url: "http://mvn.skplanet.com/content/repositories/snapshots")
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                pom {
+                    project {
+                        name 'SyrupPay Jose Library'
+                        packaging 'jar'
+                        // optionally artifactId can be defined here
+                        description 'Jose Library for SyrupPay\'s merchant'
+                        url 'https://github.com/SyrupPay/jose_java'
+
+                        scm {
+                            connection 'scm:git:git@github.com:SyrupPay/jose_java.git'
+                            developerConnection 'scm:git:git@github.com:SyrupPay/jose_java.git'
+                            url 'git@github.com:SyrupPay/jose_java.git'
+                        }
+
+                        licenses {
+                            license {
+                                name 'The MIT License (MIT)'
+                                url 'https://opensource.org/licenses/MIT'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id 'byeongchan'
+                                name 'ByeongChan Park'
+                                email 'byeongchan.park@sk.com'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+

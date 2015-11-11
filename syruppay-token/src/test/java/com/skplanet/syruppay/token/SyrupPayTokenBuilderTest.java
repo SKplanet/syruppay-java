@@ -69,6 +69,7 @@ import com.skplanet.syruppay.token.domain.Mocks;
 import com.skplanet.syruppay.token.domain.TokenHistories;
 import com.skplanet.syruppay.token.jwt.SyrupPayToken;
 import com.skplanet.syruppay.token.jwt.Token;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -621,5 +622,12 @@ public class SyrupPayTokenBuilderTest {
     public void C_샵버전_0_0_1_호환_테스트() throws IOException {
         Token t = SyrupPayTokenBuilder.verify(TokenHistories.C_SHARP_0_0_1.token, TokenHistories.C_SHARP_0_0_1.key);
         System.out.println(new ObjectMapper().writeValueAsString(t));
+    }
+
+    @Test
+    public void 라이브러리_적용_전_버전_11번가_테스트() throws IOException {
+        Token t = SyrupPayTokenBuilder.verify(TokenHistories.BEFORE_11ST.token, TokenHistories.BEFORE_11ST.key);
+        assertThat(t.getTransactionInfo().getMctTransAuthId(), is(notNullValue()));
+        assertThat(t.getTransactionInfo().getPaymentRestrictions().getCardIssuerRegion(), is(notNullValue()));
     }
 }

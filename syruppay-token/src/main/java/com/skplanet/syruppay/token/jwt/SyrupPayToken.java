@@ -151,7 +151,7 @@ public final class SyrupPayToken implements Token {
     public void setTransactionInfo(PayConfigurer transactionInfo) {
         if(this.transactionInfo != null && this.transactionInfo.getMctTransAuthId() == null && transactionInfo.getPaymentInfo().getProductTitle() == null) {
             LOGGER.warn("set only mctTransAuthId of transactionInfo element by deprecated method");
-            transactionInfo.withOrderIdOfMerchant(transactionInfo.getMctTransAuthId());
+            this.transactionInfo.withOrderIdOfMerchant(transactionInfo.getMctTransAuthId());
         } else {
             this.transactionInfo = transactionInfo;
         }

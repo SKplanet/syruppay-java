@@ -117,25 +117,3 @@ alg Param Value|Digital Signature or MAC Algorithm
 HS256|HMAC using SHA-256
 RS256|RSASSA-PKCS1-v1_5 using SHA-256
 ES256|ECDSA using P-256 and SHA-256
-
-## 0.2.x 버전 이하
-0.2.x 에서 제공하는 JweSupport는 0.3.x 버전 이상에서 제공하지 않습니다.
-소스 변경없이 0.3.x로 업그레이드를 하려면 jose_bridge library를 추가로 다운로드 받으시기 바랍니다. 
-
-### maven
-```
-<dependency>
-  <groupId>com.skplanet.syruppay</groupId>
-  <artifactId>jose_bridge</artifactId>
-  <version>0.0.2</version>
-</dependency>
-```
-
-## Gradle
-```
-compile 'com.skplanet.syruppay:jose_bridge:0.0.2'
-```
-
-## 0.3.x 버전 이상
-0.2.x 에서 제공하던 JweSupport의 기능을 JoseSupport를 사용하여 이용할 수 있습니다.
-그러나 JoseSupport에서 사용할 수 있는 알고리즘은 제한적입니다. 또한 추후 deprecated 될 예정이니 JoseSupport 사용을 권고하지 않습니다.

@@ -25,7 +25,6 @@ import com.skplanet.jose.Jose;
 import com.skplanet.jose.JoseBuilders;
 import com.skplanet.jose.JoseHeader;
 import com.skplanet.jose.jwa.Jwa;
-import com.skplanet.payment.syruppay.jwe.support.JweSupport;
 import com.skplanet.syruppay.token.claims.MapToSktUserConfigurer;
 import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
 import com.skplanet.syruppay.token.claims.MerchantUserConfigurer;
@@ -50,7 +49,7 @@ import java.text.SimpleDateFormat;
 
 /**
  * Syrup Pay 에서 사용하는 토큰을 생성 및 암/복호화에 대한 기능을 수행한다.
- * <p>
+ * <p/>
  * 토큰은 JWT 규격을 준수하며 Claim 에 대한 확장은 {@link com.skplanet.syruppay.token.ClaimConfigurer}를 이용하여 확장할 수 있으며
  * 이에 대한 인터페이스는 {@link com.skplanet.syruppay.token.SyrupPayTokenBuilder}를 통해 {@link #pay()}와 {@link #login()}와 같이 노출해야 한다.
  *
@@ -115,7 +114,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      */
     public static Token verify(String token, byte[] key) throws IOException {
         try {
-            return objectMapper.readValue(JweSupport.Jws_HmacVerify(token, new String(key, "UTF-8")), SyrupPayToken.class);
+            return objectMapper.readValue(new Jose().configuration(JoseBuilders.JsonSignatureCompactDeserializationBuilder().serializedSource(token).key(key)).deserialization(), SyrupPayToken.class);
         } catch (IOException e) {
             LOGGER.error("exception that decrypting token. key : {}, token : {}", new String(key), token);
             throw e;

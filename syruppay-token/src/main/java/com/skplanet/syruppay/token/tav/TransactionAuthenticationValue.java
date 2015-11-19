@@ -33,6 +33,7 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * 거래 인증에 대한 POJO를 정의하고 이에 대한 Signing 값을 제공하며 기존의 TAV 값으로 통용된다.<br/>
+ * 거래 인증에 대한 무결성은 HAMC으로 인증하며 이에 대한 검증은 해당 클래스에서 지원한다.
  *
  * @author 임형태
  * @since 1.3

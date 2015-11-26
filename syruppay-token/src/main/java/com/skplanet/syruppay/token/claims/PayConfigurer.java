@@ -179,7 +179,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
     }
 
     public static enum PayableLocaleRule {
-        ONLY_ALLOWED_KOR("ALLOWED:KOR"), ONLY_NOT_ALLOED_KOR("NOT_ALLOWED:KOR"), ONLY_ALLOWED_USA("ALLOWED:USA"), ONLY_NOT_ALLOED_USA("NOT_ALLOWED:USA");
+        ONLY_ALLOWED_KOR("ALLOWED:KOR"), ONLY_NOT_ALLOWED_KOR("NOT_ALLOWED:KOR"), ONLY_ALLOWED_USA("ALLOWED:USA"), ONLY_NOT_ALLOWED_USA("NOT_ALLOWED:USA");
 
         String code;
 
@@ -475,6 +475,15 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
 
         public String getCardIssuerRegion() {
             return cardIssuerRegion;
+        }
+
+        public PayableLocaleRule getPayableLocaleRule() {
+            for (PayableLocaleRule r : PayableLocaleRule.values()) {
+                if (r.toCode().equals(cardIssuerRegion)) {
+                    return r;
+                }
+            }
+            throw new IllegalArgumentException("cardIssuerRegion of this object is not matched with PaymentRestriction enumeration. check this : " + this.cardIssuerRegion);
         }
     }
 }

@@ -28,7 +28,7 @@ buildscript {
 
 configure(allprojects) { project ->
     ext.javaVersion = '1.5'
-    ext.projectVersion = '1.2.35'
+    ext.projectVersion = '1.2.36'
 
     version = projectVersion
     group = 'com.skplanet.syruppay'
@@ -151,7 +151,7 @@ project(':syruppay-token') {
         }
     }
 
-    // to skplanet maven repo
+    //to skplanet maven repo
 //    uploadArchives {
 //        repositories {
 //            mavenDeployer {

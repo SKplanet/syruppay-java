@@ -67,33 +67,36 @@ public class JoseHeader {
 			setHeader(JoseHeaderKeySpec.KEY_ID, kid);
 	}
 
-	public void setHeader(String key, String value) {
+	public JoseHeader setHeader(String key, String value) {
 		header.put(key, value);
+		return this;
 	}
 
 	public String getHeader(String key) {
 		return header.get(key);
 	}
 
-	public void setAlgorithm(Jwa alg) {
+	public JoseHeader setAlgorithm(Jwa alg) {
 		if (!JoseSupportAlgorithm.isSupported(alg)) {
 			throw new IllegalJoseHeaderException("unsupported algoritm "+alg.getValue());
 		}
 
 		setHeader(JoseHeaderKeySpec.ALGORITHM, alg.getValue());
+		return this;
 	}
 
 	public Jwa getAlgorithm() {
 		return Enum.valueOf(Jwa.class, getHeader(JoseHeaderKeySpec.ALGORITHM).replace("-", "_").toUpperCase());
 	}
 
-	public void setEncryption(Jwa enc) {
-		if (enc == null) return;
+	public JoseHeader setEncryption(Jwa enc) {
+		if (enc == null) return this;
 
 		if (!JoseSupportEncryption.isSupported(enc)) {
 			throw new IllegalJoseHeaderException("unsupported encryption algorithm "+enc.getValue());
 		}
 		setHeader(JoseHeaderKeySpec.ENCRYPTION, enc.getValue());
+		return this;
 	}
 
 	public Jwa getEncrytion() {
@@ -120,7 +123,7 @@ public class JoseHeader {
 		return encoded != null? encoded : Base64.encodeBase64URLSafeString(json);
 	}
 
-	public void setEncoded(String encoded) {
+	public JoseHeader setEncoded(String encoded) {
 		String[] token = encoded.split("\\.");
 		if (token != null && token.length == 3 || token.length == 5) {
 			encoded = token[0];
@@ -146,6 +149,8 @@ public class JoseHeader {
 		if (enc != null && !JoseSupportEncryption.isSupported(enc)) {
 			throw new IllegalJoseHeaderException("unsupported encryption "+enc);
 		}
+
+		return this;
 	}
 
 	/**

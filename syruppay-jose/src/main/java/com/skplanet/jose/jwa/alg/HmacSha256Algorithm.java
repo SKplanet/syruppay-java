@@ -24,11 +24,14 @@
 
 package com.skplanet.jose.jwa.alg;
 
+import com.skplanet.jose.exception.IllegalSignatureToken;
 import com.skplanet.jose.jwa.JwsAlgorithm;
 import com.skplanet.jose.jwa.crypto.Algorithm;
 import com.skplanet.jose.jwa.crypto.CryptoUtils;
 import com.skplanet.jose.jwa.crypto.Transformation;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
@@ -38,13 +41,26 @@ public class HmacSha256Algorithm implements JwsAlgorithm {
 	@Override
 	public boolean verify(byte[] key, byte[] actual, byte[] expected) {
 		Transformation transformation = new Transformation(Algorithm.HS256);
-		byte[] signedBytes = CryptoUtils.hmac(transformation, actual, key);
+		byte[] signedBytes = new byte[0];
+		try {
+			signedBytes = CryptoUtils.hmac(transformation, actual, key);
+		} catch (NoSuchAlgorithmException e) {
+			throw new IllegalSignatureToken(transformation.getAlgorithm()+"AlgorithmException", e);
+		} catch (InvalidKeyException e) {
+			throw new IllegalSignatureToken("InvalidVerifykeyException", e);
+		}
 		return Arrays.equals(signedBytes, expected);
 	}
 
 	@Override
 	public byte[] sign(byte[] key, byte[] bytes) {
 		Transformation transformation = new Transformation(Algorithm.HS256);
-		return CryptoUtils.hmac(transformation, bytes, key);
+		try {
+			return CryptoUtils.hmac(transformation, bytes, key);
+		} catch (NoSuchAlgorithmException e) {
+			throw new IllegalSignatureToken(transformation.getAlgorithm()+"AlgorithmException", e);
+		} catch (InvalidKeyException e) {
+			throw new IllegalSignatureToken("InvalidSignkeyException", e);
+		}
 	}
 }

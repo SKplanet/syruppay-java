@@ -24,7 +24,9 @@
 
 package com.skplanet.jose.jwa.enc;
 
+import com.skplanet.jose.exception.EncryptionException;
 import com.skplanet.jose.exception.IllegalAuthenticationTag;
+import com.skplanet.jose.exception.IllegalSignatureToken;
 import com.skplanet.jose.jwa.crypto.*;
 import com.skplanet.jose.util.ByteUtils;
 
@@ -51,7 +53,11 @@ public class AesEncryptionWithHmacSha extends ContentEncryption {
 
 	private byte[] encryption(byte[] key, byte[] iv, byte[] src) {
 		Transformation transformation = new Transformation(Algorithm.AES, Mode.CBC, Padding.PKCS5Padding);
-		return CryptoUtils.aesEncrypt(transformation, src, key, iv);
+		try {
+			return CryptoUtils.aesEncrypt(transformation, src, key, iv);
+		} catch (Exception e) {
+			throw new EncryptionException(transformation.getValue()+"EncryptionException", e);
+		}
 	}
 
 	public byte[] verifyAndDecrypt(byte[] cek, byte[] iv, byte[] cipherText, byte[] aad, byte[] expected) {
@@ -72,13 +78,22 @@ public class AesEncryptionWithHmacSha extends ContentEncryption {
 	}
 
 	private byte[] decryption(byte[] key, byte[] iv, byte[] cipherText) {
-		return CryptoUtils.aesDecrypt(new Transformation(Algorithm.AES, Mode.CBC, Padding.PKCS5Padding), cipherText,
-				key, iv);
+		Transformation transformation = new Transformation(Algorithm.AES, Mode.CBC, Padding.PKCS5Padding);
+		try {
+			return CryptoUtils.aesDecrypt(transformation, cipherText, key, iv);
+		} catch (Exception e) {
+			throw new EncryptionException(transformation.getValue()+"DecryptionException", e);
+		}
 	}
 
 	private byte[] sign(byte[] key, byte[] iv, byte[] cipherText, byte[] aad) {
 		byte[] signPart = getSignPart(iv, cipherText, aad);
-		byte[] digest = CryptoUtils.hmac(new Transformation(Algorithm.HS256), signPart, key);
+		byte[] digest = new byte[0];
+		try {
+			digest = CryptoUtils.hmac(new Transformation(Algorithm.HS256), signPart, key);
+		} catch (Exception e) {
+			throw new IllegalSignatureToken("invalid algorithm/key", e);
+		}
 
 		byte[] at = new byte[16];
 		System.arraycopy(digest, 0, at, 0, 16);

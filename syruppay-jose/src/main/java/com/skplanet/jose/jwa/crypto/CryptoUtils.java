@@ -24,6 +24,17 @@
 
 package com.skplanet.jose.jwa.crypto;
 
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.engines.AESWrapEngine;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.interfaces.ECPrivateKey;
@@ -32,201 +43,88 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.*;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.Mac;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-
-import org.bouncycastle.crypto.CipherParameters;
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.engines.AESWrapEngine;
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
 public class CryptoUtils {
-	public static byte[] aesEncrypt(Transformation transformation, byte[] raw, byte[] secret, byte[] iv) {
-		Cipher cipher = null;
-		byte[] encryptedData = null;
-
-		try {
-			cipher = Cipher.getInstance(transformation.getValue());
-			cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(secret, transformation.getAlgorithm()),
-					new IvParameterSpec(iv));
-			encryptedData = cipher.doFinal(raw);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return encryptedData;
+	public static byte[] aesEncrypt(Transformation transformation, byte[] raw, byte[] secret, byte[] iv) throws Exception {
+		Cipher cipher = Cipher.getInstance(transformation.getValue());
+		cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(secret, transformation.getAlgorithm()),
+				new IvParameterSpec(iv));
+		return cipher.doFinal(raw);
 	}
 
-	public static byte[] aesDecrypt(Transformation transformation, byte[] encryptedData, byte[] secret, byte[] iv) {
-		Cipher cipher = null;
-		byte[] decryptedData = null;
-
-		try {
-			cipher = Cipher.getInstance(transformation.getValue());
-			cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(secret, transformation.getAlgorithm()),
-					new IvParameterSpec(iv));
-			decryptedData = cipher.doFinal(encryptedData);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return decryptedData;
+	public static byte[] aesDecrypt(Transformation transformation, byte[] encryptedData, byte[] secret, byte[] iv) throws Exception {
+		Cipher cipher = Cipher.getInstance(transformation.getValue());
+		cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(secret, transformation.getAlgorithm()),
+				new IvParameterSpec(iv));
+		return cipher.doFinal(encryptedData);
 	}
 
-	public static byte[] rsaEncrypt(Transformation transformation, byte[] raw, PublicKey key) {
-		byte[] encryptedData = null;
-
-		try {
-			Cipher cipher = Cipher.getInstance(transformation.getValue());
-			cipher.init(Cipher.ENCRYPT_MODE, key);
-			encryptedData = cipher.doFinal(raw);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return encryptedData;
+	public static byte[] rsaEncrypt(Transformation transformation, byte[] raw, PublicKey key) throws Exception {
+		Cipher cipher = Cipher.getInstance(transformation.getValue());
+		cipher.init(Cipher.ENCRYPT_MODE, key);
+		return cipher.doFinal(raw);
 	}
 
-	public static byte[] rsaDecrypt(Transformation transformation, byte[] encrypted, PrivateKey key) {
-		byte[] decryptedData = null;
-
-		try {
-			Cipher cipher = Cipher.getInstance(transformation.getValue());
-			cipher.init(Cipher.DECRYPT_MODE, key);
-			decryptedData = cipher.doFinal(encrypted);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return decryptedData;
+	public static byte[] rsaDecrypt(Transformation transformation, byte[] encrypted, PrivateKey key) throws Exception {
+		Cipher cipher = Cipher.getInstance(transformation.getValue());
+		cipher.init(Cipher.DECRYPT_MODE, key);
+		return  cipher.doFinal(encrypted);
 	}
 
-	public static RSAPublicKey generateRsaPublicKey(BigInteger modulus, BigInteger publicExponent) {
-		RSAPublicKey publicKey = null;
-		try {
-			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-			publicKey = (RSAPublicKey) keyFactory.generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return publicKey;
+	public static RSAPublicKey generateRsaPublicKey(BigInteger modulus, BigInteger publicExponent) throws Exception {
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		return (RSAPublicKey) keyFactory.generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
 	}
 
-	public static PublicKey generatePublicKey(KeyAlgorithm algorithms, byte[] pKey) {
-		PublicKey publicKey = null;
-
-		try {
-			X509EncodedKeySpec x509Spec = new X509EncodedKeySpec(pKey);
-			KeyFactory keyFactory = KeyFactory.getInstance(algorithms.getValue());
-			publicKey = keyFactory.generatePublic(x509Spec);
-		} catch (NoSuchAlgorithmException e) {
-			if (algorithms.equals(KeyAlgorithm.EC)) {
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return publicKey;
+	public static PublicKey generatePublicKey(KeyAlgorithm algorithms, byte[] pKey) throws Exception {
+		X509EncodedKeySpec x509Spec = new X509EncodedKeySpec(pKey);
+		KeyFactory keyFactory = KeyFactory.getInstance(algorithms.getValue());
+		return keyFactory.generatePublic(x509Spec);
 	}
 
-	public static RSAPrivateKey generateRsaPrivateKey(BigInteger modulus, BigInteger privateExponent) {
-		RSAPrivateKey privateKey = null;
-
-		try {
-			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-			privateKey = (RSAPrivateKey) keyFactory.generatePrivate(new RSAPrivateKeySpec(modulus, privateExponent));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return privateKey;
+	public static RSAPrivateKey generateRsaPrivateKey(BigInteger modulus, BigInteger privateExponent) throws Exception {
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		return (RSAPrivateKey) keyFactory.generatePrivate(new RSAPrivateKeySpec(modulus, privateExponent));
 	}
 
-	public static PrivateKey generatePrivateKey(KeyAlgorithm algorithms, byte[] pKey) {
-		PrivateKey privateKey = null;
-
-		try {
-			PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(pKey);
-			KeyFactory keyFactory = KeyFactory.getInstance(algorithms.getValue());
-			privateKey = keyFactory.generatePrivate(keySpec);
-		} catch (NoSuchAlgorithmException e) {
-			if (algorithms.equals(KeyAlgorithm.EC)) {
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return privateKey;
+	public static PrivateKey generatePrivateKey(KeyAlgorithm algorithms, byte[] pKey) throws Exception {
+		PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(pKey);
+		KeyFactory keyFactory = KeyFactory.getInstance(algorithms.getValue());
+		return keyFactory.generatePrivate(keySpec);
 	}
 
 	public static SecretKeySpec generateSymmetricKey(byte[] key, Algorithm algorithm) {
 		return new SecretKeySpec(key, algorithm.getValue());
 	}
 
-	public static KeyPair generateRsaKeyPair(int keySize, BigInteger publicExponent) {
-		KeyPair keys = null;
-		try {
-			KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-			RSAKeyGenParameterSpec spec = new RSAKeyGenParameterSpec(keySize, publicExponent);
-			keyGen.initialize(spec);
-			keys = keyGen.generateKeyPair();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return keys;
+	public static KeyPair generateRsaKeyPair(int keySize, BigInteger publicExponent) throws Exception {
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+		RSAKeyGenParameterSpec spec = new RSAKeyGenParameterSpec(keySize, publicExponent);
+		keyGen.initialize(spec);
+		return keyGen.generateKeyPair();
 	}
 
-	public static byte[] hmac(Transformation transformation, byte[] raw, byte[] macKey) {
-		Mac hmac = null;
-		byte[] signature = null;
-
-		try {
-			hmac = Mac.getInstance(transformation.getValue());
-			hmac.init(new SecretKeySpec(macKey, transformation.getAlgorithm()));
-			signature = hmac.doFinal(raw);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return signature;
+	public static byte[] hmac(Transformation transformation, byte[] raw, byte[] macKey)
+			throws NoSuchAlgorithmException, InvalidKeyException {
+		Mac hmac = Mac.getInstance(transformation.getValue());
+		hmac.init(new SecretKeySpec(macKey, transformation.getAlgorithm()));
+		return hmac.doFinal(raw);
 	}
 
-	public static byte[] asymmetricSignature(Transformation transformation, Key key, byte[] bytes) {
-		Signature signature = null;
-		byte[] signedBytes = null;
+	public static byte[] asymmetricSignature(Transformation transformation, Key key, byte[] bytes)
+			throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+		Signature signature = Signature.getInstance(transformation.getValue());
+		signature.initSign((PrivateKey) key);
+		signature.update(bytes);
 
-		try {
-			signature = Signature.getInstance(transformation.getValue());
-			signature.initSign((PrivateKey) key);
-			signature.update(bytes);
-
-			signedBytes = signature.sign();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return signedBytes;
+		return signature.sign();
 	}
 
-	public static boolean asymmetricSignatureVerify(Transformation transformation, Key key, byte[] signingBytes, byte[] expectedBytes) {
-		Signature verifier = null;
-		try {
-			verifier = Signature.getInstance(transformation.getValue());
-			verifier.initVerify((PublicKey) key);
-			verifier.update(signingBytes);
-			return verifier.verify(expectedBytes);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return false;
+	public static boolean asymmetricSignatureVerify(Transformation transformation, Key key, byte[] signingBytes, byte[] expectedBytes)
+			throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+		Signature verifier = Signature.getInstance(transformation.getValue());
+		verifier.initVerify((PublicKey) key);
+		verifier.update(signingBytes);
+		return verifier.verify(expectedBytes);
 	}
 
 	public static byte[] KeyWrap(Transformation transformation, byte[] symmetricKey, byte[] cek) {
@@ -237,39 +135,21 @@ public class CryptoUtils {
 		return engine.wrap(cek, 0, cek.length);
 	}
 
-	public static byte[] keyUnwrap(Transformation transformation, byte[] symmetricKey, byte[] cek) {
+	public static byte[] keyUnwrap(Transformation transformation, byte[] symmetricKey, byte[] cek) throws Exception {
 		AESWrapEngine engine = new AESWrapEngine();
 		CipherParameters param = new KeyParameter(
 				new SecretKeySpec(symmetricKey, transformation.getAlgorithm()).getEncoded());
 		engine.init(false, param);
-		byte[] keyBytes = null;
-		;
-		try {
-			keyBytes = engine.unwrap(cek, 0, cek.length);
-		} catch (InvalidCipherTextException e) {
-			e.printStackTrace();
-		}
-		return keyBytes;
+		return engine.unwrap(cek, 0, cek.length);
 	}
 
-	public static byte[] generatorKey(Transformation transformation, int size) {
-		SecureRandom secureRandom = null;
-		KeyGenerator keyGenerator = null;
-		SecretKey key = null;
-		byte[] rawKey = null;
+	public static byte[] generatorKey(Transformation transformation, int size) throws NoSuchAlgorithmException {
+		SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
+		KeyGenerator keyGenerator = KeyGenerator.getInstance(transformation.getAlgorithm());
+		keyGenerator.init(size, secureRandom);
 
-		try {
-			secureRandom = SecureRandom.getInstance("SHA1PRNG");
-			keyGenerator = KeyGenerator.getInstance(transformation.getAlgorithm());
-			keyGenerator.init(size, secureRandom);
-
-			key = keyGenerator.generateKey();
-			rawKey = key.getEncoded();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return rawKey;
+		SecretKey key = keyGenerator.generateKey();
+		return key.getEncoded();
 	}
 
 	private static ECParameterSpec P256 = new ECParameterSpec(new EllipticCurve(
@@ -280,7 +160,7 @@ public class CryptoUtils {
 					new BigInteger("4FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5", 16)),
 			new BigInteger("FFFFFFFF00000000FFFFFFFFFFFFFFFFBCE6FAADA7179E84F3B9CAC2FC632551", 16), 1);
 
-	public static ECPrivateKey generateEcPrivateKey(byte[] d) {
+	public static ECPrivateKey generateEcPrivateKey(byte[] d) throws Exception {
 		ECPrivateKey privateKey = null;
 
 		try {
@@ -291,21 +171,14 @@ public class CryptoUtils {
 				Security.addProvider(new BouncyCastleProvider());
 			}
 
-			KeyFactory keyFactory = null;
-			try {
-				keyFactory = KeyFactory.getInstance("EC", "BC");
-				privateKey = (ECPrivateKey) keyFactory.generatePrivate(new ECPrivateKeySpec(new BigInteger(d), P256));
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			KeyFactory keyFactory = KeyFactory.getInstance("EC", "BC");
+			privateKey = (ECPrivateKey) keyFactory.generatePrivate(new ECPrivateKeySpec(new BigInteger(d), P256));
 		}
 
 		return privateKey;
 	}
 
-	public static ECPublicKey generateEcPublicKey(byte[] x, byte[] y) {
+	public static ECPublicKey generateEcPublicKey(byte[] x, byte[] y) throws Exception {
 		ECPublicKey publicKey = null;
 
 		ECPublicKeySpec ecPublicKeySpec = new ECPublicKeySpec(
@@ -319,15 +192,8 @@ public class CryptoUtils {
 				Security.addProvider(new BouncyCastleProvider());
 			}
 
-			KeyFactory keyFactory = null;
-			try {
-				keyFactory = KeyFactory.getInstance("EC", "BC");
-				publicKey = (ECPublicKey) keyFactory.generatePublic(ecPublicKeySpec);
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			KeyFactory keyFactory = KeyFactory.getInstance("EC", "BC");
+			publicKey = (ECPublicKey) keyFactory.generatePublic(ecPublicKeySpec);
 		}
 
 		return publicKey;

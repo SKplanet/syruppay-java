@@ -75,7 +75,7 @@ public class JwsSerializer implements JoseAction {
 		byte[] expected = jwsParts.signature;
 
 		if (!jwsAlgorithm.verify(key, signSource, expected)) {
-			throw new IllegalSignatureToken("signature fail");
+			throw new IllegalSignatureToken("invalid signature. expected:["+expected+"] actual:["+signSource+"]");
 		}
 
 		return StringUtils.byteToString(jwsParts.payload);

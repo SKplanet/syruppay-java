@@ -24,6 +24,7 @@
 
 package com.skplanet.jose.jwa.alg;
 
+import com.skplanet.jose.exception.EncryptionException;
 import com.skplanet.jose.exception.IllegalEncryptionKey;
 import com.skplanet.jose.jwa.JweAlgorithm;
 import com.skplanet.jose.jwa.crypto.Algorithm;
@@ -63,6 +64,10 @@ public class AesKeyWrapAlgorithm implements JweAlgorithm {
 		isValidKey(key);
 
 		Transformation transformation = new Transformation(Algorithm.AES);
-		return CryptoUtils.keyUnwrap(transformation, key, cek);
+		try {
+			return CryptoUtils.keyUnwrap(transformation, key, cek);
+		} catch (Exception e) {
+			throw new EncryptionException(transformation.getValue()+"KeyUnwrapException", e);
+		}
 	}
 }

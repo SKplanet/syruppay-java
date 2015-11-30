@@ -24,10 +24,13 @@
 
 package com.skplanet.jose.jwa.enc;
 
+import com.skplanet.jose.exception.KeyGenerateException;
 import com.skplanet.jose.jwa.JweEncryption;
 import com.skplanet.jose.jwa.crypto.Algorithm;
 import com.skplanet.jose.jwa.crypto.CryptoUtils;
 import com.skplanet.jose.jwa.crypto.Transformation;
+
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by 박병찬 on 2015-08-13.
@@ -47,6 +50,10 @@ public abstract class ContentEncryption implements JweEncryption {
 
 	protected byte[] generateRandomIv() {
 		Transformation transformation = new Transformation(Algorithm.AES);
-		return CryptoUtils.generatorKey(transformation, getIvBitLength());
+		try {
+			return CryptoUtils.generatorKey(transformation, getIvBitLength());
+		} catch (NoSuchAlgorithmException e) {
+			throw new KeyGenerateException("Invalid IvGenerate Algorithm", e);
+		}
 	}
 }

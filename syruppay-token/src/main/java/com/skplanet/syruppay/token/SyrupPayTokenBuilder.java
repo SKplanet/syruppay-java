@@ -161,20 +161,6 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * JWT 의 nbf 에 해당하는 값으로 토큰이 유효한 시작 시간을 설정한다.
      *
      * @param datetime
-     *         문자형식의 일자
-     * @return <code>this</code>
-     * @throws java.text.ParseException
-     *         문자형식의 일자 오류
-     */
-    public SyrupPayTokenBuilder isNotValidBefore(String datetime) throws ParseException {
-        this.nbf = DateTime.parse(datetime).getMillis() / 1000;
-        return this;
-    }
-
-    /**
-     * JWT 의 nbf 에 해당하는 값으로 토큰이 유효한 시작 시간을 설정한다.
-     *
-     * @param datetime
      *         문자 형식의 일자
      * @param f
      *         문자 형식

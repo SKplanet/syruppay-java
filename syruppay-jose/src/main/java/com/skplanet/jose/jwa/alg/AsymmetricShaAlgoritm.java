@@ -22,44 +22,42 @@
  * THE SOFTWARE.
  */
 
-package com.skplanet.jose.jwa.enc;
+package com.skplanet.jose.jwa.alg;
 
-import com.skplanet.jose.exception.KeyGenerateException;
-import com.skplanet.jose.jwa.crypto.Algorithm;
+import com.skplanet.jose.exception.IllegalSignatureToken;
 import com.skplanet.jose.jwa.crypto.CryptoUtils;
 import com.skplanet.jose.jwa.crypto.Transformation;
 
+import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 
 /**
- * Created by 박병찬 on 2015-08-17.
+ * Created by byeongchan.park@sk.com(1000808) on 2015-11-26.
  */
-public class ContentEncryptKeyGenerator {
-	private int keyLength = 0;
-	private byte[] cek = null;
-
-	public ContentEncryptKeyGenerator(int keyLength) {
-		this.keyLength = keyLength;
-	}
-
-	public void setUserEncryptionKey(byte[] cek) {
-		this.cek = cek;
-	}
-
-	private int getKeyBitLength() {
-		return keyLength * 8;
-	}
-
-	public byte[] generateRandomKey() {
-		if (cek == null ) {
-			Transformation transformation = new Transformation(Algorithm.AES);
-			try {
-				cek = CryptoUtils.generatorKey(transformation, getKeyBitLength());
-			} catch (NoSuchAlgorithmException e) {
-				throw new KeyGenerateException("Invalid KeyGenerate Algorithm", e);
-			}
+public class AsymmetricShaAlgoritm {
+	public static boolean verify(Transformation transformation, Key key, byte[] actual, byte[] expected) {
+		try {
+			return CryptoUtils.asymmetricSignatureVerify(transformation, key, actual, expected);
+		} catch (NoSuchAlgorithmException e) {
+			throw new IllegalSignatureToken(transformation.getAlgorithm()+"AlgorithmException", e);
+		} catch (InvalidKeyException e) {
+			throw new IllegalSignatureToken("InvalidVerifykeyException", e);
+		} catch (SignatureException e) {
+			throw new IllegalSignatureToken("VerifyException", e);
 		}
+	}
 
-		return cek;
+	public static byte[] sign(Transformation transformation, Key key, byte[] bytes) {
+		try {
+			return CryptoUtils.asymmetricSignature(transformation, key, bytes);
+		} catch (NoSuchAlgorithmException e) {
+			throw new IllegalSignatureToken(transformation.getAlgorithm()+"AlgorithmException", e);
+		} catch (InvalidKeyException e) {
+			throw new IllegalSignatureToken("InvalidSignkeyException", e);
+		} catch (SignatureException e) {
+			throw new IllegalSignatureToken("SignatureException", e);
+		}
 	}
 }

@@ -33,4 +33,8 @@ public class IllegalSignatureToken extends RuntimeException {
 	public IllegalSignatureToken(String message) {
 		super(message);
 	}
+
+	public IllegalSignatureToken(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

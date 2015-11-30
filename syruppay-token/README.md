@@ -82,7 +82,7 @@ String token = new SyrupPayTokenBuilder().of("가맹점 ID")
 				.pay()
 					.withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
 					.withProductTitle("제품명")
-					.withProductDetails(
+					.withProductUrls(
 					    "http://deal.11st.co.kr/product/SellerProductDetail.tmall?method=getSellerProductDetail&prdNo=1122841340",
 					    "http://deal.11st.co.kr/product/SellerProductDetail.tmall?method=getSellerProductDetail&prdNo=1265508741"
 					    )
@@ -93,7 +93,7 @@ String token = new SyrupPayTokenBuilder().of("가맹점 ID")
 					.withDeliveryPhoneNumber("01011112222")
 					.withDeliveryName("배송 수신자")
 					.withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
-					.withBsAbleToExchangeToCash(false)
+					.withBeAbleToExchangeToCash(false)
 					.withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
 				.and()
 				.generateTokenBy("가맹점에게 전달한 비밀키");
@@ -148,57 +148,57 @@ Token token = SyrupPayTokenBuilder.verify("토큰", "가맹점에게 전달한 �
 ```
 ### 참고 사항
 #### 이용하고자 하는 시럽페이 서비스 기능이 복합적인 경우 중첩하여 사용 가능하다.
-##### 상황 1. 가맹점의 사용자가 시럽페이 회원 여부를 모르는 상태에서 결제 시도 시 
+##### 상황 1. 시럽페이 가입 여부를 모르는 상태에서 결제 하고자 하는 경우 (회원가입, 로그인, 결제 가능 토큰)
 ```java
 String token = new SyrupPayTokenBuilder().of("가맹점 ID")
-                    .signup() // 
+                    .signUp() 
                         .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
-                        .extraId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력") // Optional
+                        .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력") // Optional
                     .and()
                     .pay()
-                    	.withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
+                    	.withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID") // 가맹점 Transaction Id = mctTransAuthId
                     	.withProductTitle("제품명")
-                    	.withProductDetails(
+                    	.withProductUrls(
                             "http://deal.11st.co.kr/product/SellerProductDetail.tmall?method=getSellerProductDetail&prdNo=1122841340",
                             "http://deal.11st.co.kr/product/SellerProductDetail.tmall?method=getSellerProductDetail&prdNo=1265508741"
-                            )
-                        .withLanguageForDisplay(PayConfigurer.Language.KO)
+                            ) // Optional
+                        .withLanguageForDisplay(PayConfigurer.Language.KO) 
                         .withAmount(50000)
                         .withCurrency(PayConfigurer.Currency.KRW)
-                        .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "kr"))
-                        .withDeliveryPhoneNumber("01011112222")
-                        .withDeliveryName("배송 수신자")
-                        .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
-                        .withBsAbleToExchangeToCash(false)
-                        .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
+                        .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "kr")) // Optional
+                        .withDeliveryPhoneNumber("01011112222") // Optional
+                        .withDeliveryName("배송 수신자") // Optional
+                        .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6")) // Optional
+                        .withBeAbleToExchangeToCash(false) // Optional
+                        .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR) // Optional
                     .and()
                     .generateTokenBy("가맹점에게 전달한 비밀키");
 ```
 
-##### 상황 2. 가맹점에서 가지고 있는 사용자의 SSO 를 기반으로 자동로그인 후 결제를 하고자 하는 경우
+##### 상황 2. 시럽페이에 자동 로그인 후 결제를 하고자 하는 경우 (자동 로그인, 결제 가능 토큰)
 ```java
 String token = new SyrupPayTokenBuilder().of("가맹점 ID")
                     .login() 
                         .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
-                        .extraId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력") // Optional
+                        .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력") // Optional
                         .withSsoCredential("발급 받은 SSO")
                     .and()
                     .pay()
-                        .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
+                        .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID") // 가맹점 Transaction Id = mctTransAuthId
                         .withProductTitle("제품명")
-                        .withProductDetails(
+                        .withProductUrls(
                             "http://deal.11st.co.kr/product/SellerProductDetail.tmall?method=getSellerProductDetail&prdNo=1122841340",
                             "http://deal.11st.co.kr/product/SellerProductDetail.tmall?method=getSellerProductDetail&prdNo=1265508741"
-                            )
-                        .withLanguageForDisplay(PayConfigurer.Language.KO)
+                            ) // Optional
+                        .withLanguageForDisplay(PayConfigurer.Language.KO)  
                         .withAmount(50000)
                         .withCurrency(PayConfigurer.Currency.KRW)
-                        .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "kr"))
-                        .withDeliveryPhoneNumber("01011112222")
-                        .withDeliveryName("배송 수신자")
-                        .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
-                        .withBsAbleToExchangeToCash(false)
-                        .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
+                        .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "kr")) // Optional
+                        .withDeliveryPhoneNumber("01011112222") // Optional
+                        .withDeliveryName("배송 수신자") // Optional
+                        .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6")) // Optional
+                        .withBeAbleToExchangeToCash(false) // Optional
+                        .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR) // Optional
                     .and()
                     .generateTokenBy("가맹점에게 전달한 비밀키");
 ```

@@ -25,11 +25,14 @@
 package com.skplanet.jose.jwa.alg;
 
 import com.skplanet.jose.exception.IllegalSignatureToken;
+import com.skplanet.jose.exception.KeyGenerateException;
 import com.skplanet.jose.jwa.JwsAlgorithm;
 import com.skplanet.jose.jwa.crypto.Algorithm;
 import com.skplanet.jose.jwa.crypto.CryptoUtils;
 import com.skplanet.jose.jwa.crypto.KeyAlgorithm;
 import com.skplanet.jose.jwa.crypto.Transformation;
+
+import java.security.Key;
 
 /**
  * Created by 박병찬 on 2015-07-22.
@@ -37,19 +40,24 @@ import com.skplanet.jose.jwa.crypto.Transformation;
 public class Sha256WithECDSAUsingP256Algorithm implements JwsAlgorithm {
 	public boolean verify(byte[] key, byte[] actual, byte[] expected) {
 		Transformation transformation = new Transformation(Algorithm.ES256, null, null);
-		return CryptoUtils.asymmetricSignatureVerify(
-				transformation,
-				CryptoUtils.generatePublicKey(KeyAlgorithm.EC, key),
-				actual,
-				convertRandStoDer(expected));
+		Key publicKey = null;
+		try {
+			publicKey = CryptoUtils.generatePublicKey(KeyAlgorithm.EC, key);
+		} catch (Exception e) {
+			throw new KeyGenerateException("ECPublicKeyGenerateException", e);
+		}
+		return AsymmetricShaAlgoritm.verify(transformation, publicKey, actual, convertRandStoDer(expected));
 	}
 
 	public byte[] sign(byte[] key, byte[] bytes) {
 		Transformation transformation = new Transformation(Algorithm.ES256, null, null);
-		return convertDertoRandS(CryptoUtils.asymmetricSignature(
-				transformation,
-				CryptoUtils.generatePrivateKey(KeyAlgorithm.EC, key),
-				bytes), 32);
+		Key privateKey = null;
+		try {
+			privateKey = CryptoUtils.generatePrivateKey(KeyAlgorithm.EC, key);
+		} catch (Exception e) {
+			throw new KeyGenerateException("ECPrivateKeyGenerateException", e);
+		}
+		return convertDertoRandS(AsymmetricShaAlgoritm.sign(transformation, privateKey, bytes), 32);
 	}
 
 	public byte[] convertDertoRandS(byte derBytes[], int outputLength) {

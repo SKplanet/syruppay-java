@@ -24,6 +24,8 @@
 
 package com.skplanet.jose.jws;
 
+import com.skplanet.jose.Jose;
+import com.skplanet.jose.JoseBuilders;
 import com.skplanet.jose.JoseHeader;
 import com.skplanet.jose.commons.codec.binary.Base64;
 import com.skplanet.jose.jwa.Jwa;
@@ -43,7 +45,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Created by 박병찬 on 2015-07-15.
  */
-public class JwsSignerSha256WithECDSATest {
+public class Jws_ES256Test {
 	/*
 {"kty":"EC",
 "crv":"P-256",
@@ -67,13 +69,36 @@ public class JwsSignerSha256WithECDSATest {
 	}
 
 	@Test
-	public void testCompactSerialize() {
+	public void testJwsSerialize() {
 		String payload = "{\"iss\":\"joe\",\n" + "   \"exp\":1300819380,\n" + "   \"http://example.com/is_root\":true}";
 
-		JwsSerializer jwsSerializer = new JwsSerializer(new JoseHeader(Jwa.ES256), payload, privateKey.getEncoded());
-		String actual = jwsSerializer.compactSerialization();
+		String serialization = new Jose().configuration(JoseBuilders.JsonSignatureCompactSerializationBuilder()
+				.header(new JoseHeader(Jwa.ES256))
+				.payload(payload)
+				.key(privateKey)
+		).serialization();
 
-		System.out.println(actual);
+		String actual = new Jose().configuration(JoseBuilders.compactDeserializationBuilder()
+				.serializedSource(serialization)
+				.key(publicKey)
+		).deserialization();
 
+		assertThat(actual, is(payload));
+	}
+
+	@Test
+	public void testJwsDeserialization() {
+		String expected = "{\"iss\":\"joe\",\n" + "   \"exp\":1300819380,\n" + "   \"http://example.com/is_root\":true}";
+
+		String signing = "eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJqb2UiLAogICAiZXhwIjoxMzAwODE5MzgwLAogICAiaHR0cDovL2V4YW1wbGUuY29tL2lzX3Jvb3QiOnRydWV9.HvqgOJII0U4cvAOmxj4zwcinsKAQy2FWuQicmoT0PJFs4TkhPC-TNFxr818-3Uqo-WsQSxspvKrasmFNuirJUg";
+
+		String actual = new Jose().configuration(JoseBuilders.compactDeserializationBuilder()
+				.serializedSource(signing)
+				.key(publicKey)
+		).deserialization();
+
+		assertThat(actual, is(expected));
+
+		assertThat(actual, is(expected));
 	}
 }

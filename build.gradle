@@ -28,7 +28,7 @@ buildscript {
 
 configure(allprojects) { project ->
     ext.javaVersion = '1.5'
-    ext.projectVersion = '1.3.0'
+    ext.projectVersion = '1.3.1'
 
     version = projectVersion
     group = 'com.skplanet.syruppay'
@@ -151,6 +151,16 @@ project(':syruppay-token') {
             }
         }
     }
+
+    // to skplanet maven repo
+//    uploadArchives {
+//        repositories {
+//            mavenDeployer {
+//                repository(url: "http://mvn.skplanet.com/content/repositories/releases")
+//                snapshotRepository(url: "http://mvn.skplanet.com/content/repositories/snapshots")
+//            }
+//        }
+//    }
 }
 
 project(':syruppay-jose') {

@@ -25,37 +25,42 @@
 package com.skplanet.jose.jwa.alg;
 
 import com.skplanet.jose.exception.KeyGenerateException;
-import com.skplanet.jose.jwa.JwsAlgorithm;
-import com.skplanet.jose.jwa.crypto.Algorithm;
-import com.skplanet.jose.jwa.crypto.CryptoUtils;
-import com.skplanet.jose.jwa.crypto.KeyAlgorithm;
-import com.skplanet.jose.jwa.crypto.Transformation;
+import com.skplanet.jose.jwa.crypto.*;
+import com.skplanet.jose.jwa.enc.ContentEncryptKeyGenerator;
 
-import java.security.Key;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 
 /**
- * Created by 박병찬 on 2015-07-14.
+ * Created by byeongchan.park@sk.com(1000808) on 2015-11-26.
  */
-public class Sha256WithRsaAlgorithm implements JwsAlgorithm {
-	public boolean verify(byte[] key, byte[] actual, byte[] expected) {
-		Transformation transformation = new Transformation(Algorithm.RS256, null, null);
-		Key publicKey = null;
+public class RSAEncryptionAlgorithm {
+	public static JweAlgResult encryption(Transformation transformation, byte[] key, ContentEncryptKeyGenerator cekGenerator) {
+		byte[] cek = cekGenerator.generateRandomKey();
+		RSAPublicKey publicKey = null;
 		try {
-			publicKey = CryptoUtils.generatePublicKey(KeyAlgorithm.RSA, key);
+			publicKey = (RSAPublicKey) CryptoUtils.generatePublicKey(KeyAlgorithm.RSA, key);
 		} catch (Exception e) {
 			throw new KeyGenerateException("RSAPublicKeyGenerateException", e);
 		}
-		return AsymmetricShaAlgoritm.verify(transformation, publicKey, actual, expected);
+		try {
+			return new JweAlgResult(cek, CryptoUtils.rsaEncrypt(transformation, cek, publicKey));
+		} catch (Exception e) {
+			throw new KeyGenerateException(transformation.getValue()+"EncryptionException", e);
+		}
 	}
 
-	public byte[] sign(byte[] key, byte[] bytes) {
-		Transformation transformation = new Transformation(Algorithm.RS256, null, null);
-		Key privateKey = null;
+	public static byte[] decryption(Transformation transformation, byte[] key, byte[] cek) {
+		RSAPrivateKey privateKey = null;
 		try {
-			privateKey = CryptoUtils.generatePrivateKey(KeyAlgorithm.RSA, key);
+			privateKey = (RSAPrivateKey) CryptoUtils.generatePrivateKey(KeyAlgorithm.RSA, key);
 		} catch (Exception e) {
 			throw new KeyGenerateException("RSAPrivateKeyGenerateException", e);
 		}
-		return AsymmetricShaAlgoritm.sign(transformation, privateKey, bytes);
+		try {
+			return CryptoUtils.rsaDecrypt(transformation, cek, privateKey);
+		} catch (Exception e) {
+			throw new KeyGenerateException(transformation.getValue()+"DecryptionException", e);
+		}
 	}
 }

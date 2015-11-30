@@ -22,6 +22,7 @@
 package com.skplanet.syruppay.token.tav;
 
 import org.apache.commons.codec.binary.Base64;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.crypto.Mac;
@@ -44,15 +45,43 @@ public class TransactionAuthenticationValue implements Serializable {
     private String ocTransAuthId;
     private PaymentAuthenticationDetail paymentAuthenticationDetail;
 
-    public String getChecksumBy(String key) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
-        Mac mac = Mac.getInstance("HmacSHA256");
+    public String getCardToken() {
+        return cardToken;
+    }
+
+    @JsonIgnore
+    public String getOrderIdOfMerchant() {
+        return mctTransAuthId;
+    }
+
+    @Deprecated
+    public String getMctTransAuthId() {
+        return mctTransAuthId;
+    }
+
+    @Deprecated
+    public String getOcTransAuthId() {
+        return ocTransAuthId;
+    }
+
+    @JsonIgnore
+    public String getTransactionIdOfOneClick() {
+        return ocTransAuthId;
+    }
+
+    public PaymentAuthenticationDetail getPaymentAuthenticationDetail() {
+        return paymentAuthenticationDetail;
+    }
+
+    public String getChecksumBy(final String key) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
+        final Mac mac = Mac.getInstance("HmacSHA256");
         mac.init(new SecretKeySpec(key.getBytes("UTF-8"), mac.getAlgorithm()));
         mac.update((cardToken + mctTransAuthId + ocTransAuthId + new ObjectMapper().writeValueAsString(paymentAuthenticationDetail)).getBytes("UTF-8"));
         return Base64.encodeBase64URLSafeString(mac.doFinal());
     }
 
-    public boolean isValidBy(String key, String checksum) throws NoSuchAlgorithmException, IOException, InvalidKeyException {
-        Mac mac = Mac.getInstance("HmacSHA256");
+    public boolean isValidBy(final String key, final String checksum) throws NoSuchAlgorithmException, IOException, InvalidKeyException {
+        final Mac mac = Mac.getInstance("HmacSHA256");
         mac.init(new SecretKeySpec(key.getBytes("UTF-8"), mac.getAlgorithm()));
         mac.update((cardToken + mctTransAuthId + ocTransAuthId + new ObjectMapper().writeValueAsString(paymentAuthenticationDetail)).getBytes("UTF-8"));
         return Base64.encodeBase64URLSafeString(mac.doFinal()).equals(checksum);

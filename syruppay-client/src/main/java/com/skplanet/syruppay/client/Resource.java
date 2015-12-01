@@ -21,22 +21,27 @@
 
 package com.skplanet.syruppay.client;
 
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
+import java.net.URI;
 
 /**
- * 시럽페이 서버로의 연결을 주관한다.
- *
  * @author 임형태
- * @since 0.1
+ * @since 2015.12.01
  */
-public class SyrupPayConnector {
-    private final Client client;
-    private final SyrupPayEnvironment syrupPayEnvironment;
+public interface Resource<T, R> {
 
-    public SyrupPayConnector(SyrupPayEnvironment syrupPayEnvironment) {
-        this.syrupPayEnvironment = syrupPayEnvironment;
-        this.client = ClientBuilder.newClient();
+    public T getRequest();
+
+    public R getResponse();
+
+    public URI getUri();
+
+    public DeployedType getDeplotyedType();
+
+    /**
+     * @author 임형태
+     * @since 2015.12.01
+     */
+    enum DeployedType {
+        CLOSE_ALPHA, OPEN_ALPHA, CLOSE_BETA, OPEN_BETA, SERVICE
     }
 }

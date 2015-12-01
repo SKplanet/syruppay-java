@@ -78,12 +78,36 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Im1lcmNoYW50X2lkIiwidmVyIjoiMS4zLjEi
 
 ##### 팝업 API 호출
 ``` javascript
-skplanet.syruppay.getPaymentAuth("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Im1lcmNoYW50X2lkIiwidmVyIjoiMS4zLjEifQ.eyJhdWQiOiJodHRwczovL3BheS5zeXJ1cC5jby5rciIsInR5cCI6Impvc2UiLCJpc3MiOiJtZXJjaGFudF9pZCIsImV4cCI6MTQ0ODg2ODA3NiwiaWF0IjoxNDQ4ODY3NDc2LCJqdGkiOiIwNzc1Yzg5MC0xYjViLTQ2NTEtYTQwZS0xMWM5NmU2NzQwNjEiLCJuYmYiOjAsImxvZ2luSW5mbyI6eyJtY3RVc2VySWQiOiLqsIDrp7nsoJDsnZgg7ZqM7JuQIElEIOuYkOuKlCDsi53rs4TsnpAiLCJTU09DcmVkZW50aWFsIjoi67Cc6riJIOuwm-ydgCBTU0_qsIAg7J6I7J2EIOqyveyasCDsnoXroKUifSwidHJhbnNhY3Rpb25JbmZvIjp7Im1jdFRyYW5zQXV0aElkIjoiZmEzMDIxYzEtY2RmYy00MWI2LThiYmUtMzk2NjAwZjdiMzYwIiwicGF5bWVudEluZm8iOnsiY2FyZEluZm9MaXN0IjpbXSwicHJvZHVjdFRpdGxlIjoi7KCc7ZKI66qFIiwicHJvZHVjdFVybHMiOltdLCJsYW5nIjoiS08iLCJjdXJyZW5jeUNvZGUiOiJLUlciLCJwYXltZW50QW10IjoxMDAwMCwiaXNFeGNoYW5nZWFibGUiOmZhbHNlfSwicGF5bWVudFJlc3RyaWN0aW9ucyI6eyJjYXJkSXNzdWVyUmVnaW9uIjoiQUxMT1dFRDpLT1IifX19.eM6AytBdK_2OLgcEej8wRVcx-E8aHddrPyFw6MDjC7M", returnUrl, paymentSuccessCallback, paymentFailureCallback );
+skplanet.syruppay.open(); // * Popup Blocker 에 걸리지 않기 위해 수행 필요
+
+/*------ 토큰을 받아오는 기능 수행 ------*/
+
+var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Im1lcmNoYW50X2lkIiwidmVyIjoiMS4zLjEifQ.eyJhdWQiOiJodHRwczovL3BheS5zeXJ1cC5jby5rciIsInR5cCI6Impvc2UiLCJpc3MiOiJtZXJjaGFudF9pZCIsImV4cCI6MTQ0ODg2ODA3NiwiaWF0IjoxNDQ4ODY3NDc2LCJqdGkiOiIwNzc1Yzg5MC0xYjViLTQ2NTEtYTQwZS0xMWM5NmU2NzQwNjEiLCJuYmYiOjAsImxvZ2luSW5mbyI6eyJtY3RVc2VySWQiOiLqsIDrp7nsoJDsnZgg7ZqM7JuQIElEIOuYkOuKlCDsi53rs4TsnpAiLCJTU09DcmVkZW50aWFsIjoi67Cc6riJIOuwm-ydgCBTU0_qsIAg7J6I7J2EIOqyveyasCDsnoXroKUifSwidHJhbnNhY3Rpb25JbmZvIjp7Im1jdFRyYW5zQXV0aElkIjoiZmEzMDIxYzEtY2RmYy00MWI2LThiYmUtMzk2NjAwZjdiMzYwIiwicGF5bWVudEluZm8iOnsiY2FyZEluZm9MaXN0IjpbXSwicHJvZHVjdFRpdGxlIjoi7KCc7ZKI66qFIiwicHJvZHVjdFVybHMiOltdLCJsYW5nIjoiS08iLCJjdXJyZW5jeUNvZGUiOiJLUlciLCJwYXltZW50QW10IjoxMDAwMCwiaXNFeGNoYW5nZWFibGUiOmZhbHNlfSwicGF5bWVudFJlc3RyaWN0aW9ucyI6eyJjYXJkSXNzdWVyUmVnaW9uIjoiQUxMT1dFRDpLT1IifX19.eM6AytBdK_2OLgcEej8wRVcx-E8aHddrPyFw6MDjC7M";
+
+var returnURL = "https://client.co.kr/syruppay/bridge-page.html";
+
+skplanet.syruppay.getPaymentAuth(
+	  token
+	, returnURL
+	, successHandler: function ( result ) {
+      // 가맹점 Business Logic. 거래인증정보 획득 후 결제 요청 수행
+      // var authValue = JSON.parse(result).tranAuthValue
+    }
+	, failuerHandler: function (result ) {
+      // 실패
+    }
+)
 ```
 
 ##### 페이지 전환 API
 ``` javascript
-skplanet.syruppay.getPaymentAuth("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Im1lcmNoYW50X2lkIiwidmVyIjoiMS4zLjEifQ.eyJhdWQiOiJodHRwczovL3BheS5zeXJ1cC5jby5rciIsInR5cCI6Impvc2UiLCJpc3MiOiJtZXJjaGFudF9pZCIsImV4cCI6MTQ0ODg2ODA3NiwiaWF0IjoxNDQ4ODY3NDc2LCJqdGkiOiIwNzc1Yzg5MC0xYjViLTQ2NTEtYTQwZS0xMWM5NmU2NzQwNjEiLCJuYmYiOjAsImxvZ2luSW5mbyI6eyJtY3RVc2VySWQiOiLqsIDrp7nsoJDsnZgg7ZqM7JuQIElEIOuYkOuKlCDsi53rs4TsnpAiLCJTU09DcmVkZW50aWFsIjoi67Cc6riJIOuwm-ydgCBTU0_qsIAg7J6I7J2EIOqyveyasCDsnoXroKUifSwidHJhbnNhY3Rpb25JbmZvIjp7Im1jdFRyYW5zQXV0aElkIjoiZmEzMDIxYzEtY2RmYy00MWI2LThiYmUtMzk2NjAwZjdiMzYwIiwicGF5bWVudEluZm8iOnsiY2FyZEluZm9MaXN0IjpbXSwicHJvZHVjdFRpdGxlIjoi7KCc7ZKI66qFIiwicHJvZHVjdFVybHMiOltdLCJsYW5nIjoiS08iLCJjdXJyZW5jeUNvZGUiOiJLUlciLCJwYXltZW50QW10IjoxMDAwMCwiaXNFeGNoYW5nZWFibGUiOmZhbHNlfSwicGF5bWVudFJlc3RyaWN0aW9ucyI6eyJjYXJkSXNzdWVyUmVnaW9uIjoiQUxMT1dFRDpLT1IifX19.eM6AytBdK_2OLgcEej8wRVcx-E8aHddrPyFw6MDjC7M", returnUrl);
+/*------ 토큰을 받아오는 기능 수행 ------*/
+
+var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Im1lcmNoYW50X2lkIiwidmVyIjoiMS4zLjEifQ.eyJhdWQiOiJodHRwczovL3BheS5zeXJ1cC5jby5rciIsInR5cCI6Impvc2UiLCJpc3MiOiJtZXJjaGFudF9pZCIsImV4cCI6MTQ0ODg2ODA3NiwiaWF0IjoxNDQ4ODY3NDc2LCJqdGkiOiIwNzc1Yzg5MC0xYjViLTQ2NTEtYTQwZS0xMWM5NmU2NzQwNjEiLCJuYmYiOjAsImxvZ2luSW5mbyI6eyJtY3RVc2VySWQiOiLqsIDrp7nsoJDsnZgg7ZqM7JuQIElEIOuYkOuKlCDsi53rs4TsnpAiLCJTU09DcmVkZW50aWFsIjoi67Cc6riJIOuwm-ydgCBTU0_qsIAg7J6I7J2EIOqyveyasCDsnoXroKUifSwidHJhbnNhY3Rpb25JbmZvIjp7Im1jdFRyYW5zQXV0aElkIjoiZmEzMDIxYzEtY2RmYy00MWI2LThiYmUtMzk2NjAwZjdiMzYwIiwicGF5bWVudEluZm8iOnsiY2FyZEluZm9MaXN0IjpbXSwicHJvZHVjdFRpdGxlIjoi7KCc7ZKI66qFIiwicHJvZHVjdFVybHMiOltdLCJsYW5nIjoiS08iLCJjdXJyZW5jeUNvZGUiOiJLUlciLCJwYXltZW50QW10IjoxMDAwMCwiaXNFeGNoYW5nZWFibGUiOmZhbHNlfSwicGF5bWVudFJlc3RyaWN0aW9ucyI6eyJjYXJkSXNzdWVyUmVnaW9uIjoiQUxMT1dFRDpLT1IifX19.eM6AytBdK_2OLgcEej8wRVcx-E8aHddrPyFw6MDjC7M";
+
+var returnURL = "https://client.co.kr/syruppay/bridge-page.html";
+
+skplanet.syruppay.getPaymentAuth(token, returnUrl);
 ```
 
 #### 4. [가맹점 웹페이지] Syrup Pay 결제 Page에서 사용자가 유효한 PIN을 입력하면 Syrup Pay에서 거래인증 결과를 가맹점 웹페이지로 전달합니다.
@@ -102,13 +126,13 @@ String resultCode = request.getParameter("resultCode");
 String authInfo = request.getParameter("authInfo");
 
 <script type="text/javascript">
-	var authInfo = '<%=authInfo%>';
+ var authInfo = '<%=authInfo%>';
 	<% if( resultCode.equals("200") ){ %>
 		try{
 			if( window.opener ){
-				window.opener.paymentSuccessCallback( authInfo );
+				window.opener.skplanet.syruppay.successHandler( authInfo );
 			} else {
-				parent.window.opener.paymentSuccessCallback( authInfo );
+				parent.window.opener.skplanet.syruppay.successHandler( authInfo );
 			}
 		} catch(e){
 			alert( "해당 주문서 페이지를 이탈하여 결제가 진행되지 않습니다\n다시 결제를 시도해주세요" );
@@ -117,9 +141,9 @@ String authInfo = request.getParameter("authInfo");
 	<% } else { %>
 		try{
 			if( window.opener ){
-				window.opener.paymentFailureCallback( authInfo );
+				window.opener.skplanet.syruppay.failureHandler( authInfo );
 			} else {
-				parent.window.opener.paymentFailureCallback( authInfo );
+				parent.window.opener.skplanet.syruppay.failureHandler( authInfo );
 			}
 		} catch(e){
 			alert( "해당 주문서 페이지를 이탈하여 결제가 진행되지 않습니다\n다시 결제를 시도해주세요" );
@@ -180,7 +204,7 @@ Syrup Pay의 실행 구조와 workflow를 간단하게 설명합니다.
 ## Case1) 가맹점이 Syrup Pay의 자동로그인 기능을 기능을 이용할 경우,
 가맹점이 자체 회원 체계를 보유하고 있다면 Syrup Pay와 Single-Sign-On 기능을 이용할 수 있 구조는 다음과 같습니다. 
 
-![가맹점이 Syrup Pay의 자동로그인 기능을 이용할 경우](https://raw.githubusercontent.com/skplanet/syruppay-java/release/1.3/doc/images/syrup_pay_case1.png)
+![가맹점이 Syrup Pay의 자동로그인 기능을 이용할 경우](https://raw.githubusercontent.com/skplanet/syruppay-java/release/1.3/syruppay-docs/images/syrup_pay_case1.png)
 
 시럽페이는 결제시 가맹점과 거래인증및 거래승인 단계를 거쳐 결제를 진행합니다. 
 ### Step1) 거래인증 (1-1, 1-2 단계)
@@ -196,7 +220,7 @@ Syrup Pay의 실행 구조와 workflow를 간단하게 설명합니다.
 ## Case2) 가맹점과 Syrup Pay간의 자동로그인 기능이 필요 없는경우,
 위의 경우와 동일하지만 거래인증 단계에서 Syrup Pay와 연동할 필요가 없기 때문에 아래와 같이  1-2단계가 생략 됩니다.
 
-![가맹점과 Syrup Pay간의 자동로그인 기능이 필요 없는 경우](https://raw.githubusercontent.com/skplanet/syruppay-java/release/1.3/doc/images/syrup_pay_case2.png)
+![가맹점과 Syrup Pay간의 자동로그인 기능이 필요 없는 경우](https://raw.githubusercontent.com/skplanet/syruppay-java/release/1.3/syruppay-docs/images/syrup_pay_case2.png)
 
 # Security Requirements
 해당 Interface에서 별도 정의하지 않는 한, Syrup Pay의 모든 요청 및 응답은 HTTPS 기반으로 수행하며 Syrup Pay 서버는 **보안 취약성이 있는 SSL Protocol을 허용하지 않고 TLS Protocol 만**을 허용합니다.

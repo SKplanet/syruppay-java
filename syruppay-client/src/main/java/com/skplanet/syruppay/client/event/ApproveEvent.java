@@ -24,6 +24,7 @@ package com.skplanet.syruppay.client.event;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.skplanet.syruppay.client.event.error.SyrupPayError;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
 
@@ -33,10 +34,17 @@ import java.util.List;
  * @author 임형태
  * @since 0.1
  */
-public class ApproveEvent extends ResponseError implements Serializable {
+@XmlRootElement
+public class ApproveEvent implements Serializable {
     private static final long serialVersionUID = -8558152399133908526L;
     private String mctRequestId;
     private String ocTransAuthId;
+    private String mctTransAuthId;
+
+    @Deprecated
+    public String getMctTransAuthId() {
+        return mctTransAuthId;
+    }
 
     @Deprecated
     public String getMctRequestId() {
@@ -49,8 +57,13 @@ public class ApproveEvent extends ResponseError implements Serializable {
     }
 
     @JsonIgnore
-    public String getOrderIdOfMerchant() {
+    public String getRequestIdOfMerchant() {
         return mctRequestId;
+    }
+
+    @JsonIgnore
+    public String getOrderIdOfMerchant() {
+        return mctTransAuthId;
     }
 
     @JsonIgnore
@@ -59,8 +72,13 @@ public class ApproveEvent extends ResponseError implements Serializable {
     }
 
     @JsonIgnore
+    public void setRequestIdOfMerchant(String requestIdOfMerchant) {
+        this.mctRequestId = requestIdOfMerchant;
+    }
+
+    @JsonIgnore
     public void setOrderIdOfMerchant(String orderIdOfMerchant) {
-        this.mctRequestId = orderIdOfMerchant;
+        this.mctTransAuthId = orderIdOfMerchant;
     }
 
     @JsonIgnore
@@ -68,12 +86,12 @@ public class ApproveEvent extends ResponseError implements Serializable {
         this.ocTransAuthId = transactionIdOfOneClick;
     }
 
+    @XmlRootElement
     public static class RequestApprove extends ApproveEvent {
         private static final long serialVersionUID = 324247355311107194L;
         private long mctRequestTime;
         private int paymentAmt;
         private int taxFreeAmt;
-
         private String tranAuthValue;
         private SubmallInfo submallInfo;
 
@@ -146,6 +164,7 @@ public class ApproveEvent extends ResponseError implements Serializable {
         }
     }
 
+    @XmlRootElement
     public static class SubmallInfo implements Serializable {
         private static final long serialVersionUID = 7388439447463148569L;
 
@@ -181,10 +200,10 @@ public class ApproveEvent extends ResponseError implements Serializable {
         }
     }
 
+    @XmlRootElement
     public static class ResponseApprove extends ApproveEvent {
         private String ocTransApproveNo;
         private long ocTransApproveTime;
-        private String mctTransAuthId;
         private PaymentInfo paymentInfo;
         private List<DiscountInfo> discountInfoList;
         private CardApprovalInfo cardApprovalInfo;
@@ -205,10 +224,6 @@ public class ApproveEvent extends ResponseError implements Serializable {
 
         public long getOcTransApproveTime() {
             return ocTransApproveTime;
-        }
-
-        public String getMctTransAuthId() {
-            return mctTransAuthId;
         }
 
         public PaymentInfo getPaymentInfo() {

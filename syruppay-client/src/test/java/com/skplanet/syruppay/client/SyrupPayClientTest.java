@@ -25,13 +25,13 @@
 package com.skplanet.syruppay.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.skplanet.syruppay.client.event.ResponseError;
+import com.skplanet.syruppay.client.event.ApproveEvent;
+import com.skplanet.syruppay.client.mocks.ApproveMocks;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.ws.rs.BadRequestException;
-import java.io.InputStream;
+import java.net.URI;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.*;
@@ -47,25 +47,40 @@ public class SyrupPayClientTest {
 
     @After
     public void tearDown() throws Exception {
-
     }
 
-    @Test(expected = BadRequestException.class)
-    public void testApprove_널_요청() throws Exception {
-        syrupPayClient.approve(null);
+    @Test(expected = IllegalArgumentException.class)
+    public void testBasicAuthentication_중복설정() throws Exception {
+        // Give
+        syrupPayClient.basicAuthentication("hmall001", "RfezFtrZneqNsJWEQbdFflhoxdBbKYnp");
+
+        // When
+        syrupPayClient.basicAuthentication("hmall001", "RfezFtrZneqNsJWEQbdFflhoxdBbKYnp");
+
+        // Then
     }
 
     @Test
-    public void testApprove_널_요청_예외처리_추가() throws Exception {
+    public void testApprove_널_요청() throws Exception {
         // Give
-        ResponseError re = null;
+        syrupPayClient.basicAuthentication("hmall001", "RfezFtrZneqNsJWEQbdFflhoxdBbKYnp");
 
         // When
-        try {
-            syrupPayClient.approve(null);
-        } catch (BadRequestException e) {
-            re = objectMapper.readValue((InputStream) e.getResponse().getEntity(), ResponseError.class);
-        }
+        ApproveEvent.ResponseApprove re = syrupPayClient.approve(new URI("https://private-api-devpay.syrup.co.kr/v1/api-basic/payment/approval"), null);
+
+        //Then
+        assertThat(re, is(notNullValue()));
+        assertThat(re.getSyrupPayError(), is(notNullValue()));
+        assertThat(re.getSyrupPayError().getHttpStatus(), is("BAD_REQUEST"));
+    }
+
+    @Test
+    public void testApprove() throws Exception {
+        // Give
+        syrupPayClient.basicAuthentication("hmall001", "RfezFtrZneqNsJWEQbdFflhoxdBbKYnp");
+
+        // When
+        ApproveEvent.ResponseApprove re = syrupPayClient.approve(new URI("https://private-api-devpay.syrup.co.kr/v1/api-basic/payment/approval"), ApproveMocks.getRequestApprove());
 
         //Then
         assertThat(re, is(notNullValue()));

@@ -261,6 +261,7 @@ project(':syruppay-client') {
         compile 'com.skplanet.syruppay:syruppay-token:' + projectVersion
         compile 'org.glassfish.jersey.core:jersey-client:2.22.1'
         compile 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
+        compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.22.1'
     }
 
     uploadArchives {

@@ -24,14 +24,29 @@
 
 package com.skplanet.syruppay.client.mocks;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skplanet.syruppay.client.event.ApproveEvent;
+
+import java.io.IOException;
 
 /**
  * @author 임형태
  * @since 2015.12.01
  */
 public class ApproveMocks {
-    public static ApproveEvent.RequestApprove getRequestApprove() {
-        return null;
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final String approve = "{\n" +
+            "  \"mctRequestId\":\"4e0f618e9603497f8aa40ec182c36b12\",\n" +
+            "  \"mctRequestTime\":1448870110, \n" +
+            "  \"mctTransAuthId\":\"68e4ec50-1cb6-4fcd-8615-a1c5f0615d68\", \n" +
+            "  \"paymentAmt\":10000, \n" +
+            "  \"taxFreeAmt\":0, \n" +
+            "  \"ocTransAuthId\":\"TA20151130000000000020083\", \n" +
+            "  \"tranAuthValue\":\"y7we9C6TA_k-nEiYGnkeCUN8INuVCeyNJWcxbNmaKSI\", \n" +
+            "  \"submallInfo\":null\n" +
+            "}\n";
+
+    public static ApproveEvent.RequestApprove getRequestApprove() throws IOException {
+        return OBJECT_MAPPER.readValue(approve, ApproveEvent.RequestApprove.class);
     }
 }

@@ -21,17 +21,25 @@
 
 package com.skplanet.syruppay.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skplanet.syruppay.client.event.ApproveEvent;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -40,8 +48,30 @@ import java.security.cert.X509Certificate;
  * @author 임형태
  * @since 0.1
  */
-public class SyrupPayClient {
-    public static SSLContext ssl() {
+public final class SyrupPayClient {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SyrupPayClient.class.getName());
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    private HttpAuthenticationFeature feature;
+    private MediaType accept = MediaType.APPLICATION_JSON_TYPE;
+    private MediaType contentType = MediaType.APPLICATION_JSON_TYPE;
+
+    public void setAccept(MediaType accept) {
+        this.accept = accept;
+    }
+
+    public void setContentType(MediaType contentType) {
+        this.contentType = contentType;
+    }
+
+    public void basicAuthentication(final String clientId, final String clientSecret) {
+        if (feature != null) {
+            throw new IllegalArgumentException("already set information to authenticate with http basic. you should user new object, because this object has status value.");
+        }
+        feature = HttpAuthenticationFeature.basic(clientId, clientSecret);
+    }
+
+    public static SSLContext sslContext() {
         System.setProperty("jsse.enableSNIExtension", "false");
         TrustManager[] certs = new TrustManager[]{
                 new X509TrustManager() {
@@ -68,13 +98,30 @@ public class SyrupPayClient {
         return ctx;
     }
 
-    public ApproveEvent.ResponseApprove approve(ApproveEvent.RequestApprove requestApprove) {
-        HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("hmall001", "RfezFtrZneqNsJWEQbdFflhoxdBbKYnp");
-        Client client = ClientBuilder.newBuilder().sslContext(ssl()).build();
-        return client.target("https://private-api-devpay.syrup.co.kr/v1/api-basic/payment/approval")
-                .register(feature)
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .accept(MediaType.APPLICATION_JSON_TYPE)
-                .post(Entity.json(requestApprove), ApproveEvent.ResponseApprove.class);
+    public ApproveEvent.ResponseApprove approve(final URI resource, final ApproveEvent.RequestApprove requestApprove) throws IOException {
+        try {
+            return client(resource).target(resource)
+                    .request(contentType)
+                    .accept(accept)
+                    .post(Entity.json(requestApprove), ApproveEvent.ResponseApprove.class);
+        } catch (ClientErrorException e) {
+            if (e.getResponse().hasEntity()) {
+                return OBJECT_MAPPER.readValue((InputStream) e.getResponse().getEntity(), ApproveEvent.ResponseApprove.class);
+            }
+            LOGGER.warn("", e.getResponse().getEntity());
+            throw e;
+        }
+    }
+
+    private Client client(final URI resource) {
+        final ClientBuilder cb = ClientBuilder.newBuilder();
+        if (resource.getScheme().startsWith("https")) {
+            cb.sslContext(sslContext());
+        }
+        final Client c = cb.build();
+        if (feature != null) {
+            c.register(feature);
+        }
+        return c;
     }
 }

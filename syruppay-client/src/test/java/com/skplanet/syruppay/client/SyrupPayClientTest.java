@@ -24,25 +24,23 @@
 
 package com.skplanet.syruppay.client;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skplanet.syruppay.client.event.ApproveEvent;
+import com.skplanet.syruppay.client.event.GetSsoCredentialEvent;
 import com.skplanet.syruppay.client.mocks.ApproveMocks;
+import com.skplanet.syruppay.client.mocks.GetSsoMocks;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.net.URI;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.*;
 
 public class SyrupPayClientTest {
-    private ObjectMapper objectMapper = new ObjectMapper();
     SyrupPayClient syrupPayClient;
 
     @Before
     public void setUp() throws Exception {
-        syrupPayClient = new SyrupPayClient();
+        syrupPayClient = new SyrupPayClient(SyrupPayEnvironment.DEVELOPMENT);
     }
 
     @After
@@ -66,7 +64,7 @@ public class SyrupPayClientTest {
         syrupPayClient.basicAuthentication("hmall001", "RfezFtrZneqNsJWEQbdFflhoxdBbKYnp");
 
         // When
-        ApproveEvent.ResponseApprove re = syrupPayClient.approve(new URI("https://private-api-devpay.syrup.co.kr/v1/api-basic/payment/approval"), null);
+        ApproveEvent.ResponseApprove re = syrupPayClient.approve(null);
 
         //Then
         assertThat(re, is(notNullValue()));
@@ -78,13 +76,70 @@ public class SyrupPayClientTest {
     public void testApprove() throws Exception {
         // Give
         syrupPayClient.basicAuthentication("hmall001", "RfezFtrZneqNsJWEQbdFflhoxdBbKYnp");
+        syrupPayClient.setContentType(SyrupPayClient.JOSE);
+        syrupPayClient.setAccept(SyrupPayClient.JOSE);
+        syrupPayClient.useJweWhileCommunicating("hmall001", "fQGZACj5upMx2vqSTxCOsctFwNQN0I9Z");
 
         // When
-        ApproveEvent.ResponseApprove re = syrupPayClient.approve(new URI("https://private-api-devpay.syrup.co.kr/v1/api-basic/payment/approval"), ApproveMocks.getRequestApprove());
+        ApproveEvent.ResponseApprove re = syrupPayClient.approve(ApproveMocks.getRequestApprove());
 
         //Then
         assertThat(re, is(notNullValue()));
         assertThat(re.getSyrupPayError(), is(notNullValue()));
         assertThat(re.getSyrupPayError().getHttpStatus(), is("BAD_REQUEST"));
+    }
+
+    @Test
+    public void testGetSso_WITH_JSON() throws Exception {
+        // Give
+        syrupPayClient = new SyrupPayClient(SyrupPayEnvironment.LOCALHOST);
+        syrupPayClient.basicAuthentication("hmall001", "RfezFtrZneqNsJWEQbdFflhoxdBbKYnp");
+        syrupPayClient.useJweWhileCommunicating("hmall001", "fQGZACj5upMx2vqSTxCOsctFwNQN0I9Z");
+
+        // When
+        GetSsoCredentialEvent.ResponseGettingSso re = syrupPayClient.getSso(GetSsoMocks.gettingSso());
+
+        //Then
+        assertThat(re, is(notNullValue()));
+        assertThat(re.getSyrupPayError(), is(notNullValue()));
+        assertThat(re.getSyrupPayError().getHttpStatus(), is("BAD_REQUEST"));
+    }
+
+    @Test
+    public void testGetSso_WITH_JOSE() throws Exception {
+        // Give
+        syrupPayClient = new SyrupPayClient(SyrupPayEnvironment.LOCALHOST);
+        syrupPayClient.setContentType(SyrupPayClient.JOSE);
+        syrupPayClient.setAccept(SyrupPayClient.JOSE);
+
+        syrupPayClient.basicAuthentication("sktmall_s001", "G3aIW7hYmlTjag3FDc63OGLNWwvagVUU");
+        syrupPayClient.useJweWhileCommunicating("sktmall_s001", "G3aIW7hYmlTjag3FDc63OGLNWwvagVUU");
+
+        // When
+        GetSsoCredentialEvent.ResponseGettingSso re = syrupPayClient.getSso(GetSsoMocks.gettingSso());
+
+        //Then
+        assertThat(re, is(notNullValue()));
+        assertThat(re.getSyrupPayError(), is(notNullValue()));
+        assertThat(re.getSyrupPayError().getHttpStatus(), is("BAD_REQUEST"));
+    }
+
+    @Test
+    public void testGetSso_WITH_JOSE_조회_안되는_사용자() throws Exception {
+        // Give
+        syrupPayClient = new SyrupPayClient(SyrupPayEnvironment.LOCALHOST);
+        syrupPayClient.setContentType(SyrupPayClient.JOSE);
+        syrupPayClient.setAccept(SyrupPayClient.JOSE);
+
+        syrupPayClient.basicAuthentication("sktmall_s001", "G3aIW7hYmlTjag3FDc63OGLNWwvagVUU");
+        syrupPayClient.useJweWhileCommunicating("sktmall_s001", "G3aIW7hYmlTjag3FDc63OGLNWwvagVUU");
+
+        // When
+        GetSsoCredentialEvent.ResponseGettingSso re = syrupPayClient.getSso(GetSsoMocks.notGettingSso());
+
+        //Then
+        assertThat(re, is(notNullValue()));
+        assertThat(re.getSyrupPayError(), is(notNullValue()));
+        assertThat(re.getSyrupPayError().getHttpStatus(), is("NOT_FOUND"));
     }
 }

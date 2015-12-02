@@ -24,28 +24,26 @@
 
 package com.skplanet.syruppay.client.mocks;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.skplanet.syruppay.client.event.ApproveEvent;
-
-import java.io.IOException;
+import com.skplanet.syruppay.client.event.GetSsoCredentialEvent;
 
 /**
  * @author 임형태
- * @since 2015.12.01
+ * @since 2015.12.02
  */
-public class ApproveMocks {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private static final String approve = "{\n" +
-            "  \"mctRequestId\":\"4e0f618e9603497f8aa40ec182c36b12\",\n" +
-            "  \"mctRequestTime\":1448870110, \n" +
-            "  \"mctTransAuthId\":\"68e4ec50-1cb6-4fcd-8615-a1c5f0615d68\", \n" +
-            "  \"paymentAmt\":10000, \n" +
-            "  \"taxFreeAmt\":0, \n" +
-            "  \"tranAuthValue\":\"y7we9C6TA_k-nEiYGnkeCUN8INuVCeyNJWcxbNmaKSI\", \n" +
-            "  \"submallInfo\":null\n" +
-            "}\n";
+public class GetSsoMocks {
+    public static GetSsoCredentialEvent.RequestGettingSso gettingSso() {
+        GetSsoCredentialEvent.RequestGettingSso req = new GetSsoCredentialEvent.RequestGettingSso();
+        GetSsoCredentialEvent.SsoIdentifier s = new GetSsoCredentialEvent.SsoIdentifier();
+        s.setUserIdOfMerchant("placebo");
+        req.setSsoIdentifier(s);
+        return req;
+    }
 
-    public static ApproveEvent.RequestApprove getRequestApprove() throws IOException {
-        return OBJECT_MAPPER.readValue(approve, ApproveEvent.RequestApprove.class);
+    public static GetSsoCredentialEvent.RequestGettingSso notGettingSso() {
+        GetSsoCredentialEvent.RequestGettingSso req = new GetSsoCredentialEvent.RequestGettingSso();
+        GetSsoCredentialEvent.SsoIdentifier s = new GetSsoCredentialEvent.SsoIdentifier();
+        s.setUserIdOfMerchant("asdfiklhj230");
+        req.setSsoIdentifier(s);
+        return req;
     }
 }

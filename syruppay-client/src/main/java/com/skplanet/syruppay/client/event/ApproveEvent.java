@@ -38,8 +38,8 @@ import java.util.List;
 public class ApproveEvent implements Serializable {
     private static final long serialVersionUID = -8558152399133908526L;
     private String mctRequestId;
-    private String ocTransAuthId;
     private String mctTransAuthId;
+    private String ocTransAuthId;
 
     @Deprecated
     public String getMctTransAuthId() {
@@ -72,18 +72,21 @@ public class ApproveEvent implements Serializable {
     }
 
     @JsonIgnore
-    public void setRequestIdOfMerchant(String requestIdOfMerchant) {
+    public ApproveEvent setRequestIdOfMerchant(String requestIdOfMerchant) {
         this.mctRequestId = requestIdOfMerchant;
+        return this;
     }
 
     @JsonIgnore
-    public void setOrderIdOfMerchant(String orderIdOfMerchant) {
+    public ApproveEvent setOrderIdOfMerchant(String orderIdOfMerchant) {
         this.mctTransAuthId = orderIdOfMerchant;
+        return this;
     }
 
     @JsonIgnore
-    public void setTransactionIdOfOneClick(String transactionIdOfOneClick) {
+    public ApproveEvent setTransactionIdOfOneClick(String transactionIdOfOneClick) {
         this.ocTransAuthId = transactionIdOfOneClick;
+        return this;
     }
 
     @XmlRootElement
@@ -140,27 +143,32 @@ public class ApproveEvent implements Serializable {
         }
 
         @JsonIgnore
-        public void setRequestTimeOfMerchant(long requestTimeOfMerchant) {
+        public RequestApprove setRequestTimeOfMerchant(long requestTimeOfMerchant) {
             mctRequestTime = requestTimeOfMerchant;
+            return this;
         }
 
         @JsonIgnore
-        public void setPaymentAmount(int paymentAmount) {
+        public RequestApprove setPaymentAmount(int paymentAmount) {
             paymentAmt = paymentAmount;
+            return this;
         }
 
         @JsonIgnore
-        public void setTaxFreeAmount(int taxFreeAmount) {
+        public RequestApprove setTaxFreeAmount(int taxFreeAmount) {
             taxFreeAmt = taxFreeAmount;
+            return this;
         }
 
         @JsonIgnore
-        public void setTransactionAuthenticationValue(String transactionAuthenticationValue) {
+        public RequestApprove setTransactionAuthenticationValue(String transactionAuthenticationValue) {
             tranAuthValue = transactionAuthenticationValue;
+            return this;
         }
 
-        public void setSubmallInfo(SubmallInfo submallInfo) {
+        public RequestApprove setSubmallInfo(SubmallInfo submallInfo) {
             this.submallInfo = submallInfo;
+            return this;
         }
     }
 

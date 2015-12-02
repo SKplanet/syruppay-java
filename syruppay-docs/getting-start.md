@@ -20,11 +20,11 @@ Syrup Pay는 Web 기반의 Javascript Library 또는 Native Code 기반의 SDK (
 # Getting Started
 Syrup Pay는 Web 기반의 Javascript Library 또는 Native SDK (Android, iOS)모두를 기본 제공합니다. Web 기반 연동일 경우 아래 내용을 참고하여 개발을 진행하면 됩니다. Native SDK 기반도 아래 Step과 동일하나  Client API를 호출하는 부분만 다릅니다. Native SDK 기반 연동 내용은 여기를 참고 하시면 됩니다.
 
-## 가맹점 ID & 가맹점 Secret & Basic Authorazation Key
-시럽페이 서비스 이용을 위해서는 사전에 Syrup Pay로 부터 가맹점 ID 및 가맹점 Secret 그리고 가맹점 Basic Authenticastion Key 를 전달 받습니다.
+## 가맹점 ID & 가맹점 Secret & Basic Authentication Key
+시럽페이 서비스 이용을 위해서는 사전에 Syrup Pay로 부터 가맹점 ID 및 가맹점 Secret 그리고 가맹점 Basic Authentication Key 를 전달 받습니다.
  * 가맹점 ID : merchant_id
  * 가맹점 Secret : WXpUuHbArT8G0aAyobieCQ4x9cxWH3cE
- * 가맹점 Basic Authenticastion Key : G3aIW7hYmlTjag3FDc63OGLNWwvagVUU
+ * 가맹점 Basic Authentication Key : G3aIW7hYmlTjag3FDc63OGLNWwvagVUU
 
 ## 결제 수행
 Syrup Pay로 결제를 수행하기 위해 가맹점에서 수행해야될 Task는 다음과 같습니다.

@@ -114,6 +114,7 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Im1lcmNoYW50X2lkIiwidmVyIjoiMS4zLjEi
 ```
 #### 3. [가맹점 웹페이지] 가맹점 서버로 부터 가맹점 거래인증 Token을 넘겨받아 시럽페이 거래인증 요청 API를 호출하여 Syrup Pay 결제 Page를 띄웁니다.
  * Syrup Pay의 결제 Page는 팝업 형태 또는 Page 전환 형태로 띄울 수 있습니다. 일반적으로 PC환경에서는 팝업형태, Mobile에서는 Page 전환형태가 권장됩니다.
+ * Iframe을 이용한 Page 전환은 피해 주시기 바랍니다.
 
 ##### 팝업 API 호출
 ``` javascript
@@ -152,7 +153,7 @@ skplanet.syruppay.getPaymentAuth(token, returnUrl);
 #### 4. [가맹점 웹페이지] Syrup Pay 결제 Page에서 사용자가 유효한 PIN을 입력하면 Syrup Pay에서 거래인증 결과를 가맹점 웹페이지로 전달합니다.
   * 가맹점 웹페이지에서는 가맹점 서버로 부터 거래 인증 결과를 받을 때까지 적절한 UI 표시를 해야 합니다. (ex, 결제 중입니다…Loading Page 노출)
 
-##### 응답결과 조회
+##### 팝업인 경우 응답결과 조회 샘플 코드
 ```jsp
 /**
  * resultCode 성공 및 실패를 구분합니다.
@@ -203,17 +204,7 @@ String authInfo = request.getParameter("authInfo");
 		"tranAuthValue": "ArG6u36eUkC4lbdjoLkF2TyOS7uAKCquMU3sxfuG788",
 		"mctTransAuthId": "fa3021c1-cdfc-41b6-8bbe-396600f7b360", // 가맹점의 주문 ID
 		"ocTransAuthId": "TA20151130000000000015687",
-		"ssoUpdateRequired": false,
-		"pmtAuthDetail": {
-			"payMethod": "10",
-			"payAmount": 10000,
-			"offerAmount": 0,
-			"loyaltyAmount": 0,
-			"payInstallment": "00",
-			"payCurrency": "KRW",
-			"payFinanceCode": "17",
-			"isCardPointApplied": false
-		}
+		"ssoUpdateRequired": false // true 일 경우 SSO 조회를 시도해야 함 (1번 절차 참고)
 	}
 }
 ```

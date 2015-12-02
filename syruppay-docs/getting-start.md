@@ -54,14 +54,16 @@ dependencies {
 ```
 
 ```java
+// 시럽페이 클라이언트 객체 초기화
 SyrupPayClient syrupPayClient = new SyrupPayClient(SyrupPayEnvironment.DEVELOPMENT)
 syrupPayClient.basicAuthentication("merchant_id", "G3aIW7hYmlTjag3FDc63OGLNWwvagVUU");
 syrupPayClient.useJweWhileCommunicating("merchant_id", "WXpUuHbArT8G0aAyobieCQ4x9cxWH3cE");
 
+// SSO 요청 호출
 GetSsoCredentialEvent.RequestGettingSso request = new GetSsoCredentialEvent.RequestGettingSso().setSsoIdentifier(new GetSsoCredentialEvent.SsoIdentifier().setUserIdOfMerchant("6733b40f-4b6c-48b7-8c98-f218156a0086")); // 가맹점의 회원 구분 ID 값 : 6733b40f-4b6c-48b7-8c98-f218156a0086
 
+// 응답값 확인
 GetSsoCredentialEvent.ResponseGettingSso response = syrupPayClient.getSso(request);
-
 String ssoCredentail = responset.getSsoCredential();
 ```
 
@@ -220,10 +222,12 @@ String authInfo = request.getParameter("authInfo");
  * 거래 승인 요청에 대한 응답을 받지 못한 경우 (Timeout등 발생) 정상거래가 일어났는지 알 수 가 없으므로 해당 거래에 대해서는 반드시 거래 망취소 요청을 해야 합니다.
 
 ```java
+// 시럽페이 클라이언트 객체 초기화
 SyrupPayClient syrupPayClient = new SyrupPayClient(SyrupPayEnvironment.DEVELOPMENT)
 syrupPayClient.basicAuthentication("merchant_id", "G3aIW7hYmlTjag3FDc63OGLNWwvagVUU");
 syrupPayClient.useJweWhileCommunicating("merchant_id", "WXpUuHbArT8G0aAyobieCQ4x9cxWH3cE");
 
+// 거래 승인 객체 구성
 ApproveEvent.RequestApprove request = new ApproveEvent.RequestApprove();
 request.setRequestIdOfMerchant("4e0f618e9603497f8aa40ec182c36b12");
 request.setRequestTimeOfMerchant(1448870110);
@@ -232,14 +236,17 @@ request.setPaymentAmount(10000);
 request.setTaxFreeAmount(0);
 request.setOcTransAuthId("TA20151130000000000020083");
 request.setTransactionAuthenticationValue("y7we9C6TA_k-nEiYGnkeCUN8INuVCeyNJWcxbNmaKSI");
+
+// 거래 승인 요청
 try {
 	ApproveEvent.ResponseApprove reeponse = syrupPayClient.approve(request);
 	if(reeponse.isExcept()) {
-		// 결제 실패
+		// 결제 실패 처리
 	} else {
-		// 결제 성공
+		// 결제 성공 처리
 	}
 } catch(Exception e) {
+	// 예외 발생 시에만 망상 취소
 	syrupPayClient.cancel(new CancelEvent.RequestCancel()
 		.setRequestIdIfMerchant("2398fksdjhf872q1kj3h598gfshkdjhr93") // 현재 요청 ID
 		.setRequestTimeOfMerchant(1449671502)	// 현재 요청 시간

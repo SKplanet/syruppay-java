@@ -25,7 +25,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skplanet.jose.Jose;
 import com.skplanet.jose.JoseBuilders;
 import com.skplanet.syruppay.client.event.ApproveEvent;
+import com.skplanet.syruppay.client.event.CancelEvent;
 import com.skplanet.syruppay.client.event.GetSsoCredentialEvent;
+import com.skplanet.syruppay.client.event.RefundEvent;
 import com.skplanet.syruppay.client.message.JweMessageBodyProvider;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.slf4j.Logger;
@@ -165,36 +167,64 @@ public final class SyrupPayClient {
      *
      * @param requestApprove
      *         {@link com.skplanet.syruppay.client.event.ApproveEvent.RequestApprove} 객체
-     * @return the approve event . response approve
+     * @return {@link com.skplanet.syruppay.client.event.ApproveEvent.ResponseApprove}
      * @throws IOException
      *         the iO exception
      */
     public ApproveEvent.ResponseApprove approve(final ApproveEvent.RequestApprove requestApprove) throws IOException {
-        try {
-            return client(syrupPayEnvironment.getTransactionServerUrl().startsWith("https")).target(syrupPayEnvironment.getTransactionServerUrl() + "/v1/api-basic/payment/approval")
-                    .request(contentType)
-                    .accept(accept)
-                    .post((contentType.equals(MediaType.APPLICATION_JSON_TYPE) ? Entity.json(requestApprove) : Entity.entity(requestApprove, contentType)), ApproveEvent.ResponseApprove.class);
-        } catch (ClientErrorException e) {
-            LOGGER.warn("excepted while approve resource: {}, request: {}, has a entity: {}", requestApprove, e.getResponse().hasEntity());
-            ApproveEvent.ResponseApprove re = getObjectWithErrorMessageIfExistNullReturn(e, ApproveEvent.ResponseApprove.class);
-            if (requestApprove != null) {
-                return re;
-            }
-            throw e;
-        }
+        return call(syrupPayEnvironment.getTransactionServerUrl() + "/v1/api-basic/payment/approval", requestApprove, ApproveEvent.ResponseApprove.class);
     }
 
+    /**
+     * 시럽페이 서버로 가맹점 사용자의 SSO 가 존재하는지 여부를 확인한다.
+     *
+     * @param requestGettingSso
+     *         {@link com.skplanet.syruppay.client.event.GetSsoCredentialEvent.RequestGettingSso} 객체
+     * @return {@link GetSsoCredentialEvent.ResponseGettingSso}
+     * @throws IOException
+     *         the iO exception
+     */
     public GetSsoCredentialEvent.ResponseGettingSso getSso(final GetSsoCredentialEvent.RequestGettingSso requestGettingSso) throws IOException {
+        requestGettingSso.setIss(merchantId);
+        return call(syrupPayEnvironment.getAuthenticationServerUrl() + "/v1/api-basic/merchants/" + merchantId + "/sso-credentials/create", requestGettingSso, GetSsoCredentialEvent.ResponseGettingSso.class);
+    }
+
+    /**
+     * 시럽페이 서버로 정상 승인에 대하여 거래 취소를 요청합니다.
+     *
+     * @param requestRefund
+     *         {@link com.skplanet.syruppay.client.event.RefundEvent.RequestRefund} 객체
+     * @return {@link com.skplanet.syruppay.client.event.RefundEvent.ResponseRefund}
+     * @throws IOException
+     *         the iO exception
+     */
+    public RefundEvent.ResponseRefund refund(final RefundEvent.RequestRefund requestRefund) throws IOException {
+        return call(syrupPayEnvironment.getTransactionServerUrl() + "/v1/api-basic/payment/refund", requestRefund, RefundEvent.ResponseRefund.class);
+    }
+
+    /**
+     * 가맹점에서 예외상황 발생 시 거래 취소를 요청합니다.
+     * 이 API는 Syrup Pay로부터 정상 거래승인을 받았으나 내부 오류로 정상 처리를 하지 못할 경우 사용합니다. (망 취소)
+     *
+     * @param requestCancel
+     *         {@link com.skplanet.syruppay.client.event.CancelEvent.RequestCancel} 객체
+     * @return {@link com.skplanet.syruppay.client.event.CancelEvent.ResponseCancel}
+     * @throws IOException
+     *         the iO exception
+     */
+    public RefundEvent.ResponseRefund cancel(final CancelEvent.RequestCancel requestCancel) throws IOException {
+        return call(syrupPayEnvironment.getTransactionServerUrl() + "/v1/api-basic/payment/cancel/exception", requestCancel, CancelEvent.ResponseCancel.class);
+    }
+
+    private <R> R call(String urlOfResource, Object request, Class<R> r) throws IOException {
         try {
-            requestGettingSso.setIss(merchantId);
-            return client(syrupPayEnvironment.getTransactionServerUrl().startsWith("https")).target(syrupPayEnvironment.getAuthenticationServerUrl() + "/v1/api-basic/merchants/" + merchantId + "/sso-credentials/create")
+            return client(urlOfResource.startsWith("https")).target(urlOfResource)
                     .request(contentType)
                     .accept(accept)
-                    .post((contentType.equals(MediaType.APPLICATION_JSON_TYPE) ? Entity.json(requestGettingSso) : Entity.entity(requestGettingSso, contentType)), GetSsoCredentialEvent.ResponseGettingSso.class);
+                    .post((contentType.equals(MediaType.APPLICATION_JSON_TYPE) ? Entity.json(request) : Entity.entity(request, contentType)), r);
         } catch (ClientErrorException e) {
-            LOGGER.warn("{} excepted while get sso request: {}, has a entity: {}", e.getMessage(), requestGettingSso, e.getResponse().hasEntity());
-            GetSsoCredentialEvent.ResponseGettingSso re = getObjectWithErrorMessageIfExistNullReturn(e, GetSsoCredentialEvent.ResponseGettingSso.class);
+            LOGGER.warn("{} excepted while get sso request: {}, has a entity: {}", e.getMessage(), request, e.getResponse().hasEntity());
+            R re = getObjectWithErrorMessageIfExistNullReturn(e, r);
             if (re != null) {
                 return re;
             }

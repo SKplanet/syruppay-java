@@ -41,9 +41,11 @@ public class ApproveMocks {
             "  \"mctTransAuthId\":\"68e4ec50-1cb6-4fcd-8615-a1c5f0615d68\", \n" +
             "  \"paymentAmt\":10000, \n" +
             "  \"taxFreeAmt\":0, \n" +
+            "  \"ocTransAuthId\":\"TA20151130000000000020083\", \n" +
             "  \"tranAuthValue\":\"y7we9C6TA_k-nEiYGnkeCUN8INuVCeyNJWcxbNmaKSI\", \n" +
             "  \"submallInfo\":null\n" +
             "}\n";
+
 
     public static ApproveEvent.RequestApprove getRequestApprove() throws IOException {
         return OBJECT_MAPPER.readValue(approve, ApproveEvent.RequestApprove.class);

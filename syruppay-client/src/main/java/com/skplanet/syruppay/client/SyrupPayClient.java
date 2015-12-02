@@ -78,8 +78,8 @@ public final class SyrupPayClient {
     private String merchantSecret;
     private JweMessageBodyProvider jweMessageBodyProvider;
 
-    private MediaType accept = MediaType.APPLICATION_JSON_TYPE;
-    private MediaType contentType = MediaType.APPLICATION_JSON_TYPE;
+    private MediaType accept = JOSE;
+    private MediaType contentType = JOSE;
     public static MediaType JOSE = new MediaType("application", "jose");
 
     /**

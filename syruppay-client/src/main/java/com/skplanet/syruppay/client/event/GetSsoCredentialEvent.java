@@ -48,32 +48,36 @@ public class GetSsoCredentialEvent implements Serializable {
             return iss;
         }
 
-        public void setIss(String iss) {
+        public RequestGettingSso setIss(String iss) {
             this.iss = iss;
+            return this;
         }
 
         public SsoIdentifier getSsoIdentifier() {
             return ssoIdentifier;
         }
 
-        public void setSsoIdentifier(SsoIdentifier ssoIdentifier) {
+        public RequestGettingSso setSsoIdentifier(SsoIdentifier ssoIdentifier) {
             this.ssoIdentifier = ssoIdentifier;
+            return this;
         }
 
         public SsoMappingType getSsoMappingType() {
             return ssoMappingType;
         }
 
-        public void setSsoMappingType(SsoMappingType ssoMappingType) {
+        public RequestGettingSso setSsoMappingType(SsoMappingType ssoMappingType) {
             this.ssoMappingType = ssoMappingType;
+            return this;
         }
 
         public String getSsoMappingValue() {
             return ssoMappingValue;
         }
 
-        public void setSsoMappingValue(String ssoMappingValue) {
+        public RequestGettingSso setSsoMappingValue(String ssoMappingValue) {
             this.ssoMappingValue = ssoMappingValue;
+            return this;
         }
     }
 
@@ -107,17 +111,20 @@ public class GetSsoCredentialEvent implements Serializable {
         }
 
         @JsonIgnore
-        public void setUserIdOfMerchant(String userIdOfMerchant) {
+        public SsoIdentifier setUserIdOfMerchant(String userIdOfMerchant) {
             this.mctUserId = userIdOfMerchant;
+            return this;
         }
 
         @JsonIgnore
-        public void setExtraUserIdOfMerchant(String extraUserIdOfMerchant) {
+        public SsoIdentifier setExtraUserIdOfMerchant(String extraUserIdOfMerchant) {
             this.extraUserId = extraUserIdOfMerchant;
+            return this;
         }
 
-        public void setConnectingInfo(String connectingInfo) {
+        public SsoIdentifier setConnectingInfo(String connectingInfo) {
             this.connectingInfo = connectingInfo;
+            return this;
         }
     }
 

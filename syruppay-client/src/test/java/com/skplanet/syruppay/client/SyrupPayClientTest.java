@@ -25,6 +25,7 @@
 package com.skplanet.syruppay.client;
 
 import com.skplanet.syruppay.client.event.ApproveEvent;
+import com.skplanet.syruppay.client.event.CancelEvent;
 import com.skplanet.syruppay.client.event.GetSsoCredentialEvent;
 import com.skplanet.syruppay.client.mocks.ApproveMocks;
 import com.skplanet.syruppay.client.mocks.GetSsoMocks;

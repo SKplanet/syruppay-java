@@ -50,4 +50,16 @@ public class ApproveMocks {
     public static ApproveEvent.RequestApprove getRequestApprove() throws IOException {
         return OBJECT_MAPPER.readValue(approve, ApproveEvent.RequestApprove.class);
     }
+
+    public static ApproveEvent.RequestApprove getRequestApproveForDoc() throws IOException {
+        ApproveEvent.RequestApprove request = new ApproveEvent.RequestApprove();
+        request.setRequestIdOfMerchant("가맹점 거래 승인요청 ID");
+        request.setRequestTimeOfMerchant(1448870110);
+        request.setOrderIdOfMerchant("가맹점 거래인증 ID");
+        request.setPaymentAmount(10000);
+        request.setTaxFreeAmount(0);
+        request.setOcTransAuthId("TA20151130000000000020083");
+        request.setTransactionAuthenticationValue("y7we9C6TA_k-nEiYGnkeCUN8INuVCeyNJWcxbNmaKSI");
+        return request;
+    }
 }

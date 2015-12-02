@@ -72,21 +72,17 @@ public class ApproveEvent implements Serializable {
     }
 
     @JsonIgnore
-    public ApproveEvent setRequestIdOfMerchant(String requestIdOfMerchant) {
+    public void setRequestIdOfMerchant(String requestIdOfMerchant) {
         this.mctRequestId = requestIdOfMerchant;
-        return this;
     }
 
     @JsonIgnore
-    public ApproveEvent setOrderIdOfMerchant(String orderIdOfMerchant) {
+    public void setOrderIdOfMerchant(String orderIdOfMerchant) {
         this.mctTransAuthId = orderIdOfMerchant;
-        return this;
     }
 
-    @JsonIgnore
-    public ApproveEvent setTransactionIdOfOneClick(String transactionIdOfOneClick) {
-        this.ocTransAuthId = transactionIdOfOneClick;
-        return this;
+    public void setOcTransAuthId(String ocTransAuthId) {
+        this.ocTransAuthId = ocTransAuthId;
     }
 
     @XmlRootElement
@@ -217,6 +213,11 @@ public class ApproveEvent implements Serializable {
         private CardApprovalInfo cardApprovalInfo;
         private BankApprovalInfo bankApprovalInfo;
         private SyrupPayError syrupPayError;
+        private boolean except;
+
+        public boolean isExcept() {
+            return except;
+        }
 
         public SyrupPayError getSyrupPayError() {
             return syrupPayError;

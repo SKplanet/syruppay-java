@@ -20,15 +20,16 @@ Syrup Pay는 Web 기반의 Javascript Library 또는 Native Code 기반의 SDK (
 # Getting Started
 Syrup Pay는 Web 기반의 Javascript Library 또는 Native SDK (Android, iOS)모두를 기본 제공합니다. Web 기반 연동일 경우 아래 내용을 참고하여 개발을 진행하면 됩니다. Native SDK 기반도 아래 Step과 동일하나  Client API를 호출하는 부분만 다릅니다. Native SDK 기반 연동 내용은 여기를 참고 하시면 됩니다.
 
+## 가맹점 ID & 가맹점 Secret & Basic Authorazation Key
+시럽페이 서비스 이용을 위해서는 사전에 Syrup Pay로 부터 가맹점 ID 및 가맹점 Secret 그리고 가맹점 Basic Authenticastion Key 를 전달 받습니다.
+ * 가맹점 ID : merchant_id
+ * 가맹점 Secret : WXpUuHbArT8G0aAyobieCQ4x9cxWH3cE
+ * 가맹점 Basic Authenticastion Key : G3aIW7hYmlTjag3FDc63OGLNWwvagVUU
+
 ## 결제 수행
 Syrup Pay로 결제를 수행하기 위해 가맹점에서 수행해야될 Task는 다음과 같습니다.
 
-#### 1. Syrup Pay로 부터 가맹점 ID 및 Secret을 부여 받고 서버정보를 Syrup Pay에 전달합니다.
- * 가맹점 ID : merchant_id, 가맹점 Secret : WXpUuHbArT8G0aAyobieCQ4x9cxWH3cE
-
-#### 2. [가맹점 서버] 거래 인증을 위해 가맹점 거래인증 Token을 생성합니다.
- * 자세한 가맹점 Token 생성은 syruppay-token 라이브러리를 참조하시기 바랍니다.
- * Syrup Pay와 Single-Sign-On 기능을 적용하려면 Syrup Pay 인증서버와 기 가입회원 확인 및 자격증명 발행요청 API를 개발하여 개맹점 사용자별 SSO Credential을 발급 받습니다.
+#### 1. [가맹점 서버] Syrup Pay 자동 로그인을 사용하는 경우, Syrup Pay로 부터 가맹점 회원에 대한 SSO 발급 여부를 조회합니다.
 
 ##### 개발 환경
 * Java 1.5 이상
@@ -36,7 +37,43 @@ Syrup Pay로 결제를 수행하기 위해 가맹점에서 수행해야될 Task�
 ##### Gradle 빌드 시
 ```groovy
 dependencies {
-     compile 'com.skplanet.syruppay:syruppay-token:1.3.0'
+     compile 'com.skplanet.syruppay:syruppay-client:0.1'
+}
+
+```
+
+##### Maven 빌드 시
+```xml
+<dependencies>
+	<dependency>
+		<groupId>com.skplanet.syruppay</groupId>
+		<artifactId>syruppay-client</artifactId>
+		<version>0.1</version>
+	</dependency>
+</dependencies>
+```
+
+```java
+SyrupPayClient syrupPayClient = new SyrupPayClient(SyrupPayEnvironment.DEVELOPMENT)
+syrupPayClient.basicAuthentication("merchant_id", "G3aIW7hYmlTjag3FDc63OGLNWwvagVUU");
+syrupPayClient.useJweWhileCommunicating("merchant_id", "WXpUuHbArT8G0aAyobieCQ4x9cxWH3cE");
+
+GetSsoCredentialEvent.RequestGettingSso request = new GetSsoCredentialEvent.RequestGettingSso().setSsoIdentifier(new GetSsoCredentialEvent.SsoIdentifier().setUserIdOfMerchant("6733b40f-4b6c-48b7-8c98-f218156a0086")); // 가맹점의 회원 구분 ID 값 : 6733b40f-4b6c-48b7-8c98-f218156a0086
+
+GetSsoCredentialEvent.ResponseGettingSso response = syrupPayClient.getSso(request);
+
+String ssoCredentail = responset.getSsoCredential();
+```
+
+#### 2. [가맹점 서버] 거래 인증을 위해 가맹점 거래인증 Token을 생성합니다.
+
+##### 개발 환경
+* Java 1.5 이상
+
+##### Gradle 빌드 시
+```groovy
+dependencies {
+     compile 'com.skplanet.syruppay:syruppay-token:1.3'
 }
 
 ```
@@ -47,7 +84,7 @@ dependencies {
 	<dependency>
 		<groupId>com.skplanet.syruppay</groupId>
 		<artifactId>syruppay-token</artifactId>
-		<version>1.3.0</version>
+		<version>1.3</version>
 	</dependency>
 </dependencies>
 ```
@@ -57,7 +94,7 @@ dependencies {
 String token = new SyrupPayTokenBuilder().of("merchant_id")
                     .login()
                         .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
-                        .withSsoCredential("발급 받은 SSO가 있을 경우 입력")
+                        .withSsoCredential(ssoCredentail) // SSO 를 잘급 받은 경우 입력하며 없을 경우 withSsoCredential()를 호출하지 않음
                     .and()
                     .pay()
                         .withOrderIdOfMerchant("fa3021c1-cdfc-41b6-8bbe-396600f7b360")
@@ -155,6 +192,7 @@ String authInfo = request.getParameter("authInfo");
 ```
 
 ##### 응답결과(authInfo:String)
+
 ```json
 {
 	"syrupPayError": null,
@@ -181,49 +219,32 @@ String authInfo = request.getParameter("authInfo");
 #### 5. [가맹점 서버] 가맹점 서버는 Syrup Pay에 거래승인 요청 API를 호출 하고 그 결과를 받아 처리합니다.
  * 거래 승인 요청에 대한 응답을 받지 못한 경우 (Timeout등 발생) 정상거래가 일어났는지 알 수 가 없으므로 해당 거래에 대해서는 반드시 거래 망취소 요청을 해야 합니다.
 
+```java
+SyrupPayClient syrupPayClient = new SyrupPayClient(SyrupPayEnvironment.DEVELOPMENT)
+syrupPayClient.basicAuthentication("merchant_id", "G3aIW7hYmlTjag3FDc63OGLNWwvagVUU");
+syrupPayClient.useJweWhileCommunicating("merchant_id", "WXpUuHbArT8G0aAyobieCQ4x9cxWH3cE");
 
-## 회원 가입
-Syrup Pay로 회원 가입만 별도로 수행하기 위해서는 다음과 같은 절차를 따르면 됩니다. 
-(Editor’s Note: 4.1의 결제 진행과정에서도 Syrup Pay회원이 아닌경우 회원가입을 수행할 수 있습니다. 따라서, 가망점에서 Syrup Pay 회원가입을 위한 별도의 링크를 제공할 때만 아래 내용을 개발하시면 됩니다.)
-
-#### 1. Syrup Pay로 부터 가맹점 ID 및 Secret을 부여 받고 서버정보를 Syrup Pay에 전달합니다.
-
-#### 2. (Server) 가맹점 Client에서 Syrup Pay결제시 요청하는 가맹점 Token 전달 API를 개발합니다.
-
-#### 3. (Server)거래 인증을 위해 가맹점 거래인증 Token을 생성기능을 개발합니다.
- * 가맹점 Token의 규격은 본 규격서에 기술되어 있습니다.
-
-#### 4. (Client) 가맹점 서버로 부터 가맹점 oken을 넘겨받아 시럽페이 회원가입 요청 API를 호출합니다.
- * Syrup Pay의 회원가입 Page는 팝업 형태 또는 Page 전환형태로 띄울 수 있습니다. 일반적으로 PC환경에서는 팝업형태, Mobile에서는 Page 전환형태가 권장됩니다. 팝업형태의 API는 여기, Page 전환형태의 API는 여기를 참고 하세요.
-
-#### 5. (Client, Server) Syrup Pay 회원가입에 대한 결과를 넘겨 받으면 Client에서는 적절한 UI(회원가입 완료 축하 Message 등)처리를 수행합니다.
-
-# Workflow
-Syrup Pay의 실행 구조와 workflow를 간단하게 설명합니다.
-
-## Case1) 가맹점이 Syrup Pay의 자동로그인 기능을 기능을 이용할 경우,
-가맹점이 자체 회원 체계를 보유하고 있다면 Syrup Pay와 Single-Sign-On 기능을 이용할 수 있 구조는 다음과 같습니다. 
-
-![가맹점이 Syrup Pay의 자동로그인 기능을 이용할 경우](https://raw.githubusercontent.com/skplanet/syruppay-java/release/1.3/syruppay-docs/images/syrup_pay_case1.png)
-
-시럽페이는 결제시 가맹점과 거래인증및 거래승인 단계를 거쳐 결제를 진행합니다. 
-### Step1) 거래인증 (1-1, 1-2 단계)
-* 먼저 가맹점에서 거래승인 요청을 하려면 Syrup Pay Client Library에 거래 인증을 위한 Token값을 전달해 야 합니다. 이를 위해 가맹점 Client는 가맹점 서버에게 Token 생성을 요청합니다 (1-1), 
-* 가맹점에서는 거래승인을 위한 Token을 생성하는데, Syrup Pay와의 Single-Sign-On 위해서는 Syrup Pay에게 자격증명 발행을 요청합니다. (1-2). 가맹점 서버는 거래 승인을 위한 Token값을 생성하여 가맹점 Client에 전달합니다.  
-* 가맹점 Client는 Syrup Pay Client Library에게 거래 승인요청을 하게 되면 Syrup Pay에서 적절한 UI를 Display하고 사용자가 PIN입력하여 거래 승인을 수행하면 거래인증 결과를 가맹점 Client에 전달합니다.
-
-### Step 2) 거래 승인 (3,4 단계)
-* 가맹점 Client는 Syrup Pay로 부터 전달받은 거래인증 값을 가맹점 Server로 전달합니다 (3). 
-* 가맹점 서버는 거래 Syrup Pay API서버로 거래 승인을 요청합니다, Syrup Pay API서버는 거래 승인을 수행하고 그 결과를 가맹점 서버로 전달합니다(4). 
-* 가맹점 서버는 거래승인 성공 또는 실패 여부와 관련정보를 가맹점 Client에 전달합니다
-
-## Case2) 가맹점과 Syrup Pay간의 자동로그인 기능이 필요 없는경우,
-위의 경우와 동일하지만 거래인증 단계에서 Syrup Pay와 연동할 필요가 없기 때문에 아래와 같이  1-2단계가 생략 됩니다.
-
-![가맹점과 Syrup Pay간의 자동로그인 기능이 필요 없는 경우](https://raw.githubusercontent.com/skplanet/syruppay-java/release/1.3/syruppay-docs/images/syrup_pay_case2.png)
-
-# Security Requirements
-해당 Interface에서 별도 정의하지 않는 한, Syrup Pay의 모든 요청 및 응답은 HTTPS 기반으로 수행하며 Syrup Pay 서버는 **보안 취약성이 있는 SSL Protocol을 허용하지 않고 TLS Protocol 만**을 허용합니다.
-
-가맹점에서 Syrup Pay로의 모든 요청 및 응답은 JWS(JSON Web Signature) 또는 JWE(JSON Web Encryption) 형식으로 전달되어야 하고 응답 유효성(위/변조 여부) 확인을 수행해야 합니다.
-개발 편의를 위해, 가맹점 Server 단의 JWS/JWE Library(Java 기반)를 제공하고, 가맹점의 Web Site에서 Syrup Pay 결제 연동에 필요한 “Syrup Pay Client Library”를 함께 제공합니다.
+ApproveEvent.RequestApprove request = new ApproveEvent.RequestApprove();
+request.setRequestIdOfMerchant("4e0f618e9603497f8aa40ec182c36b12");
+request.setRequestTimeOfMerchant(1448870110);
+request.setOrderIdOfMerchant("가맹점 거래인증 ID");
+request.setPaymentAmount(10000);
+request.setTaxFreeAmount(0);
+request.setOcTransAuthId("TA20151130000000000020083");
+request.setTransactionAuthenticationValue("y7we9C6TA_k-nEiYGnkeCUN8INuVCeyNJWcxbNmaKSI");
+try {
+	ApproveEvent.ResponseApprove reeponse = syrupPayClient.approve(request);
+	if(reeponse.isExcept()) {
+		// 결제 실패
+	} else {
+		// 결제 성공
+	}
+} catch(Exception e) {
+	syrupPayClient.cancel(new CancelEvent.RequestCancel()
+		.setRequestIdIfMerchant("2398fksdjhf872q1kj3h598gfshkdjhr93") // 현재 요청 ID
+		.setRequestTimeOfMerchant(1449671502)	// 현재 요청 시간
+		.setApprovedRequestIdOfMerchant("4e0f618e9603497f8aa40ec182c36b12") // 취소 하려는 결제 ID
+		.setApprovedRequestTimeOfMerchant(1448870110)	// 취소 하려는 결제 시간
+	);
+}
+```

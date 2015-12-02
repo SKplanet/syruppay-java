@@ -40,10 +40,6 @@ public class GetSsoMocks {
     }
 
     public static GetSsoCredentialEvent.RequestGettingSso notGettingSso() {
-        GetSsoCredentialEvent.RequestGettingSso req = new GetSsoCredentialEvent.RequestGettingSso();
-        GetSsoCredentialEvent.SsoIdentifier s = new GetSsoCredentialEvent.SsoIdentifier();
-        s.setUserIdOfMerchant("asdfiklhj230");
-        req.setSsoIdentifier(s);
-        return req;
+        return new GetSsoCredentialEvent.RequestGettingSso().setSsoIdentifier(new GetSsoCredentialEvent.SsoIdentifier().setUserIdOfMerchant("1129387"));
     }
 }

@@ -12,12 +12,12 @@ JDK Framework 1.5 or later
 <dependency>
 	<groupId>com.skplanet.syruppay</groupId>
 	<artifactId>jose_jdk1.5</artifactId>
-	<version>0.3.6</version>
+	<version>1.3.1</version>
 </dependency>
 ```
 ### Gradle
 ```
-compile 'com.skplanet.syruppay:jose_jdk1.5:0.3.6'
+compile 'com.skplanet.syruppay:jose_jdk1.5:1.3.1'
 ```
 
 ## Usage
@@ -123,3 +123,19 @@ alg Param Value|Digital Signature or MAC Algorithm
 HS256|HMAC using SHA-256
 RS256|RSASSA-PKCS1-v1_5 using SHA-256
 ES256|ECDSA using P-256 and SHA-256
+
+## release note
+### 1.3.1
+- CryptoUtils exception 처리 변경
+- AsymmetricShaAlgorithm class, RSAEncryptionAlgorithm class 추가
+
+### 0.3.6
+- JoseBuilders.compactDeserializationBuilder 추가
+- JoseBuilders deprecated method 추가
+    JoseBuilders.JsonSignatureCompactDeserializationBuilder
+    JoseBuilders.JsonEncryptionCompactDeserializationBuilder
+
+### 0.3.5
+- JoseHeader VER 추가
+
+

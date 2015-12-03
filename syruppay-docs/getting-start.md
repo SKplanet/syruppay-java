@@ -59,11 +59,13 @@ SyrupPayClient syrupPayClient = new SyrupPayClient(SyrupPayEnvironment.DEVELOPME
 syrupPayClient.basicAuthentication("merchant_id", "G3aIW7hYmlTjag3FDc63OGLNWwvagVUU");
 syrupPayClient.useJweWhileCommunicating("merchant_id", "WXpUuHbArT8G0aAyobieCQ4x9cxWH3cE");
 
-// SSO 요청 호출
+// SSO 요청 객체 구성
 GetSsoCredentialEvent.RequestGettingSso request = new GetSsoCredentialEvent.RequestGettingSso().setSsoIdentifier(new GetSsoCredentialEvent.SsoIdentifier().setUserIdOfMerchant("6733b40f-4b6c-48b7-8c98-f218156a0086")); // 가맹점의 회원 구분 ID 값 : 6733b40f-4b6c-48b7-8c98-f218156a0086
 
-// 응답값 확인
+// SSO 확인 요청
 GetSsoCredentialEvent.ResponseGettingSso response = syrupPayClient.getSso(request);
+
+// 응답값 확인
 String ssoCredentail = responset.getSsoCredential();
 ```
 

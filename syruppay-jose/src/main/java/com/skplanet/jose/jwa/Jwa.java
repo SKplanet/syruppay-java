@@ -31,10 +31,19 @@ package com.skplanet.jose.jwa;
  *
  */
 public enum Jwa {
-	A128KW("A128KW"), A128CBC_HS256("A128CBC-HS256"),
-	RSA1_5("RSA1_5"), RS256("RS256"), HS256("HS256"),
-	RSA_OAEP("RSA-OAEP"), ES256("ES256"), A256KW("A256KW"),
-	DIR("dir");
+	RSA1_5("RSA1_5"),
+	RSA_OAEP("RSA-OAEP"),
+	A128KW("A128KW"),
+	A256KW("A256KW"),
+	DIR("dir"),
+
+	A128CBC_HS256("A128CBC-HS256"),
+	A256CBC_HS512("A256CBC-HS512"),
+
+	HS256("HS256"),
+	RS256("RS256"),
+	ES256("ES256")
+	;
 
 	private String value;
 

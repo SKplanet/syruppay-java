@@ -110,6 +110,12 @@ dir|Direct use of a shared symmetric key as the CEK
 enc Param Value|Content Encryption Algorithm
 -------------|------
 A128CBC-HS256|AES_128_CBC_HMAC_SHA_256 authenticated encryption algorithm
+A256CBC-HS512|AES_256_CBC_HMAC_SHA_512 authenticated encryption algorithm
+
+#### A256CBC-HS512 IllegalKeyException 오류
+미국 외 지역에서 AES256를 사용하면 IllegalKeyException(Illegal key size)가 발생합니다.
+'Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files'를 설치해야만 정상적으로 동작합니다.
+'Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files'는 oracle.com 에서 다운로드 받을 수 있습니다.
 
 ### "alg" (Algorithm) Header Parameter Values for JWS
 alg Param Value|Digital Signature or MAC Algorithm
@@ -117,25 +123,3 @@ alg Param Value|Digital Signature or MAC Algorithm
 HS256|HMAC using SHA-256
 RS256|RSASSA-PKCS1-v1_5 using SHA-256
 ES256|ECDSA using P-256 and SHA-256
-
-## 0.2.x 버전 이하
-0.2.x 에서 제공하는 JweSupport는 0.3.x 버전 이상에서 제공하지 않습니다.
-소스 변경없이 0.3.x로 업그레이드를 하려면 jose_bridge library를 추가로 다운로드 받으시기 바랍니다. 
-
-### maven
-```
-<dependency>
-  <groupId>com.skplanet.syruppay</groupId>
-  <artifactId>jose_bridge</artifactId>
-  <version>0.0.2</version>
-</dependency>
-```
-
-## Gradle
-```
-compile 'com.skplanet.syruppay:jose_bridge:0.0.2'
-```
-
-## 0.3.x 버전 이상
-0.2.x 에서 제공하던 JweSupport의 기능을 JoseSupport를 사용하여 이용할 수 있습니다.
-그러나 JoseSupport에서 사용할 수 있는 알고리즘은 제한적입니다. 또한 추후 deprecated 될 예정이니 JoseSupport 사용을 권고하지 않습니다.

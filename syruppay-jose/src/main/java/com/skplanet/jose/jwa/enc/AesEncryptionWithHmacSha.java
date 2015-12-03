@@ -35,8 +35,8 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 
 public class AesEncryptionWithHmacSha extends ContentEncryption {
-	public AesEncryptionWithHmacSha(int keyLength, int ivLength) {
-		super(keyLength, ivLength);
+	public AesEncryptionWithHmacSha(int keyLength, int ivLength, Algorithm hmacAlgorithm) {
+		super(keyLength, ivLength, hmacAlgorithm);
 	}
 
 	public JweEncResult encryptAndSign(byte[] cek, byte[] iv, byte[] src, byte[] aad) {
@@ -90,13 +90,13 @@ public class AesEncryptionWithHmacSha extends ContentEncryption {
 		byte[] signPart = getSignPart(iv, cipherText, aad);
 		byte[] digest = new byte[0];
 		try {
-			digest = CryptoUtils.hmac(new Transformation(Algorithm.HS256), signPart, key);
+			digest = CryptoUtils.hmac(new Transformation(hmacAlgorithm), signPart, key);
 		} catch (Exception e) {
 			throw new IllegalSignatureToken("invalid algorithm/key", e);
 		}
 
-		byte[] at = new byte[16];
-		System.arraycopy(digest, 0, at, 0, 16);
+		byte[] at = new byte[keyLength/2];
+		System.arraycopy(digest, 0, at, 0, keyLength/2);
 
 		return at;
 	}

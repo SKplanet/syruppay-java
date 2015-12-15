@@ -481,7 +481,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         @JsonIgnore
         public PayableLocaleRule getPayableLocaleRule() {
             for (PayableLocaleRule r : PayableLocaleRule.values()) {
-                if (r.toCode().equals(cardIssuerRegion)) {
+                if (r.toCode().equals(cardIssuerRegion.toUpperCase())) {
                     return r;
                 }
             }

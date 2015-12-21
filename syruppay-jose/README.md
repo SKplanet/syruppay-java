@@ -111,6 +111,8 @@ enc Param Value|Content Encryption Algorithm
 -------------|------
 A128CBC-HS256|AES_128_CBC_HMAC_SHA_256 authenticated encryption algorithm
 A256CBC-HS512|AES_256_CBC_HMAC_SHA_512 authenticated encryption algorithm
+A128GCM|AES GCM using 128 bit key
+A256GCM|AES GCM using 256 bit key
 
 #### A256CBC-HS512 IllegalKeyException 오류
 미국 외 지역에서 AES256를 사용하면 IllegalKeyException(Illegal key size)가 발생합니다.
@@ -125,6 +127,11 @@ RS256|RSASSA-PKCS1-v1_5 using SHA-256
 ES256|ECDSA using P-256 and SHA-256
 
 ## release note
+### 1.3.1
+- A256CBC-HS256 추가
+- A128GCM 추가
+- A256GCM 추가
+
 ### 1.3.1
 - CryptoUtils exception 처리 변경
 - AsymmetricShaAlgorithm class, RSAEncryptionAlgorithm class 추가

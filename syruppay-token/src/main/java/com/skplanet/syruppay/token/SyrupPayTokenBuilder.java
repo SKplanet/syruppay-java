@@ -114,7 +114,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      */
     public static Token verify(String token, byte[] key) throws IOException {
         try {
-            return objectMapper.readValue(new Jose().configuration(JoseBuilders.JsonSignatureCompactDeserializationBuilder().serializedSource(token).key(key)).deserialization(), SyrupPayToken.class);
+            return objectMapper.readValue(new Jose().configuration(JoseBuilders.compactDeserializationBuilder().serializedSource(token).key(key)).deserialization(), SyrupPayToken.class);
         } catch (IOException e) {
             LOGGER.error("exception that decrypting token. key : {}, token : {}", new String(key), token);
             throw e;
@@ -261,7 +261,6 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
         return apply(configurer);
     }
 
-    @Override
     protected Jwt doBuild() throws Exception {
         if (iss == null || iss.isEmpty()) {
             throw new IllegalArgumentException("issuer couldn't be null. you should set of by SyrupPayTokenBuilder#of(String of)");

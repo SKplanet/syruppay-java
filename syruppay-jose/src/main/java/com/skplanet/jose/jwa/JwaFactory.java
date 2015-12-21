@@ -27,6 +27,7 @@ package com.skplanet.jose.jwa;
 import com.skplanet.jose.jwa.alg.*;
 import com.skplanet.jose.jwa.crypto.Algorithm;
 import com.skplanet.jose.jwa.enc.AesEncryptionWithHmacSha;
+import com.skplanet.jose.jwa.enc.AesGcmEncryption;
 
 import java.util.HashMap;
 
@@ -48,6 +49,8 @@ public class JwaFactory {
 
 		supportedJweEncryption.put(Jwa.A128CBC_HS256, new AesEncryptionWithHmacSha(32, 16, Algorithm.HS256));
 		supportedJweEncryption.put(Jwa.A256CBC_HS512, new AesEncryptionWithHmacSha(64, 16, Algorithm.HS512));
+		supportedJweEncryption.put(Jwa.A128GCM, new AesGcmEncryption(16, 12, Algorithm.NONE));
+		supportedJweEncryption.put(Jwa.A256GCM, new AesGcmEncryption(32, 12, Algorithm.NONE));
 	}
 
 	public static JweAlgorithm getJweAlgorithm(Jwa jwa) {

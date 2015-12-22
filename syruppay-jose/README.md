@@ -127,10 +127,11 @@ RS256|RSASSA-PKCS1-v1_5 using SHA-256
 ES256|ECDSA using P-256 and SHA-256
 
 ## release note
-### 1.3.1
+### 1.3.2
 - A256CBC-HS256 추가
 - A128GCM 추가
 - A256GCM 추가
+- unused apache common codec sources is deleted
 
 ### 1.3.1
 - CryptoUtils exception 처리 변경

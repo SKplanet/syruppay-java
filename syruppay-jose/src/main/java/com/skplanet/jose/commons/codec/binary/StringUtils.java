@@ -45,9 +45,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
-import com.skplanet.jose.commons.codec.CharEncoding;
-import com.skplanet.jose.commons.codec.Charsets;
-
 /**
  * Converts String to and from bytes using the encodings required by the Java specification. These encodings are
  * specified in <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">

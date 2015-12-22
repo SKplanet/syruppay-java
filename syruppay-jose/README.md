@@ -12,12 +12,12 @@ JDK Framework 1.5 or later
 <dependency>
 	<groupId>com.skplanet.syruppay</groupId>
 	<artifactId>jose_jdk1.5</artifactId>
-	<version>1.3.1</version>
+	<version>1.3.2</version>
 </dependency>
 ```
 ### Gradle
 ```
-compile 'com.skplanet.syruppay:jose_jdk1.5:1.3.1'
+compile 'com.skplanet.syruppay:jose_jdk1.5:1.3.2'
 ```
 
 ## Usage
@@ -44,10 +44,10 @@ String key = "12345678901234561234567890123456";
 //1. encryption
 String jweToken = new Jose().configuration(
         JsonEncryptionCompactSerializationBuilder()
-            .header(new JoseHeader(Jwa.A256KW, Jwa.A128CBC_HS256, kid))
-            .payload(payload)
-            .key(key)
-    ).serialization();
+                .header(new JweHeader(new JweAlgorithmSuites.A256KWAndA128CBC_HS256(), kid))
+                .payload(payload)
+                .key(key)
+).serialization();
 
 //2. verify and decryption		
 String decryptedText = new Jose().configuration(
@@ -77,15 +77,15 @@ String key = "12345678901234561234567890123456";
  * alg : signature algorithm. 아래 Supported JOSE encryption algorithms 참조
  */
 //1. sign
-JoseHeader joseHeader = new JoseHeader(Jwa.HS256);
-joseHeader.setHeader(JoseHeader.JoseHeaderKeySpec.TYPE, "JWT");
+JwsHeader jwsHeader = new JwsHeader(new JwsAlgorithmSuites.HS256());
+jwsHeader.setHeader(JoseHeader.JoseHeaderKeySpec.TYPE, "JWT");
 
 String token = new Jose().configuration(
         JsonSignatureCompactSerializationBuilder()
-            .header(joseHeader)
+            .header(jwsHeader)
             .payload(payload)
             .key(key)
-		).serialization();
+).serialization();
 
 //2. verify
 String json = new Jose().configuration(
@@ -128,10 +128,14 @@ ES256|ECDSA using P-256 and SHA-256
 
 ## release note
 ### 1.3.2
-- A256CBC-HS256 추가
-- A128GCM 추가
-- A256GCM 추가
+- JWE content encryption algorithms are added
+  * A256CBC-HS256 algorithm
+  * A128GCM algorithm
+  * A256GCM algorithm
 - unused apache common codec sources is deleted
+- JWE, JWS specific header class is added
+- JoseHeader class construct method with JWA arguments is deprecated
+- SerializationBuilder class header setting method is deprecated
 
 ### 1.3.1
 - CryptoUtils exception 처리 변경

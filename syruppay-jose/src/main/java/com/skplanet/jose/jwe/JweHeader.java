@@ -22,34 +22,21 @@
  * THE SOFTWARE.
  */
 
-package com.skplanet.jose;
+package com.skplanet.jose.jwe;
 
-import com.skplanet.jose.jwe.JweSerializationBuilder;
-import com.skplanet.jose.jws.JwsSerializationBuilder;
+import com.skplanet.jose.JoseHeader;
+import com.skplanet.jose.jwa.suits.JweAlgorithmSuites;
 
 /**
- * Created by 박병찬 on 2015-07-15.
+ * Created by byeongchan.park@sk.com(1000808) on 2015-12-22.
  */
-public class JoseBuilders {
-	public static JwsSerializationBuilder JsonSignatureCompactSerializationBuilder() {
-		return new JwsSerializationBuilder(JoseMethod.JWS, JoseActionType.SERIALIZATION);
+public class JweHeader extends JoseHeader {
+	public JweHeader(JweAlgorithmSuites jweAlgorithmSuites) {
+		super();
+		setAlgorithm(jweAlgorithmSuites.getKeyWrapAlgorithm(), jweAlgorithmSuites.getContentEncryptionAlgorithm(), null);
 	}
 
-	@Deprecated
-	public static DeserializationBuilder JsonSignatureCompactDeserializationBuilder() {
-		return new DeserializationBuilder(JoseMethod.JWS, JoseActionType.DESERIALIZATION);
-	}
-
-	public static JweSerializationBuilder JsonEncryptionCompactSerializationBuilder() {
-		return new JweSerializationBuilder(JoseMethod.JWE, JoseActionType.SERIALIZATION);
-	}
-
-	@Deprecated
-	public static DeserializationBuilder JsonEncryptionCompactDeserializationBuilder() {
-		return new DeserializationBuilder(JoseMethod.JWE, JoseActionType.DESERIALIZATION);
-	}
-
-	public static DeserializationBuilder compactDeserializationBuilder() {
-		return new DeserializationBuilder(JoseActionType.DESERIALIZATION);
+	public JweHeader(JweAlgorithmSuites jweAlgorithmSuites, String kid) {
+		setAlgorithm(jweAlgorithmSuites.getKeyWrapAlgorithm(), jweAlgorithmSuites.getContentEncryptionAlgorithm(), kid);
 	}
 }

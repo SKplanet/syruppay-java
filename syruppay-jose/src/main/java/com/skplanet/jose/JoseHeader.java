@@ -25,9 +25,9 @@
 package com.skplanet.jose;
 
 import com.skplanet.jose.commons.codec.binary.Base64;
+import com.skplanet.jose.exception.IllegalJoseHeaderException;
 import com.skplanet.jose.exception.UnsupportedJOSEAlgorithm;
 import com.skplanet.jose.jwa.Jwa;
-import com.skplanet.jose.exception.IllegalJoseHeaderException;
 import com.skplanet.jose.jwa.JwaFactory;
 import com.skplanet.jose.util.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -47,19 +47,27 @@ public class JoseHeader {
 	public JoseHeader() {
 	}
 
+	@Deprecated
 	public JoseHeader(Jwa alg) {
 		this(alg, null, null);
 	}
 
+	@Deprecated
 	public JoseHeader(Jwa alg, String kid) {
 		this(alg, null, kid);
 	}
 
+	@Deprecated
 	public JoseHeader(Jwa alg, Jwa enc) {
 		this(alg, enc, null);
 	}
 
+	@Deprecated
 	public JoseHeader(Jwa alg, Jwa enc, String kid) {
+		setAlgorithm(alg, enc, kid);
+	}
+
+	protected void setAlgorithm(Jwa alg, Jwa enc, String kid) {
 		setAlgorithm(alg);
 		setEncryption(enc);
 

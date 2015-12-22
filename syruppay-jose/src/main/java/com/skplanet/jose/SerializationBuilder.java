@@ -31,7 +31,7 @@ import com.skplanet.jose.jws.JwsSerializer;
  * Created by 박병찬 on 2015-07-30.
  */
 public class SerializationBuilder extends JoseCompactBuilder {
-	private JoseHeader header;
+	protected JoseHeader header;
 	private String payload;
 
 	public SerializationBuilder(JoseMethod joseMethod, JoseActionType joseActionType) {
@@ -40,15 +40,14 @@ public class SerializationBuilder extends JoseCompactBuilder {
 		header = new JoseHeader();
 	}
 
+	@Deprecated
 	public SerializationBuilder header(JoseHeader header) {
 		this.header = header;
-
 		return this;
 	}
 
 	public SerializationBuilder payload(String payload) {
 		this.payload = payload;
-
 		return this;
 	}
 

@@ -37,6 +37,6 @@ import org.junit.Test;
 public class SyrupPayTokenBuildTest {
     @Test
     public void testBackwardJdkRun() {
-        new Jose().configuration(JoseBuilders.JsonEncryptionCompactSerializationBuilder().header(new JoseHeader(Jwa.A256KW,  "test")).payload("{\"test\":\"\"}").key("12345678901234567890123456789012")).serialization();
+        new Jose().configuration(JoseBuilders.JsonEncryptionCompactSerializationBuilder().header(new JoseHeader(Jwa.A256KW, Jwa.A128CBC_HS256,  "test")).payload("{\"test\":\"\"}").key("12345678901234567890123456789012")).serialization();
     }
 }

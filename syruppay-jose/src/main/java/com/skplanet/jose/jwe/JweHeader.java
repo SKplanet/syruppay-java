@@ -33,10 +33,11 @@ import com.skplanet.jose.jwa.suits.JweAlgorithmSuites;
 public class JweHeader extends JoseHeader {
 	public JweHeader(JweAlgorithmSuites jweAlgorithmSuites) {
 		super();
-		setAlgorithm(jweAlgorithmSuites.getKeyWrapAlgorithm(), jweAlgorithmSuites.getContentEncryptionAlgorithm(), null);
+		setDefaultHeader(jweAlgorithmSuites.getKeyWrapAlgorithm(), jweAlgorithmSuites.getContentEncryptionAlgorithm(),
+				null);
 	}
 
 	public JweHeader(JweAlgorithmSuites jweAlgorithmSuites, String kid) {
-		setAlgorithm(jweAlgorithmSuites.getKeyWrapAlgorithm(), jweAlgorithmSuites.getContentEncryptionAlgorithm(), kid);
+		setDefaultHeader(jweAlgorithmSuites.getKeyWrapAlgorithm(), jweAlgorithmSuites.getContentEncryptionAlgorithm(), kid);
 	}
 }

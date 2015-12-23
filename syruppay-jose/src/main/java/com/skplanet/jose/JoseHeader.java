@@ -64,10 +64,10 @@ public class JoseHeader {
 
 	@Deprecated
 	public JoseHeader(Jwa alg, Jwa enc, String kid) {
-		setAlgorithm(alg, enc, kid);
+		setDefaultHeader(alg, enc, kid);
 	}
 
-	protected void setAlgorithm(Jwa alg, Jwa enc, String kid) {
+	protected void setDefaultHeader(Jwa alg, Jwa enc, String kid) {
 		setAlgorithm(alg);
 		setEncryption(enc);
 

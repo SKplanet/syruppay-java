@@ -33,11 +33,11 @@ import com.skplanet.jose.jwa.suits.JwsAlgorithmSuites;
 public class JwsHeader extends JoseHeader {
 	public JwsHeader(JwsAlgorithmSuites jwsAlgorithmSuites) {
 		super();
-		setAlgorithm(jwsAlgorithmSuites.getSignatureAlgorithm(), null, null);
+		setDefaultHeader(jwsAlgorithmSuites.getSignatureAlgorithm(), null, null);
 	}
 
 	public JwsHeader(JwsAlgorithmSuites jwsAlgorithmSuites, String kid) {
 		super();
-		setAlgorithm(jwsAlgorithmSuites.getSignatureAlgorithm(), null, kid);
+		setDefaultHeader(jwsAlgorithmSuites.getSignatureAlgorithm(), null, kid);
 	}
 }

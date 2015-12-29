@@ -22,58 +22,32 @@
  * THE SOFTWARE.
  */
 
-package com.skplanet.jose.jwa.suits;
+package com.skplanet.jose.jwa.suites;
 
 import com.skplanet.jose.jwa.Jwa;
 
 /**
  * Created by byeongchan.park@sk.com(1000808) on 2015-12-22.
  */
-public class JweAlgorithmSuites {
-	private Jwa keyWrapAlgorithm;
-	private Jwa contentEncryptionAlgorithm;
+public enum JwsAlgorithmSuites {
+	HS256(Jwa.HS256),
+	RS256(Jwa.RS256);
 
-	private JweAlgorithmSuites(Jwa keyWrapAlgorithm, Jwa contentEncryptionAlgorithm) {
-		this.keyWrapAlgorithm = keyWrapAlgorithm;
-		this.contentEncryptionAlgorithm = contentEncryptionAlgorithm;
+	private Jwa signatureAlgorithm;
+
+	private JwsAlgorithmSuites(Jwa signatureAlgorithm) {
+		this.signatureAlgorithm = signatureAlgorithm;
 	}
 
-	public Jwa getKeyWrapAlgorithm() {
-		return keyWrapAlgorithm;
+	public Jwa getSignatureAlgorithm() {
+		return signatureAlgorithm;
 	}
 
-	public Jwa getContentEncryptionAlgorithm() {
-		return contentEncryptionAlgorithm;
-	}
-
-	public static class A128KWAndA128CBC_HS256 extends JweAlgorithmSuites {
-		public A128KWAndA128CBC_HS256() {
-			super(Jwa.A128KW, Jwa.A128CBC_HS256);
+	public boolean equals(JwsAlgorithmSuites jwsAlgorithmSuites) {
+		if (jwsAlgorithmSuites != null && jwsAlgorithmSuites.getSignatureAlgorithm().equals(signatureAlgorithm)) {
+			return true;
 		}
-	}
 
-	public static class A256KWAndA128CBC_HS256 extends JweAlgorithmSuites {
-		public A256KWAndA128CBC_HS256() {
-			super(Jwa.A256KW, Jwa.A128CBC_HS256);
-		}
-	}
-
-	public static class A256KWAndA256CBC_HS512 extends JweAlgorithmSuites {
-		public A256KWAndA256CBC_HS512() {
-			super(Jwa.A256KW, Jwa.A256CBC_HS512);
-		}
-	}
-
-
-	public static class A256KWAndA128GCM extends JweAlgorithmSuites {
-		public A256KWAndA128GCM() {
-			super(Jwa.A256KW, Jwa.A128GCM);
-		}
-	}
-
-	public static class A256KWAndA256GCM extends JweAlgorithmSuites {
-		public A256KWAndA256GCM() {
-			super(Jwa.A256KW, Jwa.A256GCM);
-		}
+		return false;
 	}
 }

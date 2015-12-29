@@ -4,7 +4,7 @@ Java로 구현한 JOSE(Javascript Object Signing and Encryption) - [RFC 7516](ht
 JOSE 규격은 SyrupPay 결제 데이터 암복호화 및 AccessToken 발행 등에 사용되며 SyrupPay 서비스의 가맹점에 배포하기 위한 목적으로 라이브러리가 구현되었습니다.
 
 ## Required
-JDK Framework 1.5 or later
+JDK 1.5 or later
 
 ## Installation
 ### maven
@@ -25,9 +25,9 @@ compile 'com.skplanet.syruppay:jose_jdk1.5:1.3.2'
 ``` java
 import com.skplanet.jose.Jose;
 import com.skplanet.jose.JoseHeader;
-import com.skplanet.jose.jwa.Jwa;
-
-import static com.skplanet.jose.JoseBuilders.*;
+import com.skplanet.jose.JoseBuilders;
+import com.skplanet.jose.jwa.suites.JweAlgorithmSuites;
+import com.skplanet.jose.jwe.JweHeader;
 
 //암호화 할 데이터
 String payload = "apple";
@@ -37,33 +37,33 @@ String kid = "sample";
 String key = "12345678901234561234567890123456";
 
 /*
- * JWE header 규격
- * alg : key wrap encryption algorithm. 아래 Supported JOSE encryption algorithms 참조
- * enc : content encryption algorithm. 아래 Supported JOSE encryption algorithms 참조
- */
+* JWE header 규격
+* alg : key wrap encryption algorithm. 아래 Supported JOSE encryption algorithms 참조
+* enc : content encryption algorithm. 아래 Supported JOSE encryption algorithms 참조
+*/
 //1. encryption
 String jweToken = new Jose().configuration(
-        JsonEncryptionCompactSerializationBuilder()
-                .header(new JweHeader(new JweAlgorithmSuites.A256KWAndA128CBC_HS256(), kid))
-                .payload(payload)
-                .key(key)
+    JoseBuilders.JsonEncryptionCompactSerializationBuilder()
+            .header(new JweHeader(JweAlgorithmSuites.A256KWAndA128CBC_HS256, kid))
+            .payload(payload)
+            .key(key)
 ).serialization();
 
-//2. verify and decryption		
+//2. verify and decryption
 String decryptedText = new Jose().configuration(
-        compactDeserializationBuilder()
+    JoseBuilders.compactDeserializationBuilder()
             .serializedSource(jweToken)
             .key(key)
-        ).deserialization();	
+).deserialization();
 ```
 
 ### JWS
 ```java
 import com.skplanet.jose.Jose;
 import com.skplanet.jose.JoseHeader;
-import com.skplanet.jose.jwa.Jwa;
-
-import static com.skplanet.jose.JoseBuilders.*;
+import com.skplanet.jose.JoseBuilders;
+import com.skplanet.jose.jwa.suites.JwsAlgorithmSuites;
+import com.skplanet.jose.jws.JwsHeader;
 
 //암호화 할 데이터
 String payload = "apple";
@@ -77,25 +77,36 @@ String key = "12345678901234561234567890123456";
  * alg : signature algorithm. 아래 Supported JOSE encryption algorithms 참조
  */
 //1. sign
-JwsHeader jwsHeader = new JwsHeader(new JwsAlgorithmSuites.HS256());
-jwsHeader.setHeader(JoseHeader.JoseHeaderKeySpec.TYPE, "JWT");
-
 String token = new Jose().configuration(
-        JsonSignatureCompactSerializationBuilder()
-            .header(jwsHeader)
-            .payload(payload)
-            .key(key)
+		JoseBuilders.JsonSignatureCompactSerializationBuilder()
+    		.header(new JwsHeader(JwsAlgorithmSuites.HS256, kid))
+			.payload(payload)
+			.key(key)
 ).serialization();
 
 //2. verify
 String json = new Jose().configuration(
-        compactDeserializationBuilder()
+        JoseBuilders.compactDeserializationBuilder()
             .serializedSource(token)
             .key(key)
-        ).deserialization();	
+).deserialization();
 ```
 
 ## Supported JOSE encryption algorithms
+### JWE
+JWE는 입력한 payload를 아래에서 지원하는 alg와 enc에서 명시한 알고리즘으로 암호화합니다.
+alg는 발행된(기 공유된) key를 이용하여 내부적으로 random하게 생성된 CEK(content encryption key)를 암호화 하는 알고리즘이며,
+enc는 내부적으로 생성된 CEK를 사용하여 명시한 암호화 알고리즘으로 payload를 암호화하는 알고리즘입니다.
+
+JWE에서 정의된 alg, enc 중 SyrupPay 서비스에서 자주 사용하는 암호화 알고리즘은 아래와 같이 suties를 지원합니다.
+
+#### Supported JWE algorithm suites
+enum class |alg Param Value|enc Param Value
+------|------|------
+JweAlgorithmSuites.A128KWAndA128CBC_HS256|A128KW|A128CBC-HS256
+JweAlgorithmSuites.A256KWAndA128CBC_HS256|A256KW|A128CBC-HS256
+JweAlgorithmSuites.RSA1_5AndA128CBC_HS256|RSA1_5|A128CBC-HS256
+JweAlgorithmSuites.RSA_OAEPAndA128CBC_HS256|RSA-OAEP|A128CBC-HS256
 
 ### "alg" (Algorithm) Header Parameter Values For JWE
 alg Param Value|Key Management Algorithm
@@ -119,6 +130,18 @@ A256GCM|AES GCM using 256 bit key
 'Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files'를 설치해야만 정상적으로 동작합니다.
 'Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files'는 oracle.com 에서 다운로드 받을 수 있습니다.
 
+### JWS
+JWS는 입력한 payload를 아래에서 지원하는 alg에서 명시한 알고리즘으로 서명을 생성합니다.
+alg는 발행된(기 공유된) key를 이용하여 입력한 payload를 서명하는 알고리즘입니다.
+
+JWS에서 정의된 alg 중에서 SyrupPay 서비스에서 자주 사용하는 서명 알고리즘은 아래와 같이 suties를 지원합니다.
+
+#### Supported JWE algorithm suites
+enum class |alg Param Value
+------|------|------
+JwsAlgorithmSuites.HS256|HS256
+JwsAlgorithmSuites.RS256|RS256
+
 ### "alg" (Algorithm) Header Parameter Values for JWS
 alg Param Value|Digital Signature or MAC Algorithm
 -----|-------
@@ -134,7 +157,7 @@ ES256|ECDSA using P-256 and SHA-256
   * A256GCM algorithm
 - unused apache common codec sources is deleted
 - JWE, JWS specific header class is added
-- JoseHeader class construct method with JWA arguments is deprecated
+- JWE, JWS favorite algorithm suites is added
 - SerializationBuilder class header setting method is deprecated
 
 ### 1.3.1

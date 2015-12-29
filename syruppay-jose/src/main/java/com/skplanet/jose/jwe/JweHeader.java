@@ -25,7 +25,7 @@
 package com.skplanet.jose.jwe;
 
 import com.skplanet.jose.JoseHeader;
-import com.skplanet.jose.jwa.suits.JweAlgorithmSuites;
+import com.skplanet.jose.jwa.suites.JweAlgorithmSuites;
 
 /**
  * Created by byeongchan.park@sk.com(1000808) on 2015-12-22.

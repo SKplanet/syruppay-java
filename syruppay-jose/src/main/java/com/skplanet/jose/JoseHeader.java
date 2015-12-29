@@ -47,22 +47,18 @@ public class JoseHeader {
 	public JoseHeader() {
 	}
 
-	@Deprecated
 	public JoseHeader(Jwa alg) {
 		this(alg, null, null);
 	}
 
-	@Deprecated
 	public JoseHeader(Jwa alg, String kid) {
 		this(alg, null, kid);
 	}
 
-	@Deprecated
 	public JoseHeader(Jwa alg, Jwa enc) {
 		this(alg, enc, null);
 	}
 
-	@Deprecated
 	public JoseHeader(Jwa alg, Jwa enc, String kid) {
 		setDefaultHeader(alg, enc, kid);
 	}

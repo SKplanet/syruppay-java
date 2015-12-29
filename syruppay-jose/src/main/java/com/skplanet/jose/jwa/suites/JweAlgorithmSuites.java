@@ -22,41 +22,42 @@
  * THE SOFTWARE.
  */
 
-package com.skplanet.jose.jwa.suits;
+package com.skplanet.jose.jwa.suites;
 
 import com.skplanet.jose.jwa.Jwa;
 
 /**
- * Created by byeongchan.park@sk.com(1000808) on 2015-12-22.
+ * Created by byeongchan.park@sk.com(1000808) on 2015-12-29.
  */
-public class JwsAlgorithmSuites {
-	private Jwa signatureAlgorithm;
+public enum JweAlgorithmSuites {
+	A128KWAndA128CBC_HS256(Jwa.A128KW, Jwa.A128CBC_HS256),
+	A256KWAndA128CBC_HS256(Jwa.A256KW, Jwa.A128CBC_HS256),
+	RSA1_5AndA128CBC_HS256(Jwa.RSA1_5, Jwa.A128CBC_HS256),
+	RSA_OAEPAndA128CBC_HS256(Jwa.RSA_OAEP, Jwa.A128CBC_HS256);
 
-	private JwsAlgorithmSuites(Jwa signatureAlgorithm) {
-		this.signatureAlgorithm = signatureAlgorithm;
+	private Jwa keyWrapAlgorithm;
+	private Jwa contentEncryptionAlgorithm;
+
+	private JweAlgorithmSuites(Jwa keyWrapAlgorithm, Jwa contentEncryptionAlgorithm) {
+		this.keyWrapAlgorithm = keyWrapAlgorithm;
+		this.contentEncryptionAlgorithm = contentEncryptionAlgorithm;
 	}
 
-	public Jwa getSignatureAlgorithm() {
-		return signatureAlgorithm;
+	public Jwa getKeyWrapAlgorithm() {
+		return keyWrapAlgorithm;
 	}
 
-	public static class HS256 extends JwsAlgorithmSuites {
-		public HS256() {
-			super(Jwa.HS256);
+	public Jwa getContentEncryptionAlgorithm() {
+		return contentEncryptionAlgorithm;
+	}
+
+	public boolean equals(JweAlgorithmSuites jweAlgorithmSuites) {
+		if (jweAlgorithmSuites != null &&
+				jweAlgorithmSuites.getKeyWrapAlgorithm().equals(keyWrapAlgorithm) &&
+				jweAlgorithmSuites.getContentEncryptionAlgorithm().equals(contentEncryptionAlgorithm)) {
+			return true;
 		}
+
+		return false;
 	}
-
-	public static class RS256 extends JwsAlgorithmSuites {
-		public RS256() {
-			super(Jwa.RS256);
-		}
-	}
-
-	public static class ES256 extends JwsAlgorithmSuites {
-		public ES256() {
-			super(Jwa.ES256);
-		}
-	}
-
-
 }

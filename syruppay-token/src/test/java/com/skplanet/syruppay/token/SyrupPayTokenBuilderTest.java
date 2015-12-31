@@ -69,7 +69,6 @@ import com.skplanet.syruppay.token.domain.Mocks;
 import com.skplanet.syruppay.token.domain.TokenHistories;
 import com.skplanet.syruppay.token.jwt.SyrupPayToken;
 import com.skplanet.syruppay.token.jwt.Token;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -189,7 +188,7 @@ public class SyrupPayTokenBuilderTest {
         // Then
         Token t = OBJECT_MAPPER.readValue(syrupPayTokenBuilder.toJson(), SyrupPayToken.class);
         assertThat(t, is(notNullValue()));
-        assertThat(t.isValidInTimes(), is(false));
+        assertThat(t.isValidInTime(), is(false));
     }
 
     @Test
@@ -271,7 +270,7 @@ public class SyrupPayTokenBuilderTest {
 
         // Then
         assertThat(token, is(notNullValue()));
-        assertThat(token.isValidInTimes(), is(true));
+        assertThat(token.isValidInTime(), is(true));
         assertThat(token.getIss(), is("가맹점"));
     }
 
@@ -585,7 +584,7 @@ public class SyrupPayTokenBuilderTest {
 
         // Then
         assertThat(token, is(notNullValue()));
-        assertThat(token.isValidInTimes(), is(true));
+        assertThat(token.isValidInTime(), is(true));
         assertThat(token.getIss(), is("가맹점"));
         assertThat(token.getUserInfoMapper(), is(notNullValue()));
         assertThat(token.getUserInfoMapper().getMappingValue(), is("asdkfjhsakdfj"));

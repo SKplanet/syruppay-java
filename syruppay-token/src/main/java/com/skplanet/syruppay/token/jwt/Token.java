@@ -63,7 +63,7 @@ public interface Token extends Serializable, JwtToken {
      *
      * @return boolean
      */
-    public boolean isValidInTimes();
+    public boolean isValidInTime();
 
     /**
      * 가맹점 사용자가 가입된 SKT 통신회선의 가입 정보를 확인하기 위한 객체를 구성하여 반환한다.

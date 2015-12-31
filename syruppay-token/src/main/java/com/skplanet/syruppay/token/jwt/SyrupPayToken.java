@@ -69,7 +69,7 @@ public final class SyrupPayToken implements Token {
      * {@inheritDoc}
      */
     @JsonIgnore
-    public boolean isValidInTimes() {
+    public boolean isValidInTime() {
         return (nbf == null || (nbf <= 0) || DateTime.now().isAfter(nbf * 1000)) && DateTime.now().isBefore(exp * 1000);
     }
 

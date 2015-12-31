@@ -38,7 +38,6 @@ import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.node.ObjectNode;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +48,7 @@ import java.text.SimpleDateFormat;
 
 /**
  * Syrup Pay 에서 사용하는 토큰을 생성 및 암/복호화에 대한 기능을 수행한다.
- * <p>
+ * <p/>
  * 토큰은 JWT 규격을 준수하며 Claim 에 대한 확장은 {@link com.skplanet.syruppay.token.ClaimConfigurer}를 이용하여 확장할 수 있으며
  * 이에 대한 인터페이스는 {@link com.skplanet.syruppay.token.SyrupPayTokenBuilder}를 통해 {@link #pay()}와 {@link #login()}와 같이 노출해야 한다.
  *
@@ -58,7 +57,6 @@ import java.text.SimpleDateFormat;
  */
 public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<Jwt, SyrupPayTokenBuilder> implements ClaimBuilder<Jwt>, TokenBuilder<SyrupPayTokenBuilder> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SyrupPayTokenBuilder.class.getName());
-
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     static {
@@ -81,8 +79,10 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * @return {@link com.skplanet.syruppay.token.jwt.Token}
      * @throws java.io.IOException
      *         토큰이 유효하지 않은 경우
+     * @throws com.skplanet.syruppay.token.InvalidTokenException
+     *         토큰이 논리적으로 유효하지 않은 경우
      */
-    public static Token verify(String token, String key) throws IOException {
+    public static Token verify(String token, String key) throws IOException, InvalidTokenException {
         return verify(token, key.getBytes());
     }
 
@@ -96,8 +96,10 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * @return {@link com.skplanet.syruppay.token.jwt.Token}
      * @throws java.io.IOException
      *         토큰이 유효하지 않은 경우
+     * @throws com.skplanet.syruppay.token.InvalidTokenException
+     *         토큰이 논리적으로 유효하지 않은 경우
      */
-    public static Token verify(String token, Key key) throws IOException {
+    public static Token verify(String token, Key key) throws IOException, InvalidTokenException {
         return verify(token, key.getEncoded());
     }
 
@@ -110,11 +112,17 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      *         토큰 무결성을 검증할 키
      * @return {@link com.skplanet.syruppay.token.jwt.Token}
      * @throws java.io.IOException
-     *         토큰이 유효하지 않은 경우
+     *         토큰이 물맂거으로 유효하지 않은 경우
+     * @throws com.skplanet.syruppay.token.InvalidTokenException
+     *         토큰이 논리적으로 유효하지 않은 경우
      */
-    public static Token verify(String token, byte[] key) throws IOException {
+    public static Token verify(String token, byte[] key) throws IOException, InvalidTokenException {
         try {
-            return objectMapper.readValue(new Jose().configuration(JoseBuilders.compactDeserializationBuilder().serializedSource(token).key(key)).deserialization(), SyrupPayToken.class);
+            final SyrupPayToken t = objectMapper.readValue(new Jose().configuration(JoseBuilders.compactDeserializationBuilder().serializedSource(token).key(key)).deserialization(), SyrupPayToken.class);
+            if (!t.isValidInTime()) {
+                throw new InvalidTokenException(String.format("%d as exp of this token is over at now as %d", t.getExp(), System.currentTimeMillis() / 1000));
+            }
+            return t;
         } catch (IOException e) {
             LOGGER.error("exception that decrypting token. key : {}, token : {}", new String(key), token);
             throw e;

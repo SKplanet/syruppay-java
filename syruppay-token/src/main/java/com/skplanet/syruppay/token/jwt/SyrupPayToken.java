@@ -121,7 +121,7 @@ public final class SyrupPayToken implements Token {
      * {@inheritDoc}
      */
     public long getNbf() {
-        return nbf;
+        return nbf == null ? 0 : nbf;
     }
 
     /**

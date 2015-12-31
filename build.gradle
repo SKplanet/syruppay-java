@@ -28,7 +28,7 @@ buildscript {
 
 configure(allprojects) { project ->
     ext.javaVersion = '1.5'
-    ext.projectVersion = '1.2.38'
+    ext.projectVersion = '1.2.39'
 
     version = projectVersion
     group = 'com.skplanet.syruppay'

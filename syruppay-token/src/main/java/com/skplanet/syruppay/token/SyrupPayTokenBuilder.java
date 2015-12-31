@@ -49,7 +49,7 @@ import java.text.SimpleDateFormat;
 
 /**
  * Syrup Pay 에서 사용하는 토큰을 생성 및 암/복호화에 대한 기능을 수행한다.
- * <p>
+ * <p/>
  * 토큰은 JWT 규격을 준수하며 Claim 에 대한 확장은 {@link com.skplanet.syruppay.token.ClaimConfigurer}를 이용하여 확장할 수 있으며
  * 이에 대한 인터페이스는 {@link com.skplanet.syruppay.token.SyrupPayTokenBuilder}를 통해 {@link #pay()}와 {@link #login()}와 같이 노출해야 한다.
  *
@@ -58,12 +58,16 @@ import java.text.SimpleDateFormat;
  */
 public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<Jwt, SyrupPayTokenBuilder> implements ClaimBuilder<Jwt>, TokenBuilder<SyrupPayTokenBuilder> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SyrupPayTokenBuilder.class.getName());
-
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    static boolean checkValidationOfToken = true;
 
     static {
         objectMapper.setVisibility(JsonMethod.FIELD, JsonAutoDetect.Visibility.ANY);
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
+    }
+
+    static void uncheckValidationOfToken() {
+        checkValidationOfToken = false;
     }
 
     private String iss;
@@ -125,7 +129,6 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
                 throw new InvalidTokenException(String.format("%d as exp of this token is over at now as %d", t.getExp(), System.currentTimeMillis() / 1000));
             }
             return t;
-
         } catch (IOException e) {
             LOGGER.error("exception that decrypting token. key : {}, token : {}", new String(key), token);
             throw e;
@@ -260,6 +263,17 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      */
     public MapToSktUserConfigurer<SyrupPayTokenBuilder> mapToSktUser() throws Exception {
         return getOrApply(new MapToSktUserConfigurer<SyrupPayTokenBuilder>());
+    }
+
+    /**
+     * SKT 사용자인 시럽페이 사용자 맵핑을 위한 설정 객체를 확인하여 반환한다.
+     *
+     * @return {@link com.skplanet.syruppay.token.claims.MapToSktUserConfigurer}
+     * @throws Exception
+     *         the exception
+     */
+    public SubscriptionConfigurer<SyrupPayTokenBuilder> subscription() throws Exception {
+        return getOrApply(new SubscriptionConfigurer<SyrupPayTokenBuilder>());
     }
 
     @SuppressWarnings("unchecked")

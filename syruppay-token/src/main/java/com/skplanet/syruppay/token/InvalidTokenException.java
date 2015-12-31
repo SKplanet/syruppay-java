@@ -28,6 +28,8 @@ package com.skplanet.syruppay.token;
  * @since 1.3
  */
 public class InvalidTokenException extends Exception {
+    private static final long serialVersionUID = -3293647877955903181L;
+
     public InvalidTokenException(String message) {
         super(message);
     }

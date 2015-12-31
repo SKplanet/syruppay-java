@@ -30,6 +30,7 @@ import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
 import com.skplanet.syruppay.token.claims.MerchantUserConfigurer;
 import com.skplanet.syruppay.token.claims.OrderConfigurer;
 import com.skplanet.syruppay.token.claims.PayConfigurer;
+import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
 import com.skplanet.syruppay.token.jwt.SyrupPayToken;
 import com.skplanet.syruppay.token.jwt.Token;
 import org.codehaus.jackson.JsonNode;
@@ -58,10 +59,15 @@ import java.text.SimpleDateFormat;
 public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<Jwt, SyrupPayTokenBuilder> implements ClaimBuilder<Jwt>, TokenBuilder<SyrupPayTokenBuilder> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SyrupPayTokenBuilder.class.getName());
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    static boolean checkValidationOfToken = true;
 
     static {
         objectMapper.setVisibility(JsonMethod.FIELD, JsonAutoDetect.Visibility.ANY);
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
+    }
+
+    static void uncheckValidationOfToken() {
+        checkValidationOfToken = false;
     }
 
     private String iss;
@@ -119,7 +125,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
     public static Token verify(String token, byte[] key) throws IOException, InvalidTokenException {
         try {
             final SyrupPayToken t = objectMapper.readValue(new Jose().configuration(JoseBuilders.compactDeserializationBuilder().serializedSource(token).key(key)).deserialization(), SyrupPayToken.class);
-            if (!t.isValidInTime()) {
+            if (checkValidationOfToken && !t.isValidInTime()) {
                 throw new InvalidTokenException(String.format("%d as exp of this token is over at now as %d", t.getExp(), System.currentTimeMillis() / 1000));
             }
             return t;
@@ -257,6 +263,17 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      */
     public MapToSktUserConfigurer<SyrupPayTokenBuilder> mapToSktUser() throws Exception {
         return getOrApply(new MapToSktUserConfigurer<SyrupPayTokenBuilder>());
+    }
+
+    /**
+     * SKT 사용자인 시럽페이 사용자 맵핑을 위한 설정 객체를 확인하여 반환한다.
+     *
+     * @return {@link com.skplanet.syruppay.token.claims.MapToSktUserConfigurer}
+     * @throws Exception
+     *         the exception
+     */
+    public SubscriptionConfigurer<SyrupPayTokenBuilder> subscription() throws Exception {
+        return getOrApply(new SubscriptionConfigurer<SyrupPayTokenBuilder>());
     }
 
     @SuppressWarnings("unchecked")

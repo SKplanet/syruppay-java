@@ -26,6 +26,7 @@ import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
 import com.skplanet.syruppay.token.claims.MerchantUserConfigurer;
 import com.skplanet.syruppay.token.claims.OrderConfigurer;
 import com.skplanet.syruppay.token.claims.PayConfigurer;
+import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.joda.time.DateTime;
@@ -57,6 +58,7 @@ public final class SyrupPayToken implements Token {
     private MapToSyrupPayUserConfigurer userInfoMapper;
     private MapToSktUserConfigurer lineInfo;
     private OrderConfigurer checkoutInfo;
+    private SubscriptionConfigurer subscription;
 
     /**
      * {@inheritDoc}
@@ -140,7 +142,7 @@ public final class SyrupPayToken implements Token {
      * {@inheritDoc}
      */
     public PayConfigurer getTransactionInfo() {
-        if(transactionInfo == null) {
+        if (transactionInfo == null) {
             transactionInfo = new PayConfigurer();
         }
         return transactionInfo;
@@ -149,7 +151,7 @@ public final class SyrupPayToken implements Token {
     @Deprecated
     @JsonProperty("transactionInfo")
     public void setTransactionInfo(PayConfigurer transactionInfo) {
-        if(this.transactionInfo != null && this.transactionInfo.getMctTransAuthId() == null && transactionInfo.getPaymentInfo().getProductTitle() == null) {
+        if (this.transactionInfo != null && this.transactionInfo.getMctTransAuthId() == null && transactionInfo.getPaymentInfo().getProductTitle() == null) {
             LOGGER.warn("set only mctTransAuthId of transactionInfo element by deprecated method");
             this.transactionInfo.withOrderIdOfMerchant(transactionInfo.getMctTransAuthId());
         } else {
@@ -195,5 +197,9 @@ public final class SyrupPayToken implements Token {
                 getTransactionInfo().withPayableRuleWithCard(r);
             }
         }
+    }
+
+    public SubscriptionConfigurer getSubscription() {
+        return subscription;
     }
 }

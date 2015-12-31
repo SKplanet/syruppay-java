@@ -27,6 +27,7 @@ import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
 import com.skplanet.syruppay.token.claims.MerchantUserConfigurer;
 import com.skplanet.syruppay.token.claims.OrderConfigurer;
 import com.skplanet.syruppay.token.claims.PayConfigurer;
+import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
 
 import java.io.Serializable;
 
@@ -80,4 +81,13 @@ public interface Token extends Serializable, JwtToken {
      */
 
     public OrderConfigurer<? extends TokenBuilder> getCheckoutInfo();
+
+
+    /**
+     * Gets subscription.
+     *
+     * @return the subscription
+     * @since 1.2.38
+     */
+    public SubscriptionConfigurer<? extends TokenBuilder> getSubscription();
 }

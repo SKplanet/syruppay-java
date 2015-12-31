@@ -126,7 +126,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
     public static Token verify(String token, byte[] key) throws IOException, InvalidTokenException {
         try {
             final SyrupPayToken t = objectMapper.readValue(JweSupport.Jws_HmacVerify(token, new String(key, "UTF-8")), SyrupPayToken.class);
-            if (!t.isValidInTime()) {
+            if (checkValidationOfToken && !t.isValidInTime()) {
                 throw new InvalidTokenException(String.format("%d as exp of this token is over at now as %d", t.getExp(), System.currentTimeMillis() / 1000));
             }
             return t;

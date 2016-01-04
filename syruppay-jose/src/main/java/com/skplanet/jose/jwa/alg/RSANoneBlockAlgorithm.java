@@ -29,8 +29,8 @@ import com.skplanet.jose.jwa.crypto.Algorithm;
 import com.skplanet.jose.jwa.crypto.Mode;
 import com.skplanet.jose.jwa.crypto.Padding;
 
-public class RSAOAEPAlgorithm extends RSAEncryptionAlgorithm implements JweAlgorithm {
-	public RSAOAEPAlgorithm() {
-		super(Algorithm.RSA, Mode.ECB, Padding.OAEPPadding);
+public class RSANoneBlockAlgorithm extends RSAEncryptionAlgorithm implements JweAlgorithm {
+	public RSANoneBlockAlgorithm() {
+		super(Algorithm.RSA, Mode.NONE, Padding.PKCS1Padding);
 	}
 }

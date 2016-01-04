@@ -40,6 +40,7 @@ public class JwaFactory {
 		supportedJweAlgorithm.put(Jwa.A128KW, new AesKeyWrapAlgorithm());
 		supportedJweAlgorithm.put(Jwa.A256KW, new AesKeyWrapAlgorithm(32));
 		supportedJweAlgorithm.put(Jwa.RSA1_5, new RSA15Algorithm());
+		supportedJweAlgorithm.put(Jwa.RSA_NONE, new RSANoneBlockAlgorithm());
 		supportedJweAlgorithm.put(Jwa.RSA_OAEP, new RSAOAEPAlgorithm());
 		supportedJweAlgorithm.put(Jwa.DIR, new DirectKeyAlgorithm());
 
@@ -47,8 +48,9 @@ public class JwaFactory {
 		supportedJwsAlgorithm.put(Jwa.RS256, new Sha256WithRsaAlgorithm());
 		supportedJwsAlgorithm.put(Jwa.ES256, new Sha256WithECDSAUsingP256Algorithm());
 
-		supportedJweEncryption.put(Jwa.A128CBC_HS256, new AesEncryptionWithHmacSha(32, 16, Algorithm.HS256));
-		supportedJweEncryption.put(Jwa.A256CBC_HS512, new AesEncryptionWithHmacSha(64, 16, Algorithm.HS512));
+		supportedJweEncryption.put(Jwa.A128CBC_HS256, new AesEncryptionWithHmacSha.AesWithPaddingAndHmac(32, 16, Algorithm.HS256));
+		supportedJweEncryption.put(Jwa.A128CBC_NONE_HS256, new AesEncryptionWithHmacSha.AesNoPaddingAndHmac(32, 16, Algorithm.HS256));
+		supportedJweEncryption.put(Jwa.A256CBC_HS512, new AesEncryptionWithHmacSha.AesWithPaddingAndHmac(64, 16, Algorithm.HS512));
 		supportedJweEncryption.put(Jwa.A128GCM, new AesGcmEncryption(16, 12, Algorithm.NONE));
 		supportedJweEncryption.put(Jwa.A256GCM, new AesGcmEncryption(32, 12, Algorithm.NONE));
 	}

@@ -92,13 +92,39 @@ String json = new Jose().configuration(
 ).deserialization();
 ```
 
+### Header
+암호화 또는 서명을 생성할 때 JOSE에서 지원하는 알고리즘을 설정 파라미터로 명시하여 처리합니다.
+이 알고리즘 설정에 대해서 이 라이브러리는 두가지 방법을 제공합니다.
+
+#### 개별 설정
+각 알고리즘 조합을 사용자가 지정하여 사용할 수 있습니다.
+```java
+String jweToken = new Jose().configuration(
+    JoseBuilders.JsonEncryptionCompactSerializationBuilder()
+            .header(new JoseHeader(Jwa.A256KW, Jwa.A128CBC_HS256, kid))
+            .payload(payload)
+            .key(key)
+).serialization();
+```
+
+#### Suites 설정
+자주 사용하는 알로리즘만 사용할 수 있습니다. 
+```java
+String jweToken = new Jose().configuration(
+    JoseBuilders.JsonEncryptionCompactSerializationBuilder()
+            .header(new JweHeader(JweAlgorithmSuites.A256KWAndA128CBC_HS256, kid))
+            .payload(payload)
+            .key(key)
+).serialization();
+```
+
 ## Supported JOSE encryption algorithms
 ### JWE
 JWE는 입력한 payload를 아래에서 지원하는 alg와 enc에서 명시한 알고리즘으로 암호화합니다.
 alg는 발행된(기 공유된) key를 이용하여 내부적으로 random하게 생성된 CEK(content encryption key)를 암호화 하는 알고리즘이며,
 enc는 내부적으로 생성된 CEK를 사용하여 명시한 암호화 알고리즘으로 payload를 암호화하는 알고리즘입니다.
 
-JWE에서 정의된 alg, enc 중 SyrupPay 서비스에서 자주 사용하는 암호화 알고리즘은 아래와 같이 suties를 지원합니다.
+JWE에서 정의된 alg, enc 중 SyrupPay 서비스에서 자주 사용하는 암호화 알고리즘은 아래와 같이 suites를 지원합니다.
 
 #### Supported JWE algorithm suites
 enum class |alg Param Value|enc Param Value
@@ -134,7 +160,7 @@ A256GCM|AES GCM using 256 bit key
 JWS는 입력한 payload를 아래에서 지원하는 alg에서 명시한 알고리즘으로 서명을 생성합니다.
 alg는 발행된(기 공유된) key를 이용하여 입력한 payload를 서명하는 알고리즘입니다.
 
-JWS에서 정의된 alg 중에서 SyrupPay 서비스에서 자주 사용하는 서명 알고리즘은 아래와 같이 suties를 지원합니다.
+JWS에서 정의된 alg 중에서 SyrupPay 서비스에서 자주 사용하는 서명 알고리즘은 아래와 같이 suites를 지원합니다.
 
 #### Supported JWE algorithm suites
 enum class |alg Param Value
@@ -151,16 +177,20 @@ ES256|ECDSA using P-256 and SHA-256
 
 ## release note
 ### 1.3.2
-- JWE content encryption algorithms are added
+- JWE content encryption algorithms is added
   * A256CBC-HS256 algorithm
   * A128GCM algorithm
   * A256GCM algorithm
 - unused apache common codec sources is deleted
 - JWE, JWS specific header class is added
 - JWE, JWS favorite algorithm suites is added
-- SerializationBuilder class header setting method is deprecated
+- OpenSSL compatibility for IOS is added (only decryption supported)
+  * RSA/NONE/PKCS1PADDING
+  * AES/CBC/NOPADDING
+- v0.2.1 JWS header bugs compatibility is added
 
 ### 1.3.1
+- version up for syruppay-token matching
 - CryptoUtils exception 처리 변경
 - AsymmetricShaAlgorithm class, RSAEncryptionAlgorithm class 추가
 

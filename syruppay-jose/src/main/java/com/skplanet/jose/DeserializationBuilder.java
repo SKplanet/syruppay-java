@@ -24,6 +24,7 @@
 
 package com.skplanet.jose;
 
+import com.skplanet.jose.jwa.Jwa;
 import com.skplanet.jose.jwe.JweSerializer;
 import com.skplanet.jose.jws.JwsSerializer;
 
@@ -31,6 +32,7 @@ import com.skplanet.jose.jws.JwsSerializer;
  * Created by 박병찬 on 2015-07-30.
  */
 public class DeserializationBuilder extends JoseCompactBuilder {
+	private JoseHeader userJoseHeader;
 	private String serializedSource;
 
 	public DeserializationBuilder(JoseActionType joseActionType) {
@@ -41,9 +43,36 @@ public class DeserializationBuilder extends JoseCompactBuilder {
 		super.compactBuilder(joseMethod, joseActionType);
 	}
 
+	/**
+	 * JWE, JWS content
+	 * @param serializedSource
+	 * @return
+	 */
 	public DeserializationBuilder serializedSource(String serializedSource) {
 		this.serializedSource = serializedSource;
+		return this;
+	}
 
+	/**
+	 * deserialize payload as specific JOSE header 'alg'
+	 *
+	 * @param alg {@link Jwa}
+	 * @return
+	 */
+	public DeserializationBuilder userAlgorithm(Jwa alg) {
+		this.userJoseHeader = new JoseHeader(alg);
+		return this;
+	}
+
+	/**
+	 * deserialize payload as specific JOSE header 'alg' and 'enc'
+	 *
+	 * @param alg {@link Jwa}
+	 * @param enc {@link Jwa}
+	 * @return
+	 */
+	public DeserializationBuilder userAlgorithm(Jwa alg, Jwa enc) {
+		this.userJoseHeader = new JoseHeader(alg, enc);
 		return this;
 	}
 
@@ -55,9 +84,13 @@ public class DeserializationBuilder extends JoseCompactBuilder {
 		switch (joseSerializeType) {
 		case COMPACT_SERIALIZATION:
 			if (JoseMethod.JWE == joseMethod && JoseActionType.DESERIALIZATION == joseActionType) {
-				return new JweSerializer(serializedSource, key);
+				JweSerializer serializer = new JweSerializer(serializedSource, key);
+				serializer.setUserJoseHeader(userJoseHeader);
+				return serializer;
 			} else if (JoseMethod.JWS == joseMethod && JoseActionType.DESERIALIZATION == joseActionType) {
-				return new JwsSerializer(serializedSource, key);
+				JwsSerializer serializer = new JwsSerializer(serializedSource, key);
+				serializer.setUserJoseHeader(userJoseHeader);
+				return serializer;
 			} else {
 				throw new IllegalArgumentException("unknown JoseSerializeType and JoseActionType");
 			}

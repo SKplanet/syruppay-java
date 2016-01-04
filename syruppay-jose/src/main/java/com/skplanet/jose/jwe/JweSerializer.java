@@ -28,6 +28,7 @@ import com.skplanet.jose.JoseAction;
 import com.skplanet.jose.JoseHeader;
 import com.skplanet.jose.commons.codec.binary.Base64;
 import com.skplanet.jose.exception.IllegalEncrytionToken;
+import com.skplanet.jose.jwa.Jwa;
 import com.skplanet.jose.jwa.JwaFactory;
 import com.skplanet.jose.jwa.JweAlgorithm;
 import com.skplanet.jose.jwa.JweEncryption;
@@ -41,6 +42,7 @@ public class JweSerializer implements JoseAction {
 	private byte[] key;
 
 	private JweParts jweParts = new JweParts();
+	private JoseHeader userJoseHeader;
 
 	public JweSerializer(JoseHeader header, String payload, byte[] key) {
 		jweParts.joseHeader = header;
@@ -56,6 +58,10 @@ public class JweSerializer implements JoseAction {
 	public void setUserEncryptionKey(byte[] cek, byte[] iv) {
 		jweParts.cek = cek;
 		jweParts.iv = iv;
+	}
+
+	public void setUserJoseHeader(JoseHeader userJoseHeader) {
+		this.userJoseHeader = userJoseHeader;
 	}
 
 	private byte[] getAdditionalAuthenticatedData() {
@@ -84,9 +90,23 @@ public class JweSerializer implements JoseAction {
 		return jweParts.toString();
 	}
 
+	private Jwa getDeserializeAlgorithm() {
+		if (userJoseHeader != null && userJoseHeader.getAlgorithm() != null)
+			return userJoseHeader.getAlgorithm();
+		else
+			return jweParts.joseHeader.getAlgorithm();
+	}
+
+	private Jwa getDeserializeEncryption() {
+		if (userJoseHeader != null && userJoseHeader.getEncrytion() != null)
+			return userJoseHeader.getEncrytion();
+		else
+			return jweParts.joseHeader.getEncrytion();
+	}
+
 	public String compactDeserialization() {
-		JweAlgorithm jweAlgorithm = JwaFactory.getJweAlgorithm(jweParts.joseHeader.getAlgorithm());
-		JweEncryption jweEncryption = JwaFactory.getJweEncryption(jweParts.joseHeader.getEncrytion());
+		JweAlgorithm jweAlgorithm = JwaFactory.getJweAlgorithm(getDeserializeAlgorithm());
+		JweEncryption jweEncryption = JwaFactory.getJweEncryption(getDeserializeEncryption());
 
 		byte[] cek = jweAlgorithm.decryption(key, jweParts.cek);
 		this.payload = jweEncryption.verifyAndDecrypt(cek, jweParts.iv, jweParts.cipherText,

@@ -40,7 +40,6 @@ public class SerializationBuilder extends JoseCompactBuilder {
 		header = new JoseHeader();
 	}
 
-	@Deprecated
 	public SerializationBuilder header(JoseHeader header) {
 		this.header = header;
 		return this;

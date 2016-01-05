@@ -632,4 +632,12 @@ public class SyrupPayTokenBuilderTest {
         assertThat(t.getTransactionInfo().getMctTransAuthId(), is(notNullValue()));
         assertThat(t.getTransactionInfo().getPaymentRestrictions().getCardIssuerRegion(), is(notNullValue()));
     }
+
+    @Test
+    public void 하위버전_1_3_4_버전_CJOSHOPPING_테스트() throws Exception {
+        SyrupPayTokenBuilder.uncheckValidationOfToken();
+        Token t = SyrupPayTokenBuilder.verify(TokenHistories.VERSION_1_3_4_BY_CJOSHOPPING.token, TokenHistories.VERSION_1_3_4_BY_CJOSHOPPING.key);
+        assertThat(t.getTransactionInfo().getMctTransAuthId(), is(notNullValue()));
+        assertThat(t.getTransactionInfo().getPaymentRestrictions().getCardIssuerRegion(), is(notNullValue()));
+    }
 }

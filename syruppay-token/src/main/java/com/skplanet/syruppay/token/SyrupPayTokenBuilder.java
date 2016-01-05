@@ -124,7 +124,9 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      */
     public static Token verify(String token, byte[] key) throws IOException, InvalidTokenException {
         try {
-            final SyrupPayToken t = objectMapper.readValue(new Jose().configuration(JoseBuilders.compactDeserializationBuilder().serializedSource(token).key(key)).deserialization(), SyrupPayToken.class);
+            final SyrupPayToken t = objectMapper.readValue(
+                    new Jose().configuration(JoseBuilders.compactDeserializationBuilder().userAlgorithm(Jwa.HS256).serializedSource(token).key(key)).deserialization()
+                    , SyrupPayToken.class);
             if (checkValidationOfToken && !t.isValidInTime()) {
                 throw new InvalidTokenException(String.format("%d as exp of this token is over at now as %d", t.getExp(), System.currentTimeMillis() / 1000));
             }

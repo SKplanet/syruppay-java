@@ -49,7 +49,7 @@ import java.text.SimpleDateFormat;
 
 /**
  * Syrup Pay 에서 사용하는 토큰을 생성 및 암/복호화에 대한 기능을 수행한다.
- * <p/>
+ * <p>
  * 토큰은 JWT 규격을 준수하며 Claim 에 대한 확장은 {@link com.skplanet.syruppay.token.ClaimConfigurer}를 이용하여 확장할 수 있으며
  * 이에 대한 인터페이스는 {@link com.skplanet.syruppay.token.SyrupPayTokenBuilder}를 통해 {@link #pay()}와 {@link #login()}와 같이 노출해야 한다.
  *

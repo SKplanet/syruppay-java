@@ -106,8 +106,13 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
         return this;
     }
 
-    public OrderConfigurer<H> enableMainShippingAddressSetting() {
+    public OrderConfigurer<H> disableMainShippingAddressSetting() {
         this.mainShippingAddressSettingDisabled = true;
+        return this;
+    }
+
+    public OrderConfigurer<H> enableMainShippingAddressSetting() {
+        this.mainShippingAddressSettingDisabled = false;
         return this;
     }
 

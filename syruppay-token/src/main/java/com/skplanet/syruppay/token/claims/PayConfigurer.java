@@ -22,6 +22,7 @@
 package com.skplanet.syruppay.token.claims;
 
 import com.skplanet.syruppay.token.TokenBuilder;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.io.Serializable;
@@ -479,6 +480,16 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
 
         public String getCardIssuerRegion() {
             return cardIssuerRegion;
+        }
+
+        @JsonIgnore
+        public PayableLocaleRule getPayableLocaleRule() {
+            for (PayableLocaleRule r : PayableLocaleRule.values()) {
+                if (r.toCode().equals(cardIssuerRegion.toUpperCase())) {
+                    return r;
+                }
+            }
+            throw new IllegalArgumentException("cardIssuerRegion of this object is not matched with PaymentRestriction enumeration. check this : " + this.cardIssuerRegion);
         }
     }
 }

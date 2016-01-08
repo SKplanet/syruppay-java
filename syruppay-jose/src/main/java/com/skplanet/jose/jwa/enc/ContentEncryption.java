@@ -38,10 +38,12 @@ import java.security.NoSuchAlgorithmException;
 public abstract class ContentEncryption implements JweEncryption {
 	protected int keyLength = 0;
 	protected int ivLength = 0;
+	protected Algorithm hmacAlgorithm;
 
-	public ContentEncryption(int keyLength, int ivLength) {
+	public ContentEncryption(int keyLength, int ivLength, Algorithm hmacAlgorithm) {
 		this.keyLength = keyLength;
 		this.ivLength = ivLength;
+		this.hmacAlgorithm = hmacAlgorithm;
 	}
 
 	protected int getIvBitLength() {

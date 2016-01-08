@@ -22,15 +22,42 @@
  * THE SOFTWARE.
  */
 
-package com.skplanet.jose.jwa.alg;
+package com.skplanet.jose.jwa.suites;
 
-import com.skplanet.jose.jwa.JweAlgorithm;
-import com.skplanet.jose.jwa.crypto.Algorithm;
-import com.skplanet.jose.jwa.crypto.Mode;
-import com.skplanet.jose.jwa.crypto.Padding;
+import com.skplanet.jose.jwa.Jwa;
 
-public class RSAOAEPAlgorithm extends RSAEncryptionAlgorithm implements JweAlgorithm {
-	public RSAOAEPAlgorithm() {
-		super(Algorithm.RSA, Mode.ECB, Padding.OAEPPadding);
+/**
+ * Created by byeongchan.park@sk.com(1000808) on 2015-12-29.
+ */
+public enum JweAlgorithmSuites {
+	A128KWAndA128CBC_HS256(Jwa.A128KW, Jwa.A128CBC_HS256),
+	A256KWAndA128CBC_HS256(Jwa.A256KW, Jwa.A128CBC_HS256),
+	RSA1_5AndA128CBC_HS256(Jwa.RSA1_5, Jwa.A128CBC_HS256),
+	RSA_OAEPAndA128CBC_HS256(Jwa.RSA_OAEP, Jwa.A128CBC_HS256);
+
+	private Jwa keyWrapAlgorithm;
+	private Jwa contentEncryptionAlgorithm;
+
+	private JweAlgorithmSuites(Jwa keyWrapAlgorithm, Jwa contentEncryptionAlgorithm) {
+		this.keyWrapAlgorithm = keyWrapAlgorithm;
+		this.contentEncryptionAlgorithm = contentEncryptionAlgorithm;
+	}
+
+	public Jwa getKeyWrapAlgorithm() {
+		return keyWrapAlgorithm;
+	}
+
+	public Jwa getContentEncryptionAlgorithm() {
+		return contentEncryptionAlgorithm;
+	}
+
+	public boolean equals(JweAlgorithmSuites jweAlgorithmSuites) {
+		if (jweAlgorithmSuites != null &&
+				jweAlgorithmSuites.getKeyWrapAlgorithm().equals(keyWrapAlgorithm) &&
+				jweAlgorithmSuites.getContentEncryptionAlgorithm().equals(contentEncryptionAlgorithm)) {
+			return true;
+		}
+
+		return false;
 	}
 }

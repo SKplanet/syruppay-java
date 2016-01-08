@@ -24,8 +24,12 @@
 
 package com.skplanet.jose.jwa.crypto;
 
+import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.engines.AESWrapEngine;
+import org.bouncycastle.crypto.modes.GCMBlockCipher;
+import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -57,6 +61,52 @@ public class CryptoUtils {
 				new IvParameterSpec(iv));
 		return cipher.doFinal(encryptedData);
 	}
+
+	public static byte[] aesGcmEncrypt(Transformation transformation, byte[] raw, byte[] secret, int atLength, byte[] iv, byte[] aad) throws Exception {
+		BlockCipher blockCipher = new AESEngine();
+		blockCipher.init(true, new KeyParameter(new SecretKeySpec(secret, "AES").getEncoded()));
+
+		GCMBlockCipher aGCMBlockCipher = new GCMBlockCipher(blockCipher);
+		aGCMBlockCipher.init(true, new AEADParameters(new KeyParameter(secret), atLength, iv, aad));
+
+		int len = aGCMBlockCipher.getOutputSize(raw.length);
+		byte[] out = new byte[len];
+		int outOff = aGCMBlockCipher.processBytes(raw, 0, raw.length, out, 0);
+		aGCMBlockCipher.doFinal(out, outOff);
+
+		return out;
+	}
+
+//	public static byte[] aesGcmEncrypt(Transformation transformation, byte[] raw, byte[] secret, int atLength, byte[] iv, byte[] aad) throws Exception {
+//		Cipher cipher = Cipher.getInstance(transformation.getValue());
+//		cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(secret, transformation.getAlgorithm()),
+//				new GCMParameterSpec(atLength, iv));
+//		cipher.updateAAD(aad);
+//		return cipher.doFinal(raw);
+//	}
+
+	public static byte[] aesGcmDecrypt(Transformation transformation, byte[] encryptedData, byte[] secret, int atLength, byte[] iv, byte[] aad) throws Exception {
+		BlockCipher blockCipher = new AESEngine();
+		blockCipher.init(false, new KeyParameter(new SecretKeySpec(secret, "AES").getEncoded()));
+
+		GCMBlockCipher aGCMBlockCipher = new GCMBlockCipher(blockCipher);
+		aGCMBlockCipher.init(false, new AEADParameters(new KeyParameter(secret), atLength, iv, aad));
+
+		int len = aGCMBlockCipher.getOutputSize(encryptedData.length);
+		byte[] out = new byte[len];
+		int outOff = aGCMBlockCipher.processBytes(encryptedData, 0, encryptedData.length, out, 0);
+		aGCMBlockCipher.doFinal(out, outOff);
+
+		return out;
+	}
+
+//	public static byte[] aesGcmDecrypt(Transformation transformation, byte[] encryptedData, byte[] secret, int atLength, byte[] iv, byte[] aad) throws Exception {
+//		Cipher cipher = Cipher.getInstance(transformation.getValue());
+//		cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(secret, transformation.getAlgorithm()),
+//				new GCMParameterSpec(atLength, iv));
+//		cipher.updateAAD(aad);
+//		return cipher.doFinal(encryptedData);
+//	}
 
 	public static byte[] rsaEncrypt(Transformation transformation, byte[] raw, PublicKey key) throws Exception {
 		Cipher cipher = Cipher.getInstance(transformation.getValue());

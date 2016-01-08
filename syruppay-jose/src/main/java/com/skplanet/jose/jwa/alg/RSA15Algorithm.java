@@ -28,18 +28,9 @@ import com.skplanet.jose.jwa.JweAlgorithm;
 import com.skplanet.jose.jwa.crypto.Algorithm;
 import com.skplanet.jose.jwa.crypto.Mode;
 import com.skplanet.jose.jwa.crypto.Padding;
-import com.skplanet.jose.jwa.crypto.Transformation;
-import com.skplanet.jose.jwa.enc.ContentEncryptKeyGenerator;
 
-public class RSA15Algorithm implements JweAlgorithm {
-	public JweAlgResult encryption(byte[] key, ContentEncryptKeyGenerator cekGenerator) {
-		Transformation transformation = new Transformation(Algorithm.RSA, Mode.ECB, Padding.PKCS1Padding);
-		return RSAEncryptionAlgorithm.encryption(transformation, key, cekGenerator);
-
-	}
-
-	public byte[] decryption(byte[] key, byte[] cek) {
-		Transformation transformation = new Transformation(Algorithm.RSA, Mode.ECB, Padding.PKCS1Padding);
-		return RSAEncryptionAlgorithm.decryption(transformation, key, cek);
+public class RSA15Algorithm extends RSAEncryptionAlgorithm implements JweAlgorithm {
+	public RSA15Algorithm() {
+		super(Algorithm.RSA, Mode.ECB, Padding.PKCS1Padding);
 	}
 }

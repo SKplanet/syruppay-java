@@ -25,19 +25,13 @@
 package com.skplanet.jose.jws;
 
 import com.skplanet.jose.JoseAction;
-import com.skplanet.jose.JoseActionType;
 import com.skplanet.jose.JoseHeader;
 import com.skplanet.jose.commons.codec.binary.Base64;
 import com.skplanet.jose.exception.IllegalSignatureToken;
 import com.skplanet.jose.jwa.Jwa;
 import com.skplanet.jose.jwa.JwaFactory;
 import com.skplanet.jose.jwa.JwsAlgorithm;
-import com.skplanet.jose.jwa.crypto.Algorithm;
-import com.skplanet.jose.jwa.crypto.CryptoUtils;
-import com.skplanet.jose.jwa.crypto.KeyAlgorithm;
 import com.skplanet.jose.util.StringUtils;
-
-import java.security.Key;
 
 /**
  * Created by 박병찬 on 2015-07-17.
@@ -46,6 +40,7 @@ public class JwsSerializer implements JoseAction {
 	private byte[] key;
 
 	private JwsParts jwsParts = new JwsParts();
+	private JoseHeader userJoseHeader;
 
 	public JwsSerializer(JoseHeader header, String payload, byte[] key) {
 		jwsParts.joseHeader = header;
@@ -58,6 +53,10 @@ public class JwsSerializer implements JoseAction {
 		this.key = key;
 	}
 
+	public void setUserJoseHeader(JoseHeader userJoseHeader) {
+		this.userJoseHeader = userJoseHeader;
+	}
+
 	public String compactSerialization() {
 		Jwa alg = jwsParts.joseHeader.getAlgorithm();
 		JwsAlgorithm jwsAlgorithm = JwaFactory.getJwsAlgorithm(alg);
@@ -67,9 +66,15 @@ public class JwsSerializer implements JoseAction {
 		return jwsParts.toString();
 	}
 
+	private Jwa getDeserializeAlgorithm() {
+		if (userJoseHeader != null && userJoseHeader.getAlgorithm() != null)
+			return userJoseHeader.getAlgorithm();
+		else
+			return jwsParts.joseHeader.getAlgorithm();
+	}
+
 	public String compactDeserialization() {
-		Jwa alg = jwsParts.joseHeader.getAlgorithm();
-		JwsAlgorithm jwsAlgorithm = JwaFactory.getJwsAlgorithm(alg);
+		JwsAlgorithm jwsAlgorithm = JwaFactory.getJwsAlgorithm(getDeserializeAlgorithm());
 
 		byte[] signSource = jwsParts.getSignatureSource();
 		byte[] expected = jwsParts.signature;

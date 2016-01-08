@@ -22,15 +22,32 @@
  * THE SOFTWARE.
  */
 
-package com.skplanet.jose.jwa.alg;
+package com.skplanet.jose.jwa.suites;
 
-import com.skplanet.jose.jwa.JweAlgorithm;
-import com.skplanet.jose.jwa.crypto.Algorithm;
-import com.skplanet.jose.jwa.crypto.Mode;
-import com.skplanet.jose.jwa.crypto.Padding;
+import com.skplanet.jose.jwa.Jwa;
 
-public class RSAOAEPAlgorithm extends RSAEncryptionAlgorithm implements JweAlgorithm {
-	public RSAOAEPAlgorithm() {
-		super(Algorithm.RSA, Mode.ECB, Padding.OAEPPadding);
+/**
+ * Created by byeongchan.park@sk.com(1000808) on 2015-12-22.
+ */
+public enum JwsAlgorithmSuites {
+	HS256(Jwa.HS256),
+	RS256(Jwa.RS256);
+
+	private Jwa signatureAlgorithm;
+
+	private JwsAlgorithmSuites(Jwa signatureAlgorithm) {
+		this.signatureAlgorithm = signatureAlgorithm;
+	}
+
+	public Jwa getSignatureAlgorithm() {
+		return signatureAlgorithm;
+	}
+
+	public boolean equals(JwsAlgorithmSuites jwsAlgorithmSuites) {
+		if (jwsAlgorithmSuites != null && jwsAlgorithmSuites.getSignatureAlgorithm().equals(signatureAlgorithm)) {
+			return true;
+		}
+
+		return false;
 	}
 }

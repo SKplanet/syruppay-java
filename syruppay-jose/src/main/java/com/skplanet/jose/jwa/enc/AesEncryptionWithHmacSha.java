@@ -35,8 +35,11 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 
 public class AesEncryptionWithHmacSha extends ContentEncryption {
-	public AesEncryptionWithHmacSha(int keyLength, int ivLength) {
-		super(keyLength, ivLength);
+	private Transformation transformation;
+
+	public AesEncryptionWithHmacSha(int keyLength, int ivLength, Transformation transformation, Algorithm hmacAlgorithm) {
+		super(keyLength, ivLength, hmacAlgorithm);
+		this.transformation = transformation;
 	}
 
 	public JweEncResult encryptAndSign(byte[] cek, byte[] iv, byte[] src, byte[] aad) {
@@ -52,7 +55,6 @@ public class AesEncryptionWithHmacSha extends ContentEncryption {
 	}
 
 	private byte[] encryption(byte[] key, byte[] iv, byte[] src) {
-		Transformation transformation = new Transformation(Algorithm.AES, Mode.CBC, Padding.PKCS5Padding);
 		try {
 			return CryptoUtils.aesEncrypt(transformation, src, key, iv);
 		} catch (Exception e) {
@@ -78,7 +80,6 @@ public class AesEncryptionWithHmacSha extends ContentEncryption {
 	}
 
 	private byte[] decryption(byte[] key, byte[] iv, byte[] cipherText) {
-		Transformation transformation = new Transformation(Algorithm.AES, Mode.CBC, Padding.PKCS5Padding);
 		try {
 			return CryptoUtils.aesDecrypt(transformation, cipherText, key, iv);
 		} catch (Exception e) {
@@ -90,13 +91,13 @@ public class AesEncryptionWithHmacSha extends ContentEncryption {
 		byte[] signPart = getSignPart(iv, cipherText, aad);
 		byte[] digest = new byte[0];
 		try {
-			digest = CryptoUtils.hmac(new Transformation(Algorithm.HS256), signPart, key);
+			digest = CryptoUtils.hmac(new Transformation(hmacAlgorithm), signPart, key);
 		} catch (Exception e) {
 			throw new IllegalSignatureToken("invalid algorithm/key", e);
 		}
 
-		byte[] at = new byte[16];
-		System.arraycopy(digest, 0, at, 0, 16);
+		byte[] at = new byte[keyLength/2];
+		System.arraycopy(digest, 0, at, 0, keyLength/2);
 
 		return at;
 	}
@@ -125,5 +126,22 @@ public class AesEncryptionWithHmacSha extends ContentEncryption {
 
 	public ContentEncryptKeyGenerator getContentEncryptionKeyGenerator() {
 		return new ContentEncryptKeyGenerator(keyLength);
+	}
+
+	public static class AesWithPaddingAndHmac extends AesEncryptionWithHmacSha {
+		public AesWithPaddingAndHmac(int keyLength, int ivLength, Algorithm hmacAlgorithm) {
+			super(keyLength, ivLength, new Transformation(Algorithm.AES, Mode.CBC, Padding.PKCS5Padding), hmacAlgorithm);
+		}
+	}
+
+	public static class AesNoPaddingAndHmac extends AesEncryptionWithHmacSha {
+		public AesNoPaddingAndHmac(int keyLength, int ivLength, Algorithm hmacAlgorithm) {
+			super(keyLength, ivLength, new Transformation(Algorithm.AES, Mode.CBC, Padding.NoPadding), hmacAlgorithm);
+		}
+
+//		@Override
+//		public JweEncResult encryptAndSign(byte[] cek, byte[] iv, byte[] src, byte[] aad) {
+//			throw new UnsupportedOperationException("NoPadding AES Encryption");
+//		}
 	}
 }

@@ -25,7 +25,7 @@
 package com.skplanet.jose.jwa.crypto;
 
 public enum Mode {
-	ECB("ECB"), CBC("CBC"), CFB("CFB"), OFB("OFB");
+	NONE("NONE"), ECB("ECB"), CBC("CBC"), CFB("CFB"), OFB("OFB"), GCM("GCM");
 
 	private String value;
 

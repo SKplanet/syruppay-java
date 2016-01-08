@@ -24,12 +24,15 @@
 
 package com.skplanet.jose;
 
+import com.skplanet.jose.jwe.JweSerializationBuilder;
+import com.skplanet.jose.jws.JwsSerializationBuilder;
+
 /**
  * Created by 박병찬 on 2015-07-15.
  */
 public class JoseBuilders {
-	public static SerializationBuilder JsonSignatureCompactSerializationBuilder() {
-		return new SerializationBuilder(JoseMethod.JWS, JoseActionType.SERIALIZATION);
+	public static JwsSerializationBuilder JsonSignatureCompactSerializationBuilder() {
+		return new JwsSerializationBuilder(JoseMethod.JWS, JoseActionType.SERIALIZATION);
 	}
 
 	@Deprecated
@@ -37,8 +40,8 @@ public class JoseBuilders {
 		return new DeserializationBuilder(JoseMethod.JWS, JoseActionType.DESERIALIZATION);
 	}
 
-	public static SerializationBuilder JsonEncryptionCompactSerializationBuilder() {
-		return new SerializationBuilder(JoseMethod.JWE, JoseActionType.SERIALIZATION);
+	public static JweSerializationBuilder JsonEncryptionCompactSerializationBuilder() {
+		return new JweSerializationBuilder(JoseMethod.JWE, JoseActionType.SERIALIZATION);
 	}
 
 	@Deprecated

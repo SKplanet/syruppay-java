@@ -22,15 +22,22 @@
  * THE SOFTWARE.
  */
 
-package com.skplanet.jose.jwa.alg;
+package com.skplanet.jose.jws;
 
-import com.skplanet.jose.jwa.JweAlgorithm;
-import com.skplanet.jose.jwa.crypto.Algorithm;
-import com.skplanet.jose.jwa.crypto.Mode;
-import com.skplanet.jose.jwa.crypto.Padding;
+import com.skplanet.jose.JoseHeader;
+import com.skplanet.jose.jwa.suites.JwsAlgorithmSuites;
 
-public class RSAOAEPAlgorithm extends RSAEncryptionAlgorithm implements JweAlgorithm {
-	public RSAOAEPAlgorithm() {
-		super(Algorithm.RSA, Mode.ECB, Padding.OAEPPadding);
+/**
+ * Created by byeongchan.park@sk.com(1000808) on 2015-12-22.
+ */
+public class JwsHeader extends JoseHeader {
+	public JwsHeader(JwsAlgorithmSuites jwsAlgorithmSuites) {
+		super();
+		setDefaultHeader(jwsAlgorithmSuites.getSignatureAlgorithm(), null, null);
+	}
+
+	public JwsHeader(JwsAlgorithmSuites jwsAlgorithmSuites, String kid) {
+		super();
+		setDefaultHeader(jwsAlgorithmSuites.getSignatureAlgorithm(), null, kid);
 	}
 }

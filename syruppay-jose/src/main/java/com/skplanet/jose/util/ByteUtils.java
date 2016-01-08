@@ -45,15 +45,24 @@ public class ByteUtils {
 	}
 
 	public static byte[] firstHalf(byte[] b) {
-		byte[] t = new byte[b.length/2];
-		System.arraycopy(b, 0, t, 0, t.length);
+		return subBytes(b, 0, b.length/2);
+	}
+
+	public static byte[] restHalf(byte[] b) {
+		return subBytes(b, b.length/2, b.length/2);
+	}
+
+	public static byte[] subBytes(byte[] b, int offset, int length) {
+		byte[] t = new byte[length];
+		System.arraycopy(b, offset, t, 0, length);
 
 		return t;
 	}
 
-	public static byte[] restHalf(byte[] b) {
-		byte[] t = new byte[b.length/2];
-		System.arraycopy(b, b.length/2, t, 0, t.length);
+	public static byte[] concat(byte[] b1, byte[] b2) {
+		byte[] t = new byte[b1.length + b2.length];
+		System.arraycopy(b1, 0, t, 0, b1.length);
+		System.arraycopy(b2, 0, t, b1.length, b2.length);
 
 		return t;
 	}

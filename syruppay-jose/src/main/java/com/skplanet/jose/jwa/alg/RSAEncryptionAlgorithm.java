@@ -35,7 +35,13 @@ import java.security.interfaces.RSAPublicKey;
  * Created by byeongchan.park@sk.com(1000808) on 2015-11-26.
  */
 public class RSAEncryptionAlgorithm {
-	public static JweAlgResult encryption(Transformation transformation, byte[] key, ContentEncryptKeyGenerator cekGenerator) {
+	private Transformation transformation;
+
+	public RSAEncryptionAlgorithm(Algorithm algorithm, Mode mode, Padding padding) {
+		transformation = new Transformation(algorithm, mode, padding);
+	}
+
+	public JweAlgResult encryption(byte[] key, ContentEncryptKeyGenerator cekGenerator) {
 		byte[] cek = cekGenerator.generateRandomKey();
 		RSAPublicKey publicKey = null;
 		try {
@@ -50,7 +56,7 @@ public class RSAEncryptionAlgorithm {
 		}
 	}
 
-	public static byte[] decryption(Transformation transformation, byte[] key, byte[] cek) {
+	public byte[] decryption(byte[] key, byte[] cek) {
 		RSAPrivateKey privateKey = null;
 		try {
 			privateKey = (RSAPrivateKey) CryptoUtils.generatePrivateKey(KeyAlgorithm.RSA, key);

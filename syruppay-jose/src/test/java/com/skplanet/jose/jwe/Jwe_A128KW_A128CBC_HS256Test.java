@@ -33,6 +33,7 @@ import com.skplanet.jose.jwa.Jwa;
 import com.skplanet.jose.jwa.JweAlgorithm;
 import com.skplanet.jose.jwa.alg.AesKeyWrapAlgorithm;
 import com.skplanet.jose.jwa.alg.JweAlgResult;
+import com.skplanet.jose.jwa.crypto.Algorithm;
 import com.skplanet.jose.jwa.enc.AesEncryptionWithHmacSha;
 import com.skplanet.jose.jwa.enc.ContentEncryptKeyGenerator;
 import com.skplanet.jose.jwa.enc.JweEncResult;
@@ -80,7 +81,7 @@ public class Jwe_A128KW_A128CBC_HS256Test {
 
 		byte[] key = ByteUtils.firstHalf(secret);
 
-		AesEncryptionWithHmacSha jweEncryption = new AesEncryptionWithHmacSha(32, 16);
+		AesEncryptionWithHmacSha jweEncryption = new AesEncryptionWithHmacSha.AesWithPaddingAndHmac(32, 16, Algorithm.HS256);
 		JweEncResult result = jweEncryption.encryptAndSign(secret, iv, payload, new byte[0]);
 
 		assertThat(Base64.encodeBase64URLSafeString(result.getCipherText()), is("KDlTtXchhZTGufMYmOYGS4HffxPSUrfmqCHXaI9wOGY"));
@@ -145,7 +146,7 @@ public class Jwe_A128KW_A128CBC_HS256Test {
 
 		String expected = "U0m_YmjN04DJvceFICbCVQ";
 
-		AesEncryptionWithHmacSha jweEncryption = new AesEncryptionWithHmacSha(32, 16);
+		AesEncryptionWithHmacSha jweEncryption = new AesEncryptionWithHmacSha.AesWithPaddingAndHmac(32, 16, Algorithm.HS256);
 
 		try {
 			jweEncryption.verifyAndDecrypt(cek, iv, Base64.decodeBase64(cipherText), header.getBytes(), Base64.decodeBase64(expected));
@@ -171,7 +172,7 @@ public class Jwe_A128KW_A128CBC_HS256Test {
 		String at = "U0m_YmjN04DJvceFICbCVQ";
 		String expected = "Live long and prosper.";
 
-		AesEncryptionWithHmacSha jweEncryption = new AesEncryptionWithHmacSha(32, 16);
+		AesEncryptionWithHmacSha jweEncryption = new AesEncryptionWithHmacSha.AesWithPaddingAndHmac(32, 16, Algorithm.HS256);
 		byte[] actual = jweEncryption.verifyAndDecrypt(cek, iv, Base64.decodeBase64(cipherText), header.getBytes(), Base64.decodeBase64(at));
 
 		assertThat(Arrays.equals(actual, expected.getBytes()), is(true));

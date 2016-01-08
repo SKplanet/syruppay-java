@@ -37,7 +37,6 @@ import java.util.List;
 public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<SubscriptionConfigurer<H>, H> {
     private SubscriptionType subscriptionType;
     private String shippingAddress;
-    private String subscriptionId;
     private long subscriptionStartDate;
     private long subscriptionFinishDate;
     private PaymentCycle paymentCycle;
@@ -49,15 +48,6 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
 
     public SubscriptionConfigurer<H> withShippingAddress(PayConfigurer.ShippingAddress shippingAddress) {
         this.shippingAddress = shippingAddress.mapToStringForFds();
-        return this;
-    }
-
-    public String getSubscriptionId() {
-        return subscriptionId;
-    }
-
-    public SubscriptionConfigurer<H> withSubscriptionId(String subscriptionId) {
-        this.subscriptionId = subscriptionId;
         return this;
     }
 
@@ -148,6 +138,7 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
     public static class ProductInfo {
         private String productId;
         private String productTitle;
+        private String autoPaymentId;
         private List<String> productUrls;
         private int paymentAmt;
         private PayConfigurer.Currency currencyCode;
@@ -164,6 +155,15 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
                         ",  currencyCode : " + currencyCode +
                         " and paymentAmt should be bigger than 0. yours : " + paymentAmt);
             }
+        }
+
+        public String getAutoPaymentId() {
+            return autoPaymentId;
+        }
+
+        public ProductInfo setAutoPaymentId(final String autoPaymentId) {
+            this.autoPaymentId = autoPaymentId;
+            return this;
         }
 
         public ProductInfo setProductId(final String productId) {

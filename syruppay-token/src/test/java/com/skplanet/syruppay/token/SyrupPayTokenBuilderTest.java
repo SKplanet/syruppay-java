@@ -65,19 +65,23 @@ package com.skplanet.syruppay.token;
 
 import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
 import com.skplanet.syruppay.token.claims.PayConfigurer;
+import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
 import com.skplanet.syruppay.token.domain.Mocks;
 import com.skplanet.syruppay.token.domain.TokenHistories;
 import com.skplanet.syruppay.token.jwt.SyrupPayToken;
 import com.skplanet.syruppay.token.jwt.Token;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Calendar;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
 
 public class SyrupPayTokenBuilderTest {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -189,7 +193,7 @@ public class SyrupPayTokenBuilderTest {
         // Then
         Token t = OBJECT_MAPPER.readValue(syrupPayTokenBuilder.toJson(), SyrupPayToken.class);
         assertThat(t, is(notNullValue()));
-        assertThat(t.isValidInTimes(), is(false));
+        assertThat(t.isValidInTime(), is(false));
     }
 
     @Test
@@ -271,7 +275,7 @@ public class SyrupPayTokenBuilderTest {
 
         // Then
         assertThat(token, is(notNullValue()));
-        assertThat(token.isValidInTimes(), is(true));
+        assertThat(token.isValidInTime(), is(true));
         assertThat(token.getIss(), is("가맹점"));
     }
 
@@ -585,7 +589,7 @@ public class SyrupPayTokenBuilderTest {
 
         // Then
         assertThat(token, is(notNullValue()));
-        assertThat(token.isValidInTimes(), is(true));
+        assertThat(token.isValidInTime(), is(true));
         assertThat(token.getIss(), is("가맹점"));
         assertThat(token.getUserInfoMapper(), is(notNullValue()));
         assertThat(token.getUserInfoMapper().getMappingValue(), is("asdkfjhsakdfj"));
@@ -613,21 +617,59 @@ public class SyrupPayTokenBuilderTest {
     }
 
     @Test
-    public void 하위버전_1_2_30_호환_테스트() throws IOException {
+    public void 하위버전_1_2_30_호환_테스트() throws IOException, InvalidTokenException {
+        SyrupPayTokenBuilder.uncheckValidationOfToken();
         Token t = SyrupPayTokenBuilder.verify(TokenHistories.VERSION_1_2_30.token, TokenHistories.VERSION_1_2_30.key);
         System.out.println(new ObjectMapper().writeValueAsString(t));
     }
 
     @Test
-    public void C_샵버전_0_0_1_호환_테스트() throws IOException {
+    public void C_샵버전_0_0_1_호환_테스트() throws IOException, InvalidTokenException {
+        SyrupPayTokenBuilder.uncheckValidationOfToken();
         Token t = SyrupPayTokenBuilder.verify(TokenHistories.C_SHARP_0_0_1.token, TokenHistories.C_SHARP_0_0_1.key);
         System.out.println(new ObjectMapper().writeValueAsString(t));
     }
 
     @Test
-    public void 라이브러리_적용_전_버전_11번가_테스트() throws IOException {
+    public void 라이브러리_적용_전_버전_11번가_테스트() throws Exception {
+        SyrupPayTokenBuilder.uncheckValidationOfToken();
         Token t = SyrupPayTokenBuilder.verify(TokenHistories.BEFORE_11ST.token, TokenHistories.BEFORE_11ST.key);
         assertThat(t.getTransactionInfo().getMctTransAuthId(), is(notNullValue()));
         assertThat(t.getTransactionInfo().getPaymentRestrictions().getCardIssuerRegion(), is(notNullValue()));
+    }
+
+    @Test
+    public void 하위버전_1_3_4_버전_CJOSHOPPING_테스트() throws Exception {
+        SyrupPayTokenBuilder.uncheckValidationOfToken();
+        Token t = SyrupPayTokenBuilder.verify(TokenHistories.VERSION_1_3_4_BY_CJOSHOPPING.token, TokenHistories.VERSION_1_3_4_BY_CJOSHOPPING.key);
+        assertThat(t.getTransactionInfo().getMctTransAuthId(), is(notNullValue()));
+        assertThat(t.getTransactionInfo().getPaymentRestrictions().getCardIssuerRegion(), is(notNullValue()));
+    }
+
+    @Test
+    public void 정기_자동_결제_규격_추가_테스트() throws Exception {
+        // Give
+        // @formatter:off
+        syrupPayTokenBuilder.of("가맹점")
+                .subscription()
+                .fixed()
+                .withShippingAddress(new PayConfigurer.ShippingAddress("zipcode", "address1", "address2", "city", "state", "KR"))
+                .withSubscriptionStartDate(Calendar.getInstance().getTimeInMillis() / 1000)
+                .withSubscriptionFinishDate(Calendar.getInstance().getTimeInMillis() / 1000 + 365 * 24 * 60 * 60)
+                .withPaymentCycle(SubscriptionConfigurer.PaymentCycle.ONCE_A_MONTH)
+                .addProductInfo(new SubscriptionConfigurer.ProductInfo() {{
+                    setProductId("prod-0001");
+                    setProductTitle("테스트 데이터");
+                    setProductUrls(Arrays.asList("http://localhost/product1"));
+                    setPaymentAmount(10000);
+                    setCurrencyCode(PayConfigurer.Currency.KRW);
+                }});
+        // @formatter:on
+        // When
+        Token token = SyrupPayTokenBuilder.verify(syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
+
+        // Then
+        assertThat(token.getSubscription(), is(notNullValue()));
+        assertThat(token.getSubscription().getProductInfo().size(), is(greaterThan(0)));
     }
 }

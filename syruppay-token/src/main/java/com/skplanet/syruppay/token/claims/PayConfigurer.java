@@ -22,6 +22,7 @@
 package com.skplanet.syruppay.token.claims;
 
 import com.skplanet.syruppay.token.TokenBuilder;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.io.Serializable;
@@ -154,8 +155,12 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
     }
 
     public void validRequired() throws Exception {
-        if (this.mctTransAuthId == null || this.paymentInfo.productTitle == null || this.paymentInfo.lang == null || this.paymentInfo.currencyCode == null || this.paymentInfo.paymentAmt <= 0) {
-            throw new IllegalArgumentException("some of required fields is null or wrong. " +
+        if (this.mctTransAuthId == null || this.mctTransAuthId.isEmpty()
+                || this.paymentInfo.productTitle == null || this.paymentInfo.productTitle.isEmpty()
+                || this.paymentInfo.lang == null || this.paymentInfo.lang.isEmpty()
+                || this.paymentInfo.currencyCode == null || this.paymentInfo.currencyCode.isEmpty()
+                || this.paymentInfo.paymentAmt <= 0) {
+            throw new IllegalArgumentException("some of required fields is null(or empty) or wrong. " +
                     "you should set orderIdOfMerchant : " + mctTransAuthId
                     + ",  productTitle : " + paymentInfo.productTitle
                     + ",  languageForDisplay : " + paymentInfo.lang
@@ -179,7 +184,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
     }
 
     public static enum PayableLocaleRule {
-        ONLY_ALLOWED_KOR("ALLOWED:KOR"), ONLY_NOT_ALLOED_KOR("NOT_ALLOWED:KOR"), ONLY_ALLOWED_USA("ALLOWED:USA"), ONLY_NOT_ALLOED_USA("NOT_ALLOWED:USA");
+        ONLY_ALLOWED_KOR("ALLOWED:KOR"), ONLY_NOT_ALLOWED_KOR("NOT_ALLOWED:KOR"), ONLY_ALLOWED_USA("ALLOWED:USA"), ONLY_NOT_ALLOWED_USA("NOT_ALLOWED:USA");
 
         String code;
 
@@ -475,6 +480,16 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
 
         public String getCardIssuerRegion() {
             return cardIssuerRegion;
+        }
+
+        @JsonIgnore
+        public PayableLocaleRule getPayableLocaleRule() {
+            for (PayableLocaleRule r : PayableLocaleRule.values()) {
+                if (r.toCode().equals(cardIssuerRegion.toUpperCase())) {
+                    return r;
+                }
+            }
+            throw new IllegalArgumentException("cardIssuerRegion of this object is not matched with PaymentRestriction enumeration. check this : " + this.cardIssuerRegion);
         }
     }
 }

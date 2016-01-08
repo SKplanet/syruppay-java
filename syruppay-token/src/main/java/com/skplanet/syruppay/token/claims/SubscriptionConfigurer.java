@@ -37,6 +37,7 @@ import java.util.List;
 public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<SubscriptionConfigurer<H>, H> {
     private SubscriptionType subscriptionType;
     private String shippingAddress;
+    private String subscriptionId;
     private long subscriptionStartDate;
     private long subscriptionFinishDate;
     private PaymentCycle paymentCycle;
@@ -51,6 +52,15 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
         return this;
     }
 
+    public String getSubscriptionId() {
+        return subscriptionId;
+    }
+
+    public SubscriptionConfigurer<H> withSubscriptionId(String subscriptionId) {
+        this.subscriptionId = subscriptionId;
+        return this;
+    }
+
     public SubscriptionConfigurer<H> fixed() {
         subscriptionType = SubscriptionType.FIXED;
         return this;
@@ -61,27 +71,27 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
         return this;
     }
 
-    public SubscriptionConfigurer<H> withSubscriptionStartDate(long subscriptionStartDate) {
+    public SubscriptionConfigurer<H> withSubscriptionStartDate(final long subscriptionStartDate) {
         this.subscriptionStartDate = subscriptionStartDate;
         return this;
     }
 
-    public SubscriptionConfigurer<H> withSubscriptionFinishDate(long subscriptionFinishDate) {
+    public SubscriptionConfigurer<H> withSubscriptionFinishDate(final long subscriptionFinishDate) {
         this.subscriptionFinishDate = subscriptionFinishDate;
         return this;
     }
 
-    public SubscriptionConfigurer<H> withPaymentCycle(PaymentCycle paymentCycle) {
+    public SubscriptionConfigurer<H> withPaymentCycle(final PaymentCycle paymentCycle) {
         this.paymentCycle = paymentCycle;
         return this;
     }
 
-    public SubscriptionConfigurer<H> addProductInfo(ProductInfo productInfo) {
+    public SubscriptionConfigurer<H> addProductInfo(final ProductInfo productInfo) {
         this.productInfo.add(productInfo);
         return this;
     }
 
-    public SubscriptionConfigurer<H> withProductInfo(List<ProductInfo> productInfo) {
+    public SubscriptionConfigurer<H> withProductInfo(final List<ProductInfo> productInfo) {
         this.productInfo = productInfo;
         return this;
     }
@@ -156,24 +166,24 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
             }
         }
 
-        public ProductInfo setProductId(String productId) {
+        public ProductInfo setProductId(final String productId) {
             this.productId = productId;
             return this;
         }
 
-        public ProductInfo setProductTitle(String productTitle) {
+        public ProductInfo setProductTitle(final String productTitle) {
             this.productTitle = productTitle;
             return this;
         }
 
-        public ProductInfo setProductUrls(List<String> productUrls) {
+        public ProductInfo setProductUrls(final List<String> productUrls) {
             this.productUrls = productUrls;
             return this;
         }
 
         @JsonIgnore
-        public ProductInfo setPaymentAmount(int paymentAmount) {
-            this.paymentAmt = paymentAmt;
+        public ProductInfo setPaymentAmount(final int paymentAmount) {
+            this.paymentAmt = paymentAmount;
             return this;
         }
 

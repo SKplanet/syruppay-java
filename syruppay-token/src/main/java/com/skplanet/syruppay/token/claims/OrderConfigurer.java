@@ -22,6 +22,7 @@
 package com.skplanet.syruppay.token.claims;
 
 import com.skplanet.syruppay.token.TokenBuilder;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,6 +41,8 @@ import java.util.Map;
 public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<OrderConfigurer<H>, H> {
     private int productPrice;
     private String submallName;
+    private String privacyPolicyRequirements;
+    private boolean mainShippingAddressSettingDisabled;
     private ProductDeliveryInfo productDeliveryInfo;
     private List<Offer> offerList = new ArrayList<Offer>();
     private List<Loyalty> loyaltyList = new ArrayList<Loyalty>();
@@ -48,6 +51,15 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
 
     public List<MonthlyInstallment> getMonthlyInstallmentList() {
         return Collections.unmodifiableList(monthlyInstallmentList);
+    }
+
+    public String getPrivacyPolicyRequirements() {
+        return privacyPolicyRequirements;
+    }
+
+    @JsonProperty("mainShippingAddressSettingDisabled")
+    public boolean isMainShippingAddressSettingDisabled() {
+        return mainShippingAddressSettingDisabled;
     }
 
     public int getProductPrice() {
@@ -87,6 +99,21 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
         for (MonthlyInstallment m : monthlyInstallmentList) {
             m.validRequired();
         }
+    }
+
+    public OrderConfigurer<H> withPrivacyPolicyRequirements(String privacyPolicyRequirements) {
+        this.privacyPolicyRequirements = privacyPolicyRequirements;
+        return this;
+    }
+
+    public OrderConfigurer<H> disableMainShippingAddressSetting() {
+        this.mainShippingAddressSettingDisabled = true;
+        return this;
+    }
+
+    public OrderConfigurer<H> enableMainShippingAddressSetting() {
+        this.mainShippingAddressSettingDisabled = false;
+        return this;
     }
 
     public OrderConfigurer<H> withShippingAddresses(PayConfigurer.ShippingAddress... shippingAddress) {

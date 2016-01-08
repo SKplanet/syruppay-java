@@ -25,12 +25,12 @@ import com.skplanet.jose.Jose;
 import com.skplanet.jose.JoseBuilders;
 import com.skplanet.jose.JoseHeader;
 import com.skplanet.jose.jwa.Jwa;
-import com.skplanet.payment.syruppay.jwe.support.JweSupport;
 import com.skplanet.syruppay.token.claims.MapToSktUserConfigurer;
 import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
 import com.skplanet.syruppay.token.claims.MerchantUserConfigurer;
 import com.skplanet.syruppay.token.claims.OrderConfigurer;
 import com.skplanet.syruppay.token.claims.PayConfigurer;
+import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
 import com.skplanet.syruppay.token.jwt.SyrupPayToken;
 import com.skplanet.syruppay.token.jwt.Token;
 import org.codehaus.jackson.JsonNode;
@@ -39,7 +39,6 @@ import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.node.ObjectNode;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,12 +58,16 @@ import java.text.SimpleDateFormat;
  */
 public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<Jwt, SyrupPayTokenBuilder> implements ClaimBuilder<Jwt>, TokenBuilder<SyrupPayTokenBuilder> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SyrupPayTokenBuilder.class.getName());
-
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    static boolean checkValidationOfToken = true;
 
     static {
         objectMapper.setVisibility(JsonMethod.FIELD, JsonAutoDetect.Visibility.ANY);
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
+    }
+
+    static void uncheckValidationOfToken() {
+        checkValidationOfToken = false;
     }
 
     private String iss;
@@ -82,8 +85,10 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * @return {@link com.skplanet.syruppay.token.jwt.Token}
      * @throws java.io.IOException
      *         토큰이 유효하지 않은 경우
+     * @throws com.skplanet.syruppay.token.InvalidTokenException
+     *         토큰이 논리적으로 유효하지 않은 경우
      */
-    public static Token verify(String token, String key) throws IOException {
+    public static Token verify(String token, String key) throws IOException, InvalidTokenException {
         return verify(token, key.getBytes());
     }
 
@@ -97,8 +102,10 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * @return {@link com.skplanet.syruppay.token.jwt.Token}
      * @throws java.io.IOException
      *         토큰이 유효하지 않은 경우
+     * @throws com.skplanet.syruppay.token.InvalidTokenException
+     *         토큰이 논리적으로 유효하지 않은 경우
      */
-    public static Token verify(String token, Key key) throws IOException {
+    public static Token verify(String token, Key key) throws IOException, InvalidTokenException {
         return verify(token, key.getEncoded());
     }
 
@@ -111,11 +118,19 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      *         토큰 무결성을 검증할 키
      * @return {@link com.skplanet.syruppay.token.jwt.Token}
      * @throws java.io.IOException
-     *         토큰이 유효하지 않은 경우
+     *         토큰이 물맂거으로 유효하지 않은 경우
+     * @throws com.skplanet.syruppay.token.InvalidTokenException
+     *         토큰이 논리적으로 유효하지 않은 경우
      */
-    public static Token verify(String token, byte[] key) throws IOException {
+    public static Token verify(String token, byte[] key) throws IOException, InvalidTokenException {
         try {
-            return objectMapper.readValue(JweSupport.Jws_HmacVerify(token, new String(key, "UTF-8")), SyrupPayToken.class);
+            final SyrupPayToken t = objectMapper.readValue(
+                    new Jose().configuration(JoseBuilders.compactDeserializationBuilder().userAlgorithm(Jwa.HS256).serializedSource(token).key(key)).deserialization()
+                    , SyrupPayToken.class);
+            if (checkValidationOfToken && !t.isValidInTime()) {
+                throw new InvalidTokenException(String.format("%d as exp of this token is over at now as %d", t.getExp(), System.currentTimeMillis() / 1000));
+            }
+            return t;
         } catch (IOException e) {
             LOGGER.error("exception that decrypting token. key : {}, token : {}", new String(key), token);
             throw e;
@@ -252,6 +267,17 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
         return getOrApply(new MapToSktUserConfigurer<SyrupPayTokenBuilder>());
     }
 
+    /**
+     * SKT 사용자인 시럽페이 사용자 맵핑을 위한 설정 객체를 확인하여 반환한다.
+     *
+     * @return {@link com.skplanet.syruppay.token.claims.MapToSktUserConfigurer}
+     * @throws Exception
+     *         the exception
+     */
+    public SubscriptionConfigurer<SyrupPayTokenBuilder> subscription() throws Exception {
+        return getOrApply(new SubscriptionConfigurer<SyrupPayTokenBuilder>());
+    }
+
     @SuppressWarnings("unchecked")
     private <C extends ClaimConfigurerAdapter<Jwt, SyrupPayTokenBuilder>> C getOrApply(C configurer)
             throws Exception {
@@ -262,7 +288,6 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
         return apply(configurer);
     }
 
-    @Override
     protected Jwt doBuild() throws Exception {
         if (iss == null || iss.isEmpty()) {
             throw new IllegalArgumentException("issuer couldn't be null. you should set of by SyrupPayTokenBuilder#of(String of)");

@@ -14,7 +14,7 @@
 ### Gradle 빌드 시
 ```groovy
 dependencies {
-     compile 'com.skplanet.syruppay:syruppay-token:1.2.30'
+     compile 'com.skplanet.syruppay:syruppay-token:1.3.4'
 }
 
 ```
@@ -25,7 +25,7 @@ dependencies {
 	<dependency>
 		<groupId>com.skplanet.syruppay</groupId>
 		<artifactId>syruppay-token</artifactId>
-		<version>1.2.30</version>
+		<version>1.3.4</version>
 	</dependency>
 </dependencies>
 ```
@@ -203,6 +203,9 @@ String token = new SyrupPayTokenBuilder().of("가맹점 ID")
                     .generateTokenBy("가맹점에게 전달한 비밀키");
 ```
 
+#### 4. 시럽페이에 자동 로그인 후 정기 결제 상품을 구매하고자 하는 경우(자동 로그인, 자동 정기 결제 가능 토큰)
+##### - 준비중 -
+
 ## Extensional Function 
 ### 시럽페이 사용자 연동을 위한 Syrup Pay Token 세팅
 Syrup Pay 사용자에 대한 정보를 조회하여 Syrup Pay 수동 로그인 시 ID 자동 입력과 같은 추가적인 기능을 수행할 수 있도록 매칭이 되는 정보를 설정하고 토큰을 생성합니다.
@@ -255,17 +258,17 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL3BheS5zeXJ1cC5jby5rciI
 ## 시럽페이 체크아웃 기능 사용하기
 가맹점의 쿠폰, 사용자 멤버쉽, 사용자의 배송지와 같은 주문 관련 정보와 기존 시럽페이의 간편 결제를 좀 더 편리하게(Seamless) 사용하기 위한 시럽페이의 확장된 기능   
 
-###주의
+### 주의
 쿠폰(Offer)과 멤버쉽 포인트(Loyalty)에 대한 복합 결제를 지원한기 위한 기능으로 해당 서비스를 사용하기 위해서는 사전 협의 단계가 필요하다.
 
 ### 시럽페이 체크아웃을 이용하여 가맹점의 쿠폰(Offer)을 함께 결제 인증하기 위한 Syrup Pay Token 생성
-- 준비중 - 
+##### - 준비중 -
 
 ### 시럽페이 체크아웃을 이용하여 멤버쉽 포인트(Loyalty)를 함께 결제 인증하기 위한 Syrup Pay Token 생성
-- 준비중 -
+##### - 준비중 -
 
 ### 시럽페이 체크아웃을 이용하여 배송지 정보를 멤버쉽 포인트(Loyalty)를 함께 결제 인증하기 위한 Syrup Pay Token 생성
-- 준비중 - 
+##### - 준비중 -
 
 ### 주의
 1. 한번 토큰을 생성한 SyrupPayTokenBuilder 를 재이용하여 다시 토큰을 빌드하거나 JSON 을 재성성 할 수 없다.

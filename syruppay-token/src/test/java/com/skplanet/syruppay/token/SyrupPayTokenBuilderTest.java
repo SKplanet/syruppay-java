@@ -65,6 +65,7 @@ package com.skplanet.syruppay.token;
 
 import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
 import com.skplanet.syruppay.token.claims.PayConfigurer;
+import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
 import com.skplanet.syruppay.token.domain.Mocks;
 import com.skplanet.syruppay.token.domain.TokenHistories;
 import com.skplanet.syruppay.token.jwt.SyrupPayToken;
@@ -74,9 +75,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Calendar;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
 
 public class SyrupPayTokenBuilderTest {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -639,5 +644,32 @@ public class SyrupPayTokenBuilderTest {
         Token t = SyrupPayTokenBuilder.verify(TokenHistories.VERSION_1_3_4_BY_CJOSHOPPING.token, TokenHistories.VERSION_1_3_4_BY_CJOSHOPPING.key);
         assertThat(t.getTransactionInfo().getMctTransAuthId(), is(notNullValue()));
         assertThat(t.getTransactionInfo().getPaymentRestrictions().getCardIssuerRegion(), is(notNullValue()));
+    }
+
+    @Test
+    public void 정기_자동_결제_규격_추가_테스트() throws Exception {
+        // Give
+        // @formatter:off
+        syrupPayTokenBuilder.of("가맹점")
+                .subscription()
+                .fixed()
+                .withShippingAddress(new PayConfigurer.ShippingAddress("zipcode", "address1", "address2", "city", "state", "KR"))
+                .withSubscriptionStartDate(Calendar.getInstance().getTimeInMillis() / 1000)
+                .withSubscriptionFinishDate(Calendar.getInstance().getTimeInMillis() / 1000 + 365 * 24 * 60 * 60)
+                .withPaymentCycle(SubscriptionConfigurer.PaymentCycle.ONCE_A_MONTH)
+                .addProductInfo(new SubscriptionConfigurer.ProductInfo() {{
+                    setProductId("prod-0001");
+                    setProductTitle("테스트 데이터");
+                    setProductUrls(Arrays.asList("http://localhost/product1"));
+                    setPaymentAmount(10000);
+                    setCurrencyCode(PayConfigurer.Currency.KRW);
+                }});
+        // @formatter:on
+        // When
+        Token token = SyrupPayTokenBuilder.verify(syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
+
+        // Then
+        assertThat(token.getSubscription(), is(notNullValue()));
+        assertThat(token.getSubscription().getProductInfo().size(), is(greaterThan(0)));
     }
 }

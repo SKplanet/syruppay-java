@@ -37,6 +37,7 @@ import java.util.List;
 public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<SubscriptionConfigurer<H>, H> {
     private SubscriptionType subscriptionType;
     private String shippingAddress;
+    private String autoPaymentId;
     private long subscriptionStartDate;
     private long subscriptionFinishDate;
     private PaymentCycle paymentCycle;
@@ -46,7 +47,16 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
         return shippingAddress;
     }
 
-    public SubscriptionConfigurer<H> withShippingAddress(PayConfigurer.ShippingAddress shippingAddress) {
+    public String getAutoPaymentId() {
+        return autoPaymentId;
+    }
+
+    public SubscriptionConfigurer<H> withAutoPaymentId(final String autoPaymentId) {
+        this.autoPaymentId = autoPaymentId;
+        return this;
+    }
+
+    public SubscriptionConfigurer<H> withShippingAddress(final PayConfigurer.ShippingAddress shippingAddress) {
         this.shippingAddress = shippingAddress.mapToStringForFds();
         return this;
     }
@@ -138,8 +148,8 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
     public static class ProductInfo {
         private String productId;
         private String productTitle;
-        private String autoPaymentId;
-        private List<String> productUrls;
+        private int quantity;
+        private String productUrl;
         private int paymentAmt;
         private PayConfigurer.Currency currencyCode;
 
@@ -148,21 +158,26 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
             if (productId == null || productId.isEmpty()
                     || productTitle == null || productTitle.isEmpty()
                     || paymentAmt == 0
+                    || quantity == 0
                     || currencyCode == null) {
                 throw new IllegalArgumentException("some of required fields is null(or empty) or wrong. " +
                         "you should set productId : " + productId +
                         ",  productTitle : " + productTitle +
                         ",  currencyCode : " + currencyCode +
-                        " and paymentAmt should be bigger than 0. yours : " + paymentAmt);
+                        " and paymentAmt and quantity should be bigger than 0. yours paymentAmt : " + paymentAmt +
+                        ", yours quantity : " + quantity);
             }
         }
 
-        public String getAutoPaymentId() {
-            return autoPaymentId;
+        public int getQuantity() {
+            return quantity;
         }
 
-        public ProductInfo setAutoPaymentId(final String autoPaymentId) {
-            this.autoPaymentId = autoPaymentId;
+        public ProductInfo setQuantity(final int quantity) {
+            if(quantity < 1) {
+                throw new IllegalArgumentException("quantity should be bigger than 0, yours : " + quantity);
+            }
+            this.quantity = quantity;
             return this;
         }
 
@@ -176,8 +191,8 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
             return this;
         }
 
-        public ProductInfo setProductUrls(final List<String> productUrls) {
-            this.productUrls = productUrls;
+        public ProductInfo setProductUrl(final String productUrl) {
+            this.productUrl = productUrl;
             return this;
         }
 
@@ -199,8 +214,8 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
             return productTitle;
         }
 
-        public List<String> getProductUrls() {
-            return Collections.unmodifiableList(productUrls);
+        public String getProductUrl() {
+            return productUrl;
         }
 
         @JsonIgnore

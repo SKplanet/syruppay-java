@@ -660,7 +660,8 @@ public class SyrupPayTokenBuilderTest {
                 .addProductInfo(new SubscriptionConfigurer.ProductInfo() {{
                     setProductId("prod-0001");
                     setProductTitle("테스트 데이터");
-                    setProductUrls(Arrays.asList("http://localhost/product1"));
+                    setProductUrl("http://localhost/product1");
+                    setQuantity(1);
                     setPaymentAmount(10000);
                     setCurrencyCode(PayConfigurer.Currency.KRW);
                 }});

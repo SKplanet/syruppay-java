@@ -657,20 +657,12 @@ public class SyrupPayTokenBuilderTest {
                 .withSubscriptionStartDate(Calendar.getInstance().getTimeInMillis() / 1000)
                 .withSubscriptionFinishDate(Calendar.getInstance().getTimeInMillis() / 1000 + 365 * 24 * 60 * 60)
                 .withPaymentCycle(SubscriptionConfigurer.PaymentCycle.ONCE_A_MONTH)
-                .addProductInfo(new SubscriptionConfigurer.ProductInfo() {{
-                    setProductId("prod-0001");
-                    setProductTitle("테스트 데이터");
-                    setProductUrl("http://localhost/product1");
-                    setQuantity(1);
-                    setPaymentAmount(10000);
-                    setCurrencyCode(PayConfigurer.Currency.KRW);
-                }});
+                ;
         // @formatter:on
         // When
         Token token = SyrupPayTokenBuilder.verify(syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
 
         // Then
         assertThat(token.getSubscription(), is(notNullValue()));
-        assertThat(token.getSubscription().getProductInfo().size(), is(greaterThan(0)));
     }
 }

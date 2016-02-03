@@ -75,13 +75,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Calendar;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
 
 public class SyrupPayTokenBuilderTest {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -657,19 +655,20 @@ public class SyrupPayTokenBuilderTest {
                 .withSubscriptionStartDate(Calendar.getInstance().getTimeInMillis() / 1000)
                 .withSubscriptionFinishDate(Calendar.getInstance().getTimeInMillis() / 1000 + 365 * 24 * 60 * 60)
                 .withPaymentCycle(SubscriptionConfigurer.PaymentCycle.ONCE_A_MONTH)
-                .addProductInfo(new SubscriptionConfigurer.ProductInfo() {{
-                    setProductId("prod-0001");
-                    setProductTitle("테스트 데이터");
-                    setProductUrls(Arrays.asList("http://localhost/product1"));
-                    setPaymentAmount(10000);
-                    setCurrencyCode(PayConfigurer.Currency.KRW);
-                }});
+                ;
         // @formatter:on
         // When
         Token token = SyrupPayTokenBuilder.verify(syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
 
         // Then
         assertThat(token.getSubscription(), is(notNullValue()));
-        assertThat(token.getSubscription().getProductInfo().size(), is(greaterThan(0)));
+    }
+
+    @Test(expected = Exception.class)
+    public void 체크아웃_잘못된_규격_테스트() throws IOException, InvalidTokenException {
+        SyrupPayTokenBuilder.uncheckValidationOfToken();
+        Token t = SyrupPayTokenBuilder.verify(TokenHistories.VERSION_1_3_5_INVALID.token, TokenHistories.VERSION_1_3_5_INVALID.key);
+        assertThat(t.getTransactionInfo().getMctTransAuthId(), is(notNullValue()));
+        assertThat(t.getTransactionInfo().getPaymentRestrictions().getCardIssuerRegion(), is(notNullValue()));
     }
 }

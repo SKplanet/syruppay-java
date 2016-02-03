@@ -132,7 +132,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
             }
             return t;
         } catch (IOException e) {
-            LOGGER.error("exception that decrypting token. key : {}, token : {}", new String(key), token);
+            LOGGER.error("{} exception that decrypting token. key : {}, token : {}", e.getMessage(), new String(key), token);
             throw e;
         }
     }

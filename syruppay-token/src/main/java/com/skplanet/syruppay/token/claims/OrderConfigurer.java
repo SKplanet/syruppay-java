@@ -339,6 +339,17 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
         private String exclusiveGroupId;
         private String exclusiveGroupName;
         private List<Accept> accepted = new ArrayList<Accept>();
+        private boolean applicableForNotMatchedUser;
+
+        @JsonProperty("applicableForNotMatchedUser")
+        public boolean isApplicableForNotMatchedUser() {
+            return applicableForNotMatchedUser;
+        }
+
+        public Offer setApplicableForNotMatchedUser(boolean applicableForNotMatchedUser) {
+            this.applicableForNotMatchedUser = applicableForNotMatchedUser;
+            return this;
+        }
 
         public String getUserActionCode() {
             return userActionCode;
@@ -526,6 +537,17 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
         private Error error;
         private String exclusiveGroupId;
         private String exclusiveGroupName;
+        private boolean applicableForNotMatchedUser;
+
+        @JsonProperty("applicableForNotMatchedUser")
+        public boolean isApplicableForNotMatchedUser() {
+            return applicableForNotMatchedUser;
+        }
+
+        public Loyalty setApplicableForNotMatchedUser(boolean applicableForNotMatchedUser) {
+            this.applicableForNotMatchedUser = applicableForNotMatchedUser;
+            return this;
+        }
 
         public String getUserActionCode() {
             return userActionCode;

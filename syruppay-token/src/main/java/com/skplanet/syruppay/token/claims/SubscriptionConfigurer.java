@@ -37,16 +37,25 @@ import java.util.List;
 public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<SubscriptionConfigurer<H>, H> {
     private SubscriptionType subscriptionType;
     private String shippingAddress;
+    private String autoPaymentId;
     private long subscriptionStartDate;
     private long subscriptionFinishDate;
     private PaymentCycle paymentCycle;
-    private List<ProductInfo> productInfo = new ArrayList<ProductInfo>();
 
     public String getShippingAddress() {
         return shippingAddress;
     }
 
-    public SubscriptionConfigurer<H> withShippingAddress(PayConfigurer.ShippingAddress shippingAddress) {
+    public String getAutoPaymentId() {
+        return autoPaymentId;
+    }
+
+    public SubscriptionConfigurer<H> withAutoPaymentId(final String autoPaymentId) {
+        this.autoPaymentId = autoPaymentId;
+        return this;
+    }
+
+    public SubscriptionConfigurer<H> withShippingAddress(final PayConfigurer.ShippingAddress shippingAddress) {
         this.shippingAddress = shippingAddress.mapToStringForFds();
         return this;
     }
@@ -76,16 +85,6 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
         return this;
     }
 
-    public SubscriptionConfigurer<H> addProductInfo(final ProductInfo productInfo) {
-        this.productInfo.add(productInfo);
-        return this;
-    }
-
-    public SubscriptionConfigurer<H> withProductInfo(final List<ProductInfo> productInfo) {
-        this.productInfo = productInfo;
-        return this;
-    }
-
     public SubscriptionType getSubscriptionType() {
         return subscriptionType;
     }
@@ -102,10 +101,6 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
         return paymentCycle;
     }
 
-    public List<ProductInfo> getProductInfo() {
-        return Collections.unmodifiableList(productInfo);
-    }
-
     public String claimName() {
         return "subscription";
     }
@@ -117,14 +112,6 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
 
             );
         }
-
-        if (productInfo.isEmpty()) {
-            throw new IllegalArgumentException("product info list couldn't be empty. you should set product at least one more by addProductInfo() or setProductInfo.");
-        }
-
-        for (ProductInfo p : productInfo) {
-            p.validRequiredToProductInfo();
-        }
     }
 
     public static enum SubscriptionType {
@@ -133,83 +120,5 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
 
     public static enum PaymentCycle {
         ONCE_A_WEEK, ONCE_TWO_WEEKS, ONCE_A_MONTH, ONCE_TWO_MONTHS
-    }
-
-    public static class ProductInfo {
-        private String productId;
-        private String productTitle;
-        private String autoPaymentId;
-        private List<String> productUrls;
-        private int paymentAmt;
-        private PayConfigurer.Currency currencyCode;
-
-
-        public void validRequiredToProductInfo() {
-            if (productId == null || productId.isEmpty()
-                    || productTitle == null || productTitle.isEmpty()
-                    || paymentAmt == 0
-                    || currencyCode == null) {
-                throw new IllegalArgumentException("some of required fields is null(or empty) or wrong. " +
-                        "you should set productId : " + productId +
-                        ",  productTitle : " + productTitle +
-                        ",  currencyCode : " + currencyCode +
-                        " and paymentAmt should be bigger than 0. yours : " + paymentAmt);
-            }
-        }
-
-        public String getAutoPaymentId() {
-            return autoPaymentId;
-        }
-
-        public ProductInfo setAutoPaymentId(final String autoPaymentId) {
-            this.autoPaymentId = autoPaymentId;
-            return this;
-        }
-
-        public ProductInfo setProductId(final String productId) {
-            this.productId = productId;
-            return this;
-        }
-
-        public ProductInfo setProductTitle(final String productTitle) {
-            this.productTitle = productTitle;
-            return this;
-        }
-
-        public ProductInfo setProductUrls(final List<String> productUrls) {
-            this.productUrls = productUrls;
-            return this;
-        }
-
-        @JsonIgnore
-        public ProductInfo setPaymentAmount(final int paymentAmount) {
-            this.paymentAmt = paymentAmount;
-            return this;
-        }
-
-        public void setCurrencyCode(PayConfigurer.Currency currencyCode) {
-            this.currencyCode = currencyCode;
-        }
-
-        public String getProductId() {
-            return productId;
-        }
-
-        public String getProductTitle() {
-            return productTitle;
-        }
-
-        public List<String> getProductUrls() {
-            return Collections.unmodifiableList(productUrls);
-        }
-
-        @JsonIgnore
-        public int getPaymentAmount() {
-            return paymentAmt;
-        }
-
-        public PayConfigurer.Currency getCurrencyCode() {
-            return currencyCode;
-        }
     }
 }

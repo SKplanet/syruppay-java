@@ -202,7 +202,7 @@ String token = new SyrupPayTokenBuilder().of("가맹점 ID")
                         .withMerchantDefinedValue("{\n" +
                                                   "\"id_1\": \"value\",\n" +
                                                   "\"id_2\": 2\n" +
-                                                  "}") // Optional 
+                                                  "}") // Optional, JSON 포맷 이용 시 Escape(\) 입력에 주의 필요, 1k 제한
                     .and()
                     .generateTokenBy("가맹점에게 전달한 비밀키");
 ```

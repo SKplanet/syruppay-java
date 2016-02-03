@@ -45,6 +45,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
     private static final Set<String> ISO_COUNTRIES = new HashSet<String>(Arrays.asList(Locale.getISOCountries()));
 
     private String mctTransAuthId;
+    private String mctDefinedValue;
     private PaymentInformationBySeller paymentInfo = new PaymentInformationBySeller();
     private PaymentRestriction paymentRestrictions = new PaymentRestriction();
 
@@ -56,7 +57,13 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         return ISO_LANGUAGES.contains(code);
     }
 
+    @Deprecated
     public String getMctTransAuthId() {
+        return mctTransAuthId;
+    }
+
+    @JsonIgnore
+    public String getMerchantTransationAuthentcatedId() {
         return mctTransAuthId;
     }
 
@@ -71,6 +78,21 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
     public PayConfigurer<H> withOrderIdOfMerchant(String orderId) {
         mctTransAuthId = orderId;
         return this;
+    }
+
+    public PayConfigurer<H> withMerchantDefinedValue(String merchantDefinedValue) {
+        this.mctDefinedValue = merchantDefinedValue;
+        return this;
+    }
+
+    @Deprecated
+    public String getMctDefinedValue() {
+        return mctDefinedValue;
+    }
+
+    @JsonIgnore
+    public String getMerchanttDefinedValue() {
+        return mctDefinedValue;
     }
 
     public PayConfigurer<H> withProductTitle(String productTitle) {
@@ -171,6 +193,9 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
 
         if (mctTransAuthId.length() > 40) {
             throw new IllegalArgumentException("order id of merchant couldn't be longer than 40. but yours is " + mctTransAuthId.length());
+        }
+        if (mctDefinedValue.length() > 1024) {
+            throw new IllegalArgumentException("merchant define value's length couldn't be bigger than 1024. but yours is " + mctDefinedValue.length());
         }
     }
 

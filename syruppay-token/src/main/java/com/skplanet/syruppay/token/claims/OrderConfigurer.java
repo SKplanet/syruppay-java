@@ -346,8 +346,9 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
             return applicableForNotMatchedUser;
         }
 
-        public void setApplicableForNotMatchedUser(boolean applicableForNotMatchedUser) {
+        public Offer setApplicableForNotMatchedUser(boolean applicableForNotMatchedUser) {
             this.applicableForNotMatchedUser = applicableForNotMatchedUser;
+            return this;
         }
 
         public String getUserActionCode() {
@@ -543,8 +544,9 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
             return applicableForNotMatchedUser;
         }
 
-        public void setApplicableForNotMatchedUser(boolean applicableForNotMatchedUser) {
+        public Loyalty setApplicableForNotMatchedUser(boolean applicableForNotMatchedUser) {
             this.applicableForNotMatchedUser = applicableForNotMatchedUser;
+            return this;
         }
 
         public String getUserActionCode() {

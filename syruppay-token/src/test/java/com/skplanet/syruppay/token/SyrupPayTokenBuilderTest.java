@@ -75,13 +75,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Calendar;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
 
 public class SyrupPayTokenBuilderTest {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -664,5 +662,13 @@ public class SyrupPayTokenBuilderTest {
 
         // Then
         assertThat(token.getSubscription(), is(notNullValue()));
+    }
+
+    @Test(expected = Exception.class)
+    public void 체크아웃_잘못된_규격_테스트() throws IOException, InvalidTokenException {
+        SyrupPayTokenBuilder.uncheckValidationOfToken();
+        Token t = SyrupPayTokenBuilder.verify(TokenHistories.VERSION_1_3_5_INVALID.token, TokenHistories.VERSION_1_3_5_INVALID.key);
+        assertThat(t.getTransactionInfo().getMctTransAuthId(), is(notNullValue()));
+        assertThat(t.getTransactionInfo().getPaymentRestrictions().getCardIssuerRegion(), is(notNullValue()));
     }
 }

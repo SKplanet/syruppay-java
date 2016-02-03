@@ -22,6 +22,8 @@
 package com.skplanet.syruppay.token;
 
 
+import java.io.Serializable;
+
 /**
  * {@link com.skplanet.syruppay.token.ClaimBuilder}를 설정할 수 있도록 지원합니다.
  * 모든 {@link com.skplanet.syruppay.token.ClaimConfigurer} 는 가자 우선 {@link #init(com.skplanet.syruppay.token.ClaimBuilder)} 메소드가 호출되어야 한다.
@@ -34,7 +36,7 @@ package com.skplanet.syruppay.token;
  * @author 임형태
  * @since 1.0
  */
-public interface ClaimConfigurer<O, B extends ClaimBuilder<O>> {
+public interface ClaimConfigurer<O, B extends ClaimBuilder<O>> extends Serializable {
 
     String claimName();
 

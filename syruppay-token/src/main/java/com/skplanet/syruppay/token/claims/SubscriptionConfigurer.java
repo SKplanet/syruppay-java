@@ -106,12 +106,7 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
     }
 
     public void validRequired() throws Exception {
-        if (this.subscriptionType == null) {
-            throw new IllegalArgumentException("some of required fields is null(or empty) or wrong. " +
-                    "you should set subscriptionType : null"
-
-            );
-        }
+        // ignored
     }
 
     public static enum SubscriptionType {

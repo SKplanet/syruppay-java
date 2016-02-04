@@ -35,70 +35,15 @@ import java.util.List;
  * @since 1.3
  */
 public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<SubscriptionConfigurer<H>, H> {
-    private SubscriptionType subscriptionType;
-    private String shippingAddress;
     private String autoPaymentId;
-    private long subscriptionStartDate;
-    private long subscriptionFinishDate;
-    private PaymentCycle paymentCycle;
-
-    public String getShippingAddress() {
-        return shippingAddress;
-    }
-
-    public String getAutoPaymentId() {
-        return autoPaymentId;
-    }
 
     public SubscriptionConfigurer<H> withAutoPaymentId(final String autoPaymentId) {
         this.autoPaymentId = autoPaymentId;
         return this;
     }
 
-    public SubscriptionConfigurer<H> withShippingAddress(final PayConfigurer.ShippingAddress shippingAddress) {
-        this.shippingAddress = shippingAddress.mapToStringForFds();
-        return this;
-    }
-
-    public SubscriptionConfigurer<H> fixed() {
-        subscriptionType = SubscriptionType.FIXED;
-        return this;
-    }
-
-    public SubscriptionConfigurer<H> unfixed() {
-        subscriptionType = SubscriptionType.UNFIXED;
-        return this;
-    }
-
-    public SubscriptionConfigurer<H> withSubscriptionStartDate(final long subscriptionStartDate) {
-        this.subscriptionStartDate = subscriptionStartDate;
-        return this;
-    }
-
-    public SubscriptionConfigurer<H> withSubscriptionFinishDate(final long subscriptionFinishDate) {
-        this.subscriptionFinishDate = subscriptionFinishDate;
-        return this;
-    }
-
-    public SubscriptionConfigurer<H> withPaymentCycle(final PaymentCycle paymentCycle) {
-        this.paymentCycle = paymentCycle;
-        return this;
-    }
-
-    public SubscriptionType getSubscriptionType() {
-        return subscriptionType;
-    }
-
-    public long getSubscriptionStartDate() {
-        return subscriptionStartDate;
-    }
-
-    public long getSubscriptionFinishDate() {
-        return subscriptionFinishDate;
-    }
-
-    public PaymentCycle getPaymentCycle() {
-        return paymentCycle;
+    public String getAutoPaymentId() {
+        return autoPaymentId;
     }
 
     public String claimName() {
@@ -107,13 +52,5 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
 
     public void validRequired() throws Exception {
         // ignored
-    }
-
-    public static enum SubscriptionType {
-        FIXED, UNFIXED
-    }
-
-    public static enum PaymentCycle {
-        ONCE_A_WEEK, ONCE_TWO_WEEKS, ONCE_A_MONTH, ONCE_TWO_MONTHS
     }
 }

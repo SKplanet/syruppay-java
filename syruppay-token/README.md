@@ -14,7 +14,7 @@
 ### Gradle 빌드 시
 ```groovy
 dependencies {
-     compile 'com.skplanet.syruppay:syruppay-token:1.3.4'
+     compile 'com.skplanet.syruppay:syruppay-token:1.3.5'
 }
 
 ```
@@ -25,7 +25,7 @@ dependencies {
 	<dependency>
 		<groupId>com.skplanet.syruppay</groupId>
 		<artifactId>syruppay-token</artifactId>
-		<version>1.3.4</version>
+		<version>1.3.5</version>
 	</dependency>
 </dependencies>
 ```

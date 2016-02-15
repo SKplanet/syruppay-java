@@ -65,7 +65,6 @@ package com.skplanet.syruppay.token;
 
 import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
 import com.skplanet.syruppay.token.claims.PayConfigurer;
-import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
 import com.skplanet.syruppay.token.domain.Mocks;
 import com.skplanet.syruppay.token.domain.TokenHistories;
 import com.skplanet.syruppay.token.jwt.SyrupPayToken;
@@ -75,7 +74,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Calendar;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.*;
@@ -653,5 +651,19 @@ public class SyrupPayTokenBuilderTest {
         Token t = SyrupPayTokenBuilder.verify(TokenHistories.VERSION_1_3_5_INVALID.token, TokenHistories.VERSION_1_3_5_INVALID.key);
         assertThat(t.getTransactionInfo().getMctTransAuthId(), is(notNullValue()));
         assertThat(t.getTransactionInfo().getPaymentRestrictions().getCardIssuerRegion(), is(notNullValue()));
+    }
+
+    @Test
+    public void PHP_버전_사용자로그인_토큰_호환성_테스트() throws IOException, InvalidTokenException {
+        SyrupPayTokenBuilder.uncheckValidationOfToken();
+        Token t = SyrupPayTokenBuilder.verify(TokenHistories.PHP_TO_LOGIN_VERSION_1_0_0.token, TokenHistories.PHP_TO_LOGIN_VERSION_1_0_0.key);
+        System.out.println(new ObjectMapper().writeValueAsString(t));
+    }
+
+    @Test
+    public void PHP_버전_결제_토큰_호환성_테스트() throws IOException, InvalidTokenException {
+        SyrupPayTokenBuilder.uncheckValidationOfToken();
+        Token t = SyrupPayTokenBuilder.verify(TokenHistories.PHP_TO_PAY_VERSION_1_0_0.token, TokenHistories.PHP_TO_PAY_VERSION_1_0_0.key);
+        System.out.println(new ObjectMapper().writeValueAsString(t));
     }
 }

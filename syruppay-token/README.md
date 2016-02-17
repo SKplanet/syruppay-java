@@ -14,7 +14,7 @@
 ### Gradle 빌드 시
 ```groovy
 dependencies {
-     compile 'com.skplanet.syruppay:syruppay-token:1.3.5'
+     compile 'com.skplanet.syruppay:syruppay-token:1.3.6'
 }
 
 ```
@@ -25,7 +25,7 @@ dependencies {
 	<dependency>
 		<groupId>com.skplanet.syruppay</groupId>
 		<artifactId>syruppay-token</artifactId>
-		<version>1.3.5</version>
+		<version>1.3.6</version>
 	</dependency>
 </dependencies>
 ```
@@ -199,9 +199,9 @@ String token = new SyrupPayTokenBuilder().of("가맹점 ID")
                         .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6")) // Optional
                         .withBeAbleToExchangeToCash(false) // Optional
                         .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR) // Optional
-                        .withMerchantDefinedValue("{\n" +
-                                                  "\"id_1\": \"value\",\n" +
-                                                  "\"id_2\": 2\n" +
+                        .withMerchantDefinedValue("{" +
+                                                  "\"id_1\": \"value\"," +
+                                                  "\"id_2\": 2" +
                                                   "}") // Optional, JSON 포맷 이용 시 Escape(\) 입력에 주의 필요, 1k 제한
                     .and()
                     .generateTokenBy("가맹점에게 전달한 비밀키");

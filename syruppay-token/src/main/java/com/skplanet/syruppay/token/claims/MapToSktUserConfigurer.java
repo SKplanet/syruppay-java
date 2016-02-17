@@ -27,8 +27,9 @@ import com.skplanet.syruppay.token.TokenBuilder;
  * 가맹점 사용자의 SKT 가입 정보와 관련된 Claim 을 설정한다.
  *
  * @author 임형태
- * @since 2015.09.09
+ * @since 1.0
  */
+@Deprecated
 public class MapToSktUserConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<MapToSktUserConfigurer<H>, H> {
     private String lineNumber;
     private String svcMgmtNumber;

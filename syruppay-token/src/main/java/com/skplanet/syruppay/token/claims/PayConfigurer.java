@@ -49,11 +49,11 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
     private PaymentInformationBySeller paymentInfo = new PaymentInformationBySeller();
     private PaymentRestriction paymentRestrictions = new PaymentRestriction();
 
-    public static boolean isValidCountryAlpha2Code(String code) {
+    public static boolean isValidCountryAlpha2Code(final String code) {
         return ISO_COUNTRIES.contains(code.contains(":") ? code.substring(code.indexOf(":") + 1).toUpperCase() : code.toUpperCase());
     }
 
-    public static boolean isValidLanuageCode(String code) {
+    public static boolean isValidLanuageCode(final String code) {
         return ISO_LANGUAGES.contains(code);
     }
 
@@ -75,12 +75,12 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         return paymentRestrictions;
     }
 
-    public PayConfigurer<H> withOrderIdOfMerchant(String orderId) {
+    public PayConfigurer<H> withOrderIdOfMerchant(final String orderId) {
         mctTransAuthId = orderId;
         return this;
     }
 
-    public PayConfigurer<H> withMerchantDefinedValue(String merchantDefinedValue) {
+    public PayConfigurer<H> withMerchantDefinedValue(final String merchantDefinedValue) {
         this.mctDefinedValue = merchantDefinedValue;
         return this;
     }
@@ -95,12 +95,12 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         return mctDefinedValue;
     }
 
-    public PayConfigurer<H> withProductTitle(String productTitle) {
+    public PayConfigurer<H> withProductTitle(final String productTitle) {
         paymentInfo.productTitle = productTitle;
         return this;
     }
 
-    public PayConfigurer<H> withProductUrls(List<String> productUrls) {
+    public PayConfigurer<H> withProductUrls(final List<String> productUrls) {
         for (String productDetail : productUrls) {
             if (!(productDetail.startsWith("http") || productDetail.startsWith("https"))) {
                 throw new IllegalArgumentException("product details should be contained http or https urls. check your input!");
@@ -110,31 +110,31 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         return this;
     }
 
-    public PayConfigurer<H> withProductUrls(String... url) {
+    public PayConfigurer<H> withProductUrls(final String... url) {
         return withProductUrls(Arrays.asList(url));
     }
 
-    public PayConfigurer<H> withLanguageForDisplay(Language l) {
+    public PayConfigurer<H> withLanguageForDisplay(final Language l) {
         paymentInfo.lang = l.toString();
         return this;
     }
 
-    public PayConfigurer<H> withCurrency(Currency c) {
+    public PayConfigurer<H> withCurrency(final Currency c) {
         paymentInfo.currencyCode = c.toString();
         return this;
     }
 
-    public PayConfigurer<H> withShippingAddress(ShippingAddress shippingAddress) {
+    public PayConfigurer<H> withShippingAddress(final ShippingAddress shippingAddress) {
         paymentInfo.shippingAddress = shippingAddress.mapToStringForFds();
         return this;
     }
 
-    public PayConfigurer<H> withShippingAddress(String shippingAddress) {
+    public PayConfigurer<H> withShippingAddress(final String shippingAddress) {
         paymentInfo.shippingAddress = shippingAddress;
         return this;
     }
 
-    public PayConfigurer<H> withAmount(int paymentAmount) {
+    public PayConfigurer<H> withAmount(final int paymentAmount) {
         if (paymentAmount <= 0) {
             throw new IllegalArgumentException("Cannot be smaller than 0. Check yours input value : " + paymentAmount);
         }
@@ -142,32 +142,37 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         return this;
     }
 
-    public PayConfigurer<H> withDeliveryPhoneNumber(String deliveryPhoneNumber) {
+    public PayConfigurer<H> withDeliveryPhoneNumber(final String deliveryPhoneNumber) {
         paymentInfo.deliveryPhoneNumber = deliveryPhoneNumber;
         return this;
     }
 
-    public PayConfigurer<H> withDeliveryName(String deliveryName) {
+    public PayConfigurer<H> withDeliveryName(final String deliveryName) {
         paymentInfo.deliveryName = deliveryName;
         return this;
     }
 
-    public PayConfigurer<H> withBeAbleToExchangeToCash(boolean exchangeable) {
+    public PayConfigurer<H> withDeliveryType(final DeliveryType deliveryType) {
+        paymentInfo.deliveryType = deliveryType;
+        return this;
+    }
+
+    public PayConfigurer<H> withBeAbleToExchangeToCash(final boolean exchangeable) {
         paymentInfo.isExchangeable = exchangeable;
         return this;
     }
 
-    public PayConfigurer<H> withInstallmentPerCardInformation(List<CardInstallmentInformation> cards) {
+    public PayConfigurer<H> withInstallmentPerCardInformation(final List<CardInstallmentInformation> cards) {
         paymentInfo.cardInfoList.addAll(cards);
         return this;
     }
 
-    public PayConfigurer<H> withInstallmentPerCardInformation(CardInstallmentInformation... card) {
+    public PayConfigurer<H> withInstallmentPerCardInformation(final CardInstallmentInformation... card) {
         paymentInfo.cardInfoList.addAll(Arrays.asList(card));
         return this;
     }
 
-    public PayConfigurer<H> withPayableRuleWithCard(PayableLocaleRule r) {
+    public PayConfigurer<H> withPayableRuleWithCard(final PayableLocaleRule r) {
         paymentRestrictions.cardIssuerRegion = r.toCode();
         return this;
     }
@@ -194,7 +199,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         if (mctTransAuthId.length() > 40) {
             throw new IllegalArgumentException("order id of merchant couldn't be longer than 40. but yours is " + mctTransAuthId.length());
         }
-        if (mctDefinedValue.length() > 1024) {
+        if (mctDefinedValue != null && mctDefinedValue.length() > 1024) {
             throw new IllegalArgumentException("merchant define value's length couldn't be bigger than 1024. but yours is " + mctDefinedValue.length());
         }
     }
@@ -226,6 +231,10 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         NOT_FAR_AWAY, FAR_AWAY, FAR_FAR_AWAY
     }
 
+    public static enum DeliveryType {
+        PREPAID, FREE, DIY, QUICK, PAYMENT_ON_DELIVERY
+    }
+
     public static final class ShippingAddress implements Serializable {
         private static final long serialVersionUID = 5453957807241639495L;
         private String id;
@@ -247,7 +256,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         public ShippingAddress() {
         }
 
-        public ShippingAddress(String zipCode, String mainAddress, String detailAddress, String city, String state, String countryCode) {
+        public ShippingAddress(final String zipCode, final String mainAddress, final String detailAddress, final String city, final String state, final String countryCode) {
             this.zipCode = zipCode;
             this.mainAddress = mainAddress;
             this.detailAddress = detailAddress;
@@ -260,7 +269,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return userActionCode;
         }
 
-        public ShippingAddress setUserActionCode(String userActionCode) {
+        public ShippingAddress setUserActionCode(final String userActionCode) {
             this.userActionCode = userActionCode;
             return this;
         }
@@ -269,7 +278,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return id;
         }
 
-        public ShippingAddress setId(String id) {
+        public ShippingAddress setId(final String id) {
             this.id = id;
             return this;
         }
@@ -278,7 +287,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return name;
         }
 
-        public ShippingAddress setName(String name) {
+        public ShippingAddress setName(final String name) {
             this.name = name;
             return this;
         }
@@ -287,7 +296,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return countryCode;
         }
 
-        public ShippingAddress setCountryCode(String countryCode) {
+        public ShippingAddress setCountryCode(final String countryCode) {
             if (!isValidCountryAlpha2Code(countryCode)) {
                 throw new IllegalArgumentException("countryCode should meet the specifications of ISO-3166 Alpha2(as KR, US) except prefix like a2. yours : " + countryCode);
             }
@@ -299,7 +308,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return zipCode;
         }
 
-        public ShippingAddress setZipCode(String zipCode) {
+        public ShippingAddress setZipCode(final String zipCode) {
             this.zipCode = zipCode;
             return this;
         }
@@ -308,7 +317,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return mainAddress;
         }
 
-        public ShippingAddress setMainAddress(String mainAddress) {
+        public ShippingAddress setMainAddress(final String mainAddress) {
             this.mainAddress = mainAddress;
             return this;
         }
@@ -317,7 +326,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return detailAddress;
         }
 
-        public ShippingAddress setDetailAddress(String detailAddress) {
+        public ShippingAddress setDetailAddress(final String detailAddress) {
             this.detailAddress = detailAddress;
             return this;
         }
@@ -326,7 +335,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return city;
         }
 
-        public ShippingAddress setCity(String city) {
+        public ShippingAddress setCity(final String city) {
             this.city = city;
             return this;
         }
@@ -335,7 +344,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return state;
         }
 
-        public ShippingAddress setState(String state) {
+        public ShippingAddress setState(final String state) {
             this.state = state;
             return this;
         }
@@ -344,7 +353,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return recipientName;
         }
 
-        public ShippingAddress setRecipientName(String recipientName) {
+        public ShippingAddress setRecipientName(final String recipientName) {
             this.recipientName = recipientName;
             return this;
         }
@@ -353,7 +362,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return recipientPhoneNumber;
         }
 
-        public ShippingAddress setRecipientPhoneNumber(String recipientPhoneNumber) {
+        public ShippingAddress setRecipientPhoneNumber(final String recipientPhoneNumber) {
             if (recipientPhoneNumber != null && !recipientPhoneNumber.matches("\\d+")) {
                 throw new IllegalArgumentException("phone number should be contained numbers. remove characters as '-'. yours : " + recipientPhoneNumber);
             }
@@ -365,7 +374,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return deliveryRestriction;
         }
 
-        public ShippingAddress setDeliveryRestriction(DeliveryRestriction deliveryRestriction) {
+        public ShippingAddress setDeliveryRestriction(final DeliveryRestriction deliveryRestriction) {
             this.deliveryRestriction = deliveryRestriction;
             return this;
         }
@@ -374,7 +383,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return defaultDeliveryCost;
         }
 
-        public ShippingAddress setDefaultDeliveryCost(Integer defaultDeliveryCost) {
+        public ShippingAddress setDefaultDeliveryCost(final Integer defaultDeliveryCost) {
             this.defaultDeliveryCost = defaultDeliveryCost;
             return this;
         }
@@ -383,7 +392,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return additionalDeliveryCost;
         }
 
-        public ShippingAddress setAdditionalDeliveryCost(Integer additionalDeliveryCost) {
+        public ShippingAddress setAdditionalDeliveryCost(final Integer additionalDeliveryCost) {
             this.additionalDeliveryCost = additionalDeliveryCost;
             return this;
         }
@@ -392,7 +401,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return orderApplied;
         }
 
-        public ShippingAddress setOrderApplied(Integer orderApplied) {
+        public ShippingAddress setOrderApplied(final Integer orderApplied) {
             this.orderApplied = orderApplied;
             return this;
         }
@@ -424,7 +433,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         public CardInstallmentInformation() {
         }
 
-        public CardInstallmentInformation(String cardCode, String monthlyInstallmentInfo) {
+        public CardInstallmentInformation(final String cardCode, final String monthlyInstallmentInfo) {
             this.cardCode = cardCode;
             this.monthlyInstallmentInfo = monthlyInstallmentInfo;
         }
@@ -449,6 +458,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         private String shippingAddress;
         private String deliveryPhoneNumber;
         private String deliveryName;
+        private DeliveryType deliveryType;
         private boolean isExchangeable;
 
         public String getProductTitle() {
@@ -492,9 +502,13 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return Collections.unmodifiableList(cardInfoList);
         }
 
+        public DeliveryType getDeliveryType() {
+            return deliveryType;
+        }
+
         @Deprecated
         @JsonProperty("productDetails")
-        public void setProductDetails(List<String> productDetails) {
+        public void setProductDetails(final List<String> productDetails) {
             this.productUrls = productDetails;
         }
     }

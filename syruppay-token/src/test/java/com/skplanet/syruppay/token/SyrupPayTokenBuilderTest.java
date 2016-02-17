@@ -65,7 +65,6 @@ package com.skplanet.syruppay.token;
 
 import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
 import com.skplanet.syruppay.token.claims.PayConfigurer;
-import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
 import com.skplanet.syruppay.token.domain.Mocks;
 import com.skplanet.syruppay.token.domain.TokenHistories;
 import com.skplanet.syruppay.token.jwt.SyrupPayToken;
@@ -75,10 +74,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Calendar;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.*;
 
 public class SyrupPayTokenBuilderTest {
@@ -523,6 +520,10 @@ public class SyrupPayTokenBuilderTest {
                                 .withOrderIdOfMerchant("1234567890123456789012345678901234567890")
                                 .withProductTitle("제품명")
                                 .withProductUrls("http://www.11st.co.kr/product/SellerProductDetail.tmall?method=getSellerProductDetail&prdNo=1354119088&trTypeCd=22&trCtgrNo=895019")
+                                .withMerchantDefinedValue("{\n" +
+                                                            "\"id_1\": \"value\",\n" +
+                                                            "\"id_2\": 2\n" +
+                                                            "}")
                                 .withLanguageForDisplay(PayConfigurer.Language.KO)
                                 .withAmount(50000)
                                 .withCurrency(PayConfigurer.Currency.KRW)
@@ -644,31 +645,25 @@ public class SyrupPayTokenBuilderTest {
         assertThat(t.getTransactionInfo().getPaymentRestrictions().getCardIssuerRegion(), is(notNullValue()));
     }
 
-    @Test
-    public void 정기_자동_결제_규격_추가_테스트() throws Exception {
-        // Give
-        // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
-                .subscription()
-                .fixed()
-                .withShippingAddress(new PayConfigurer.ShippingAddress("zipcode", "address1", "address2", "city", "state", "KR"))
-                .withSubscriptionStartDate(Calendar.getInstance().getTimeInMillis() / 1000)
-                .withSubscriptionFinishDate(Calendar.getInstance().getTimeInMillis() / 1000 + 365 * 24 * 60 * 60)
-                .withPaymentCycle(SubscriptionConfigurer.PaymentCycle.ONCE_A_MONTH)
-                ;
-        // @formatter:on
-        // When
-        Token token = SyrupPayTokenBuilder.verify(syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
-
-        // Then
-        assertThat(token.getSubscription(), is(notNullValue()));
-    }
-
     @Test(expected = Exception.class)
     public void 체크아웃_잘못된_규격_테스트() throws IOException, InvalidTokenException {
         SyrupPayTokenBuilder.uncheckValidationOfToken();
         Token t = SyrupPayTokenBuilder.verify(TokenHistories.VERSION_1_3_5_INVALID.token, TokenHistories.VERSION_1_3_5_INVALID.key);
         assertThat(t.getTransactionInfo().getMctTransAuthId(), is(notNullValue()));
         assertThat(t.getTransactionInfo().getPaymentRestrictions().getCardIssuerRegion(), is(notNullValue()));
+    }
+
+    @Test
+    public void PHP_버전_사용자로그인_토큰_호환성_테스트() throws IOException, InvalidTokenException {
+        SyrupPayTokenBuilder.uncheckValidationOfToken();
+        Token t = SyrupPayTokenBuilder.verify(TokenHistories.PHP_TO_LOGIN_VERSION_1_0_0.token, TokenHistories.PHP_TO_LOGIN_VERSION_1_0_0.key);
+        System.out.println(new ObjectMapper().writeValueAsString(t));
+    }
+
+    @Test
+    public void PHP_버전_결제_토큰_호환성_테스트() throws IOException, InvalidTokenException {
+        SyrupPayTokenBuilder.uncheckValidationOfToken();
+        Token t = SyrupPayTokenBuilder.verify(TokenHistories.PHP_TO_PAY_VERSION_1_0_0.token, TokenHistories.PHP_TO_PAY_VERSION_1_0_0.key);
+        System.out.println(new ObjectMapper().writeValueAsString(t));
     }
 }

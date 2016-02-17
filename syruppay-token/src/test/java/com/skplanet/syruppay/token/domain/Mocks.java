@@ -106,10 +106,10 @@ public class Mocks {
     }};
 
     public static List<OrderConfigurer.ProductDeliveryInfo> productDeliveryInfoList = new ArrayList<OrderConfigurer.ProductDeliveryInfo>() {{
-        add(new OrderConfigurer.ProductDeliveryInfo().setDeliveryType(OrderConfigurer.DeliveryType.PREPAID).setDeliveryName("선결제").setDefaultDeliveryCostApplied(true).setAdditionalDeliveryCostApplied(true));
-        add(new OrderConfigurer.ProductDeliveryInfo().setDeliveryType(OrderConfigurer.DeliveryType.FREE).setDeliveryName("무료배송").setDefaultDeliveryCostApplied(false).setAdditionalDeliveryCostApplied(true));
-        add(new OrderConfigurer.ProductDeliveryInfo().setDeliveryType(OrderConfigurer.DeliveryType.DIY).setDeliveryName("방문수령").setDefaultDeliveryCostApplied(false).setAdditionalDeliveryCostApplied(false));
-        add(new OrderConfigurer.ProductDeliveryInfo().setDeliveryType(OrderConfigurer.DeliveryType.QUICK).setDeliveryName("퀵서비스").setDefaultDeliveryCostApplied(false).setAdditionalDeliveryCostApplied(false));
-        add(new OrderConfigurer.ProductDeliveryInfo().setDeliveryType(OrderConfigurer.DeliveryType.PAYMENT_ON_DELIVERY).setDeliveryName("착불").setDefaultDeliveryCostApplied(false).setAdditionalDeliveryCostApplied(true));
+        add(new OrderConfigurer.ProductDeliveryInfo().setDeliveryType(PayConfigurer.DeliveryType.PREPAID).setDeliveryName("선결제").setDefaultDeliveryCostApplied(true).setAdditionalDeliveryCostApplied(true));
+        add(new OrderConfigurer.ProductDeliveryInfo().setDeliveryType(PayConfigurer.DeliveryType.FREE).setDeliveryName("무료배송").setDefaultDeliveryCostApplied(false).setAdditionalDeliveryCostApplied(true));
+        add(new OrderConfigurer.ProductDeliveryInfo().setDeliveryType(PayConfigurer.DeliveryType.DIY).setDeliveryName("방문수령").setDefaultDeliveryCostApplied(false).setAdditionalDeliveryCostApplied(false));
+        add(new OrderConfigurer.ProductDeliveryInfo().setDeliveryType(PayConfigurer.DeliveryType.QUICK).setDeliveryName("퀵서비스").setDefaultDeliveryCostApplied(false).setAdditionalDeliveryCostApplied(false));
+        add(new OrderConfigurer.ProductDeliveryInfo().setDeliveryType(PayConfigurer.DeliveryType.PAYMENT_ON_DELIVERY).setDeliveryName("착불").setDefaultDeliveryCostApplied(false).setAdditionalDeliveryCostApplied(true));
     }};
 }

@@ -224,10 +224,6 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
         CARD, SYRUP_PAY_COUPON
     }
 
-    public static enum DeliveryType {
-        PREPAID, FREE, DIY, QUICK, PAYMENT_ON_DELIVERY
-    }
-
     interface Element {
         public void validRequired();
     }
@@ -269,7 +265,7 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
     public static final class ProductDeliveryInfo implements Serializable, Element {
         private static final long serialVersionUID = 2327522688494682416L;
 
-        private DeliveryType deliveryType;
+        private PayConfigurer.DeliveryType deliveryType;
         private String deliveryName;
         private boolean defaultDeliveryCostApplied;
         private boolean additionalDeliveryCostApplied;
@@ -284,11 +280,11 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
             return this;
         }
 
-        public DeliveryType getDeliveryType() {
+        public PayConfigurer.DeliveryType getDeliveryType() {
             return deliveryType;
         }
 
-        public ProductDeliveryInfo setDeliveryType(DeliveryType deliveryType) {
+        public ProductDeliveryInfo setDeliveryType(PayConfigurer.DeliveryType deliveryType) {
             this.deliveryType = deliveryType;
             return this;
         }

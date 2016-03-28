@@ -666,4 +666,29 @@ public class SyrupPayTokenBuilderTest {
         Token t = SyrupPayTokenBuilder.verify(TokenHistories.PHP_TO_PAY_VERSION_1_0_0.token, TokenHistories.PHP_TO_PAY_VERSION_1_0_0.key);
         System.out.println(new ObjectMapper().writeValueAsString(t));
     }
+
+    @Test
+    public void 자동결제를_위한_인증_토큰_생성() throws Exception {
+        // Given
+        // @formatter:off
+        String t = syrupPayTokenBuilder.of("가맹점")
+                .login()
+                    .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
+                    .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
+                    .withSsoCredential("SSO 를 발급 받았을 경우 입력")
+                .and()
+                .subscription()
+                    .withAutoPaymentId("시럽페이로부터 발급받은 자동결제 ID") // Optional
+                .and()
+                .generateTokenBy("가맹점에게 전달한 비밀키");
+        // @formatter:on
+        System.out.printf(t);
+        // When
+        Token token = SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+
+        // Then
+        assertThat(token, is(notNullValue()));
+        assertThat(token.isValidInTime(), is(true));
+        assertThat(token.getIss(), is("가맹점"));
+    }
 }

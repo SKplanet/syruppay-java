@@ -194,9 +194,9 @@ String token = syrupPayTokenBuilder.of("가맹점 ID")
                     .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력") // Optional
                     .withSsoCredential("SSO 를 발급 받았을 경우 입력") // 자동 로그인 시 필수 입력
                 .and()
-                .subscription() // Optional. 자동결제 변경 시에만 필요, 자동결제 등록 시에는 필요 없음
+                .subscription()
                     .withAutoPaymentId("시럽페이로부터 발급받은 자동결제 ID") //Optional,  자동결제 변경 시에만 필요, 자동결제 등록 시에는 필요 없음
-                .and() // Optional. 자동결제 변경 시에만 필요, 자동결제 등록 시에는 필요 없음
+                .and()
                 .generateTokenBy("가맹점에게 전달한 비밀키");
 ```
 #### token 결과

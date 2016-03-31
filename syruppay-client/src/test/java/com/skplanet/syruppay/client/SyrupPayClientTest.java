@@ -25,13 +25,21 @@
 package com.skplanet.syruppay.client;
 
 import com.skplanet.syruppay.client.event.ApproveEvent;
-import com.skplanet.syruppay.client.event.CancelEvent;
 import com.skplanet.syruppay.client.event.GetSsoCredentialEvent;
 import com.skplanet.syruppay.client.mocks.ApproveMocks;
 import com.skplanet.syruppay.client.mocks.GetSsoMocks;
+import org.apache.commons.codec.binary.Base64;
+import org.bouncycastle.util.encoders.Base64Encoder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.*;
@@ -142,5 +150,43 @@ public class SyrupPayClientTest {
         assertThat(re, is(notNullValue()));
         assertThat(re.getSyrupPayError(), is(notNullValue()));
         assertThat(re.getSyrupPayError().getHttpStatus(), is("NOT_FOUND"));
+    }
+
+    @Test
+    public void testGet_Sso_WITH_BASIC_AUTHENTICATION() throws IOException {
+        URL url = new URL("http://ip:port/login");
+        String encoding = Base64.encodeBase64String("id:password".getBytes());
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setDoOutput(true);
+        connection.setRequestProperty("Authorization", "Basic " + encoding);
+        InputStream content = connection.getInputStream();
+        BufferedReader in =
+                new BufferedReader(new InputStreamReader(content));
+        String line;
+        while ((line = in.readLine()) != null) {
+            System.out.println(line);
+        }
+    }
+
+    @Test
+    public void testForReadme() throws IOException {
+        // 접속 환경 설정
+        SyrupPayClient syrupPayClient = new SyrupPayClient(SyrupPayEnvironment.DEVELOPMENT);
+        syrupPayClient.basicAuthentication("가맹점 ID", "가맹점 Basic Authentication Key");
+        syrupPayClient.useJweWhileCommunicating("가맹점 ID", "가맹점 Secret");
+
+        ApproveEvent.RequestApprove request = new ApproveEvent.RequestApprove();
+        request.setRequestIdOfMerchant("가맹점 거래 승인요청 ID");
+        request.setRequestTimeOfMerchant(1448870110);
+        request.setOrderIdOfMerchant("가맹점 거래인증 ID");
+        request.setPaymentAmount(10000);
+        request.setTaxFreeAmount(0);
+        request.setOcTransAuthId("TA20151130000000000020083");
+        request.setTransactionAuthenticationValue("y7we9C6TA_k-nEiYGnkeCUN8INuVCeyNJWcxbNmaKSI");
+
+        ApproveEvent.ResponseApprove response = syrupPayClient.approve(request);
+
     }
 }

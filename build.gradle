@@ -270,6 +270,7 @@ project(':syruppay-jose') {
 project(':syruppay-client') {
     apply plugin: 'maven'
 
+    ext.javaVersion = '1.7'
     archivesBaseName = 'syruppay-client'
     version = 0.1
 

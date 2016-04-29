@@ -32,8 +32,6 @@ import com.skplanet.syruppay.client.event.ApproveEvent;
 import com.skplanet.syruppay.client.event.GetSsoCredentialEvent;
 import com.skplanet.syruppay.client.mocks.ApproveMocks;
 import com.skplanet.syruppay.client.mocks.GetSsoMocks;
-import org.apache.commons.codec.binary.Base64;
-import org.bouncycastle.util.encoders.Base64Encoder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -177,7 +175,7 @@ public class SyrupPayClientTest {
                         .header(h)
                         .payload("{\n" +
                                 "    \"ssoIdentifier\": {\n" +
-                                "        \"mctUserId\" : \"15644623\"\n" +
+                                "        \"mctUserId\" : \"15644623-3\"\n" +
                                 "    }\n" +
                                 "}")
                         .key("G3aIW7hYmlTjag3FDc63OGLNWwvagVUU")
@@ -188,7 +186,13 @@ public class SyrupPayClientTest {
         out.close();
 
         try {
-            InputStream content = connection.getInputStream();
+            int status = connection.getResponseCode();
+            InputStream content;
+            if (status == 200) {
+                content = connection.getInputStream();
+            } else {
+                content = connection.getErrorStream();
+            }
             BufferedReader in = new BufferedReader(new InputStreamReader(content));
             String line;
             StringBuilder buf = new StringBuilder();
@@ -205,10 +209,10 @@ public class SyrupPayClientTest {
             System.out.println(response);
 
             in.close();
-        } catch(FileNotFoundException fe) {
+        } catch (FileNotFoundException fe) {
             // 사용자 없음
             System.out.println("User Not Found");
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

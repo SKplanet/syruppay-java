@@ -63,6 +63,8 @@
 
 package com.skplanet.syruppay.token;
 
+import com.skplanet.jose.Jose;
+import com.skplanet.jose.JoseBuilders;
 import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
 import com.skplanet.syruppay.token.claims.PayConfigurer;
 import com.skplanet.syruppay.token.domain.Mocks;
@@ -690,5 +692,18 @@ public class SyrupPayTokenBuilderTest {
         assertThat(token, is(notNullValue()));
         assertThat(token.isValidInTime(), is(true));
         assertThat(token.getIss(), is("가맹점"));
+    }
+
+    @Test
+    public void OCB_복호화() throws Exception {
+        String t = "eyJhbGciOiJBMTI4S1ciLCJlbmMiOiJBMTI4Q0JDLUhTMjU2Iiwia2lkIjoic2t0bWFsbF9zMDAyIiwidmVyIjoiMS4zLjIifQ.RTsmoCwCgsBViSsQUzYy4iNM3MYVTmpbf9J5be_Kpf9pw5s8xrdGAQ.7wrdUYUgLnTXfK-B_Bjlhg.WiffmU_pgYtsPWi95sfRmGNyM8bIBWNN7YTUPW6LX14zWgOu8O43YIADhgZtG5b_65iBxq--vS1D_cKEPp523okH4cDLwaubsw8xkkh1ke_E9mxpXhEvjdPRyK4Kv7khYeBn3T515cby3fzHX5Ubv5qx3uJ_1u9udkCJ8LqdZEzyIfWeTIHQZTt2C3NAVWBK2s8dGSGsQLsRzKks-7BAMMVyS-IE_UYoQ4OQ5q41kyMIxqbstEiheYx8A-BU32KvBU_EqcS_zeRE-LgwgVIjh35KezLmdQQnD1Sp3aDMrV0.cYCigQ6r-1hv0oDtxqs0dA";
+
+        String json = new Jose().configuration(
+                JoseBuilders.compactDeserializationBuilder()
+                        .serializedSource(t)
+                        .key("crTKa9RY5Re0J0UYSin9cFap6x5UDsib")
+        ).deserialization();
+        System.out.printf(json);
+
     }
 }

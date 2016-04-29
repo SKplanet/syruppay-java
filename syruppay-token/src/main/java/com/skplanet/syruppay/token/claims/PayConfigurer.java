@@ -177,6 +177,11 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         return this;
     }
 
+    public PayConfigurer<H> withMatchedUser(final MatchedUser matchedUser) {
+        paymentRestrictions.matchedUser = matchedUser;
+        return this;
+    }
+
     public String claimName() {
         return "transactionInfo";
     }
@@ -521,6 +526,12 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return cardIssuerRegion;
         }
 
+        private MatchedUser matchedUser;
+
+        public MatchedUser getMatchedUser() {
+            return matchedUser;
+        }
+
         @JsonIgnore
         public PayableLocaleRule getPayableLocaleRule() {
             for (PayableLocaleRule r : PayableLocaleRule.values()) {
@@ -530,5 +541,9 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             }
             throw new IllegalArgumentException("cardIssuerRegion of this object is not matched with PaymentRestriction enumeration. check this : " + this.cardIssuerRegion);
         }
+    }
+
+    public static enum MatchedUser {
+        CI_MATCHED_ONLY
     }
 }

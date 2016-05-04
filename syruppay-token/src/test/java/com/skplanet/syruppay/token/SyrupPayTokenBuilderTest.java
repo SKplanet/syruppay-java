@@ -71,11 +71,19 @@ import com.skplanet.syruppay.token.domain.Mocks;
 import com.skplanet.syruppay.token.domain.TokenHistories;
 import com.skplanet.syruppay.token.jwt.SyrupPayToken;
 import com.skplanet.syruppay.token.jwt.Token;
+import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.security.spec.KeySpec;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.*;
@@ -704,6 +712,40 @@ public class SyrupPayTokenBuilderTest {
                         .key("crTKa9RY5Re0J0UYSin9cFap6x5UDsib")
         ).deserialization();
         System.out.printf(json);
-
     }
+
+    @Test
+    public void AES_MODE_별_테스트_ERROR() throws Exception {
+        final String keyFactorySalt = "65594821073030071593";
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "SunJCE");
+        SecretKeySpec secretKeySpec;
+        try {
+            KeySpec spec = new PBEKeySpec("7244798e1fab1a9175f752a8a7e12beafe2cd27b208f9f2f7ab43173358153fc5eae2499afa66f7386d74cb8cf4765133c513ae2e6acd521acde4f80d747".toCharArray(), keyFactorySalt.getBytes(), 1, 256);
+            SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            SecretKey secretKey = secretKeyFactory.generateSecret(spec);
+            secretKeySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
+        } catch (Exception e) {
+            throw e;
+        }
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, new IvParameterSpec(new byte[cipher.getBlockSize()]));
+        System.out.println(new String(cipher.doFinal(Base64.decodeBase64("yMvtcFwlhwBg22GF-biF4A".getBytes())), "UTF-8"));
+    }
+
+    @Test
+    public void AES_MODE_별_테스트() throws Exception {
+        final String keyFactorySalt = "65594821073030071593";
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "SunJCE");
+        SecretKeySpec secretKeySpec;
+        try {
+            KeySpec spec = new PBEKeySpec("56c32e32c94a9fbde34cbc25a3b232bf25e91ec3a8a67159cffef70b924a67dcca13fc364cdb10a7a265f5520469997709ce542e6644b861c585c7ccd2f3".toCharArray(), keyFactorySalt.getBytes(), 1, 256);
+            SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            SecretKey secretKey = secretKeyFactory.generateSecret(spec);
+            secretKeySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
+        } catch (Exception e) {
+            throw e;
+        }
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, new IvParameterSpec(new byte[cipher.getBlockSize()]));
+        System.out.println(new String(cipher.doFinal(Base64.decodeBase64("yMvtcFwlhwBg22GF-biF4A".getBytes())), "UTF-8"));
+    }
+
 }

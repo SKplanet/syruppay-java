@@ -218,7 +218,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         return this;
     }
 
-    public PayConfigurer<H> withRestrictionOf(final PaymentType paymentType) {
+    public PayConfigurer<H> withRestrictionPaymentTypeOf(final String paymentType) {
         paymentRestrictions.paymentType = paymentType;
         return this;
     }
@@ -569,7 +569,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         private static final long serialVersionUID = 3528805314551672041L;
         private String cardIssuerRegion = "ALLOWED:KOR";
         private MatchedUser matchedUser;
-        private PaymentType paymentType;
+        private String paymentType;
 
         public String getCardIssuerRegion() {
             return cardIssuerRegion;
@@ -579,7 +579,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return matchedUser;
         }
 
-        public PaymentType getPaymentType() {
+        public String getPaymentType() {
             return paymentType;
         }
 
@@ -593,10 +593,6 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             throw new IllegalArgumentException("cardIssuerRegion of this object is not matched with PaymentRestriction enumeration. check this : " + this.cardIssuerRegion);
         }
 
-    }
-
-    public static enum PaymentType {
-        CARD, BANK, MOBILE
     }
 
     public static enum MatchedUser {

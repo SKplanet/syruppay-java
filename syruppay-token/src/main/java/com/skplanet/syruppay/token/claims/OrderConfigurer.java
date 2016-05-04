@@ -48,6 +48,7 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
     private List<Loyalty> loyaltyList = new ArrayList<Loyalty>();
     private List<PayConfigurer.ShippingAddress> shippingAddressList = new ArrayList<PayConfigurer.ShippingAddress>();
     private List<MonthlyInstallment> monthlyInstallmentList = new ArrayList<MonthlyInstallment>();
+    private List<PayConfigurer.Bank> bankInfoList = new ArrayList<PayConfigurer.Bank>();
 
     public List<MonthlyInstallment> getMonthlyInstallmentList() {
         return Collections.unmodifiableList(monthlyInstallmentList);
@@ -72,6 +73,10 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
 
     public ProductDeliveryInfo getProductDeliveryInfo() {
         return this.productDeliveryInfo;
+    }
+
+    public List<PayConfigurer.Bank> getBankInfoList() {
+        return bankInfoList;
     }
 
     public String claimName() {
@@ -99,6 +104,15 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
         for (MonthlyInstallment m : monthlyInstallmentList) {
             m.validRequired();
         }
+    }
+
+    public OrderConfigurer<H> withBankInfoList(final List<PayConfigurer.Bank> bankInfoList) {
+        this.bankInfoList.addAll(bankInfoList);
+        return this;
+    }
+
+    public OrderConfigurer<H> withBankInfoList(final PayConfigurer.Bank... bank) {
+        return withBankInfoList(Arrays.asList(bank));
     }
 
     public OrderConfigurer<H> withPrivacyPolicyRequirements(String privacyPolicyRequirements) {
@@ -221,7 +235,7 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
     }
 
     public static enum AcceptType {
-        CARD, SYRUP_PAY_COUPON
+        CARD, SYRUP_PAY_COUPON, BANK, MOBILE
     }
 
     interface Element {

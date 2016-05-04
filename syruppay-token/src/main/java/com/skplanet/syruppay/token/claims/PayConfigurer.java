@@ -48,6 +48,20 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
     private String mctDefinedValue;
     private PaymentInformationBySeller paymentInfo = new PaymentInformationBySeller();
     private PaymentRestriction paymentRestrictions = new PaymentRestriction();
+    private CashReceiptDisplay cashReceiptDisplay;
+
+    public static enum CashReceiptDisplay {
+        YES, NO, DELEGATE_ADMIN
+    }
+
+    public CashReceiptDisplay getCashReceiptDisplay() {
+        return cashReceiptDisplay;
+    }
+
+    public PayConfigurer<H> withCashReceiptDisplay(final CashReceiptDisplay cashReceiptDisplay) {
+        this.cashReceiptDisplay = cashReceiptDisplay;
+        return this;
+    }
 
     public static boolean isValidCountryAlpha2Code(final String code) {
         return ISO_COUNTRIES.contains(code.contains(":") ? code.substring(code.indexOf(":") + 1).toUpperCase() : code.toUpperCase());
@@ -112,6 +126,15 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
 
     public PayConfigurer<H> withProductUrls(final String... url) {
         return withProductUrls(Arrays.asList(url));
+    }
+
+    public PayConfigurer<H> withBankInfoList(final List<Bank> bankInfoList) {
+        paymentInfo.bankInfoList.addAll(bankInfoList);
+        return this;
+    }
+
+    public PayConfigurer<H> withBankInfoList(final Bank... bank) {
+        return withBankInfoList(Arrays.asList(bank));
     }
 
     public PayConfigurer<H> withLanguageForDisplay(final Language l) {
@@ -465,6 +488,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         private String deliveryName;
         private DeliveryType deliveryType;
         private boolean isExchangeable;
+        private List<Bank> bankInfoList = new ArrayList<Bank>();
 
         public String getProductTitle() {
             return productTitle;
@@ -511,6 +535,10 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             return deliveryType;
         }
 
+        public List<Bank> getBankInfoList() {
+            return bankInfoList;
+        }
+
         @Deprecated
         @JsonProperty("productDetails")
         public void setProductDetails(final List<String> productDetails) {
@@ -545,5 +573,18 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
 
     public static enum MatchedUser {
         CI_MATCHED_ONLY
+    }
+
+    public static class Bank {
+        private String bankCode;
+
+        public String getBankCode() {
+            return bankCode;
+        }
+
+        public Bank setBankCode(String bankCode) {
+            this.bankCode = bankCode;
+            return this;
+        }
     }
 }

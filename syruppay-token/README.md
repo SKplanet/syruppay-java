@@ -24,7 +24,7 @@ dependencies {
 	<dependency>
 		<groupId>com.skplanet.syruppay</groupId>
 		<artifactId>syruppay-token</artifactId>
-		<version>1.3.6</version>
+		<version>1.3.7_SNAPSHOT_1</version>
 	</dependency>
 </dependencies>
 ```

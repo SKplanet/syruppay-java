@@ -13,7 +13,7 @@
 ### Gradle 빌드 시
 ```groovy
 dependencies {
-     compile 'com.skplanet.syruppay:syruppay-token:1.3.7_SNAPSHOT_3'
+     compile 'com.skplanet.syruppay:syruppay-token:1.3.7_SNAPSHOT_4'
 }
 
 ```
@@ -24,7 +24,7 @@ dependencies {
 	<dependency>
 		<groupId>com.skplanet.syruppay</groupId>
 		<artifactId>syruppay-token</artifactId>
-		<version>1.3.7_SNAPSHOT_3</version>
+		<version>1.3.7_SNAPSHOT_4</version>
 	</dependency>
 </dependencies>
 ```
@@ -93,7 +93,7 @@ String token = new SyrupPayTokenBuilder().of("가맹점 ID")
 					.withDeliveryName("배송 수신자")
 					.withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
 					.withBeAbleToExchangeToCash(false)
-					.withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
+					.withRestrictionOf(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
 				.and()
 				.generateTokenBy("가맹점에게 전달한 비밀키");
 ```
@@ -255,7 +255,7 @@ String token = new SyrupPayTokenBuilder().of("가맹점 ID")
                         .withDeliveryName("배송 수신자") // Optional
                         .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6")) // Optional
                         .withBeAbleToExchangeToCash(false) // Optional
-                        .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR) // Optional
+                        .withRestrictionOf(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR) // Optional
                         .withMatchedUser(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional. 가맹점과 시럽페이 사용자 동일 여부 확인 시에만 필요
                     .and()
                     .generateTokenBy("가맹점에게 전달한 비밀키");
@@ -284,7 +284,7 @@ String token = new SyrupPayTokenBuilder().of("가맹점 ID")
                         .withDeliveryName("배송 수신자") // Optional
                         .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6")) // Optional
                         .withBeAbleToExchangeToCash(false) // Optional
-                        .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR) // Optional
+                        .withRestrictionOf(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR) // Optional
                         .withMerchantDefinedValue("{" +
                                                   "\"id_1\": \"value\"," +
                                                   "\"id_2\": 2" +

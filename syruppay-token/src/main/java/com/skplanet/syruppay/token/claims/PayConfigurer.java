@@ -99,6 +99,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         return this;
     }
 
+
     @Deprecated
     public String getMctDefinedValue() {
         return mctDefinedValue;
@@ -195,15 +196,33 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         return this;
     }
 
+    public PayConfigurer<H> withRestrictionOf(final PayableLocaleRule r) {
+        paymentRestrictions.cardIssuerRegion = r.toCode();
+        return this;
+    }
+
+    @Deprecated
     public PayConfigurer<H> withPayableRuleWithCard(final PayableLocaleRule r) {
         paymentRestrictions.cardIssuerRegion = r.toCode();
         return this;
     }
 
+    public PayConfigurer<H> withRestrictionOf(final MatchedUser matchedUser) {
+        paymentRestrictions.matchedUser = matchedUser;
+        return this;
+    }
+
+    @Deprecated
     public PayConfigurer<H> withMatchedUser(final MatchedUser matchedUser) {
         paymentRestrictions.matchedUser = matchedUser;
         return this;
     }
+
+    public PayConfigurer<H> withRestrictionOf(final PaymentType paymentType) {
+        paymentRestrictions.paymentType = paymentType;
+        return this;
+    }
+
 
     public String claimName() {
         return "transactionInfo";
@@ -549,15 +568,19 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
     public static final class PaymentRestriction implements Serializable {
         private static final long serialVersionUID = 3528805314551672041L;
         private String cardIssuerRegion = "ALLOWED:KOR";
+        private MatchedUser matchedUser;
+        private PaymentType paymentType;
 
         public String getCardIssuerRegion() {
             return cardIssuerRegion;
         }
 
-        private MatchedUser matchedUser;
-
         public MatchedUser getMatchedUser() {
             return matchedUser;
+        }
+
+        public PaymentType getPaymentType() {
+            return paymentType;
         }
 
         @JsonIgnore
@@ -569,6 +592,11 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
             }
             throw new IllegalArgumentException("cardIssuerRegion of this object is not matched with PaymentRestriction enumeration. check this : " + this.cardIssuerRegion);
         }
+
+    }
+
+    public static enum PaymentType {
+        CARD, BANK, MOBILE
     }
 
     public static enum MatchedUser {

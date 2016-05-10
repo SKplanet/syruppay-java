@@ -195,7 +195,7 @@ String token = syrupPayTokenBuilder.of("가맹점 ID")
                 .and()
                 .subscription()
                     .withAutoPaymentId("시럽페이로부터 발급받은 자동결제 ID") //Optional,  자동결제 변경 시에만 필요, 자동결제 등록 시에는 필요 없음
-                    .withMatchedUser(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional. 가맹점과 시럽페이 사용자 동일 여부 확인 시에만 필요  
+                    .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional. 가맹점과 시럽페이 사용자 동일 여부 확인 시에만 필요  
                 .and()
                 .generateTokenBy("가맹점에게 전달한 비밀키");
 ```
@@ -256,7 +256,7 @@ String token = new SyrupPayTokenBuilder().of("가맹점 ID")
                         .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6")) // Optional
                         .withBeAbleToExchangeToCash(false) // Optional
                         .withRestrictionOf(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR) // Optional
-                        .withMatchedUser(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional. 가맹점과 시럽페이 사용자 동일 여부 확인 시에만 필요
+                        .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional. 가맹점과 시럽페이 사용자 동일 여부 확인 시에만 필요
                     .and()
                     .generateTokenBy("가맹점에게 전달한 비밀키");
 ```
@@ -289,7 +289,7 @@ String token = new SyrupPayTokenBuilder().of("가맹점 ID")
                                                   "\"id_1\": \"value\"," +
                                                   "\"id_2\": 2" +
                                                   "}") // Optional, JSON 포맷 이용 시 Escape(\) 입력에 주의 필요, 1k 제한
-                        .withMatchedUser(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional. 가맹점과 시럽페이 사용자 동일 여부 확인 시에만 필요
+                        .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional. 가맹점과 시럽페이 사용자 동일 여부 확인 시에만 필요
                     .and()
                     .generateTokenBy("가맹점에게 전달한 비밀키");
 ```

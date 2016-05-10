@@ -38,7 +38,7 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
         return this;
     }
 
-    public SubscriptionConfigurer<H> withMatchedUser(final PayConfigurer.MatchedUser matchedUser) {
+    public SubscriptionConfigurer<H> withRestrictionOf(final PayConfigurer.MatchedUser matchedUser) {
         this.matchedUser = matchedUser;
         return this;
     }

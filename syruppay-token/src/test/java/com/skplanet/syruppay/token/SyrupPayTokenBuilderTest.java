@@ -689,7 +689,7 @@ public class SyrupPayTokenBuilderTest {
                 .and()
                 .subscription()
                     .withAutoPaymentId("시럽페이로부터 발급받은 자동결제 ID") // Optional
-                    .withMatchedUser(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional
+                    .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional
                 .and()
                 .generateTokenBy("가맹점에게 전달한 비밀키");
         // @formatter:on

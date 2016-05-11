@@ -749,4 +749,58 @@ public class SyrupPayTokenBuilderTest {
         System.out.println(new String(cipher.doFinal(Base64.decodeBase64("yMvtcFwlhwBg22GF-biF4A".getBytes())), "UTF-8"));
     }
 
+    @Test
+    public void 자동결제를_위한_인증_토큰_생성_후_클래임_확인_테스트() throws Exception {
+        // Given
+        // @formatter:off
+        String t = syrupPayTokenBuilder.of("가맹점")
+                .login()
+                    .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
+                    .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
+                    .withSsoCredential("SSO 를 발급 받았을 경우 입력")
+                .and()
+                .subscription()
+                    .withAutoPaymentId("시럽페이로부터 발급받은 자동결제 ID") // Optional
+                    .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional
+                .and()
+                .generateTokenBy("가맹점에게 전달한 비밀키");
+        // @formatter:on
+        System.out.printf(t);
+        // When
+        Token token = SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+
+        // Then
+        assertThat(token, is(notNullValue()));
+        assertThat(token.getClaims(SyrupPayToken.Claim.TO_SUBSCRIPTION).size(), is(1));
+        assertThat(token.getClaims(SyrupPayToken.Claim.TO_LOGIN).size(), is(1));
+        assertThat(token.getClaims(SyrupPayToken.Claim.TO_PAY).size(), is(0));
+    }
+
+    @Test
+    public void 자동결제를_위한_인증_토큰_생성_후_개별_클래임_확인_테스트() throws Exception {
+        // Given
+        // @formatter:off
+        String t = syrupPayTokenBuilder.of("가맹점")
+                .login()
+                    .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
+                    .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
+                    .withSsoCredential("SSO 를 발급 받았을 경우 입력")
+                .and()
+                .subscription()
+                    .withAutoPaymentId("시럽페이로부터 발급받은 자동결제 ID") // Optional
+                    .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional
+                .and()
+                .generateTokenBy("가맹점에게 전달한 비밀키");
+        // @formatter:on
+        System.out.printf(t);
+        // When
+        Token token = SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+
+        // Then
+        assertThat(token, is(notNullValue()));
+        assertThat(token.getClaim(SyrupPayToken.Claim.TO_SUBSCRIPTION), is(notNullValue()));
+        assertThat(token.getClaim(SyrupPayToken.Claim.TO_LOGIN), is(notNullValue()));
+        assertThat(token.getClaim(SyrupPayToken.Claim.TO_PAY), is(nullValue()));
+    }
+
 }

@@ -210,20 +210,6 @@ public class SyrupPayToken implements Token {
         return subscription;
     }
 
-    public static enum Claim {
-        TO_SIGNUP(MerchantUserConfigurer.class), TO_LOGIN(MerchantUserConfigurer.class), TO_PAY(PayConfigurer.class), TO_ORDER(OrderConfigurer.class), TO_MAP_USER(MapToSyrupPayUserConfigurer.class), TO_SUBSCRIPTION(SubscriptionConfigurer.class);
-
-        <C extends ClaimConfigurerAdapter> Claim(Class<C> configurer) {
-            this.configurer = configurer;
-        }
-
-        Class<?> configurer;
-
-        public Class<?> getConfigurer() {
-            return configurer;
-        }
-    }
-
     public List<ClaimConfigurer> getClaims() {
         return getClaims(Claim.values());
     }
@@ -264,4 +250,19 @@ public class SyrupPayToken implements Token {
         }
         return null;
     }
+
+    public static enum Claim {
+        TO_SIGNUP(MerchantUserConfigurer.class), TO_LOGIN(MerchantUserConfigurer.class), TO_PAY(PayConfigurer.class), TO_CHECKOUT(OrderConfigurer.class), TO_MAP_USER(MapToSyrupPayUserConfigurer.class), TO_SUBSCRIPTION(SubscriptionConfigurer.class);
+
+        <C extends ClaimConfigurerAdapter> Claim(Class<C> configurer) {
+            this.configurer = configurer;
+        }
+
+        Class<?> configurer;
+
+        public Class<?> getConfigurer() {
+            return configurer;
+        }
+    }
+
 }

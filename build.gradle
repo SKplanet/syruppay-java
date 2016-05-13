@@ -35,7 +35,7 @@ import org.ajoberstar.gradle.git.tasks.GitTag
 
 configure(allprojects) { project ->
     ext.javaVersion = '1.5'
-    ext.projectVersion = '1.3.7_SNAPSHOT_8'
+    ext.projectVersion = '1.3.7'
     ext.tagVersion = projectVersion
 
     version = projectVersion
@@ -135,64 +135,64 @@ project(':syruppay-token') {
         compile 'com.skplanet.syruppay:jose_jdk1.5:1.3.2'
     }
 
-//    uploadArchives {
-//        dependsOn pushTag
-//        repositories {
-//            mavenDeployer {
-//                beforeDeployment {
-//                    MavenDeployment deployment -> signing.signPom(deployment)
-//                }
-//                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
-//                    authentication(userName: ossrhUsername, password: ossrhPassword)
-//                }
-//
-//                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
-//                    authentication(userName: ossrhUsername, password: ossrhPassword)
-//                }
-//
-//                pom {
-//                    project {
-//                        name 'Syrup Pay Token Java Library'
-//                        packaging 'jar'
-//                        // optionally artifactId can be defined here
-//                        description 'This library helps 3rd party developers or merchants to develop with Syrup Pay service.'
-//                        url 'https://github.com/skplanet/syruppay-java'
-//
-//                        scm {
-//                            connection 'scm:git:https://github.com/skplanet/syruppay-java.git'
-//                            developerConnection 'scm:git:https://github.com/skplanet/syruppay-java.git'
-//                            url 'https://github.com/skplanet/syruppay-java'
-//                        }
-//
-//                        licenses {
-//                            license {
-//                                name 'GNU Lesser General Public License, version 2.1'
-//                                url 'http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html'
-//                            }
-//                        }
-//
-//                        developers {
-//                            developer {
-//                                id 'placebo'
-//                                name 'HyungTae Lim'
-//                                email 'placebo2me@gmail.com'
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-    // to skplanet maven repo
     uploadArchives {
+        dependsOn pushTag
         repositories {
             mavenDeployer {
-                repository(url: "http://mvn.skplanet.com/content/repositories/releases")
-                snapshotRepository(url: "http://mvn.skplanet.com/content/repositories/snapshots")
+                beforeDeployment {
+                    MavenDeployment deployment -> signing.signPom(deployment)
+                }
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                pom {
+                    project {
+                        name 'Syrup Pay Token Java Library'
+                        packaging 'jar'
+                        // optionally artifactId can be defined here
+                        description 'This library helps 3rd party developers or merchants to develop with Syrup Pay service.'
+                        url 'https://github.com/skplanet/syruppay-java'
+
+                        scm {
+                            connection 'scm:git:https://github.com/skplanet/syruppay-java.git'
+                            developerConnection 'scm:git:https://github.com/skplanet/syruppay-java.git'
+                            url 'https://github.com/skplanet/syruppay-java'
+                        }
+
+                        licenses {
+                            license {
+                                name 'GNU Lesser General Public License, version 2.1'
+                                url 'http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id 'byplacebo'
+                                name 'HyungTae Lim'
+                                email 'placebo2me@gmail.com'
+                            }
+                        }
+                    }
+                }
             }
         }
     }
+
+    // to skplanet maven repo
+//    uploadArchives {
+//        repositories {
+//            mavenDeployer {
+//                repository(url: "http://mvn.skplanet.com/content/repositories/releases")
+//                snapshotRepository(url: "http://mvn.skplanet.com/content/repositories/snapshots")
+//            }
+//        }
+//    }
 }
 
 project(':syruppay-jose') {

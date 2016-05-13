@@ -22,11 +22,6 @@
 package com.skplanet.syruppay.token.claims;
 
 import com.skplanet.syruppay.token.TokenBuilder;
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * 정기/비정기 결제 정보에 대한 Claim 을 구성한다.
@@ -36,14 +31,24 @@ import java.util.List;
  */
 public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<SubscriptionConfigurer<H>, H> {
     private String autoPaymentId;
+    private PayConfigurer.MatchedUser matchedUser;
 
     public SubscriptionConfigurer<H> withAutoPaymentId(final String autoPaymentId) {
         this.autoPaymentId = autoPaymentId;
         return this;
     }
 
+    public SubscriptionConfigurer<H> withRestrictionOf(final PayConfigurer.MatchedUser matchedUser) {
+        this.matchedUser = matchedUser;
+        return this;
+    }
+
     public String getAutoPaymentId() {
         return autoPaymentId;
+    }
+
+    public PayConfigurer.MatchedUser getMatchedUser() {
+        return matchedUser;
     }
 
     public String claimName() {

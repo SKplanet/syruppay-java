@@ -21,6 +21,8 @@
 
 package com.skplanet.syruppay.token.jwt;
 
+import com.skplanet.syruppay.token.ClaimConfigurer;
+import com.skplanet.syruppay.token.ClaimConfigurerAdapter;
 import com.skplanet.syruppay.token.claims.MapToSktUserConfigurer;
 import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
 import com.skplanet.syruppay.token.claims.MerchantUserConfigurer;
@@ -33,13 +35,18 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * 시럽페이에서 사용되는 토큰를 추상화하여 정의한다.
  *
  * @author 임형태
  * @since 1.0
  */
-public final class SyrupPayToken implements Token {
+public class SyrupPayToken implements Token {
     private static final Logger LOGGER = LoggerFactory.getLogger(SyrupPayToken.class.getName());
 
     private static final long serialVersionUID = 1684081647352606412L;
@@ -202,4 +209,60 @@ public final class SyrupPayToken implements Token {
     public SubscriptionConfigurer getSubscription() {
         return subscription;
     }
+
+    public List<ClaimConfigurer> getClaims() {
+        return getClaims(Claim.values());
+    }
+
+    public ClaimConfigurer getClaim(final Claim claim) {
+        try {
+            return getFieldOfClaimIfNotExistNull(claim);
+        } catch (IllegalAccessException e) {
+            LOGGER.warn("except while find claim from token: {}", e.getMessage());
+        } catch (NoSuchFieldException e) {
+            LOGGER.warn("except while find claim from token: {}", e.getMessage());
+        }
+        return null;
+    }
+
+    public List<ClaimConfigurer> getClaims(final Claim... claims) {
+        List<ClaimConfigurer> l = new ArrayList<ClaimConfigurer>();
+        for (Claim c : claims) {
+            try {
+                ClaimConfigurer cc = getFieldOfClaimIfNotExistNull(c);
+                if (cc != null) {
+                    l.add(cc);
+                }
+            } catch (IllegalAccessException e) {
+                LOGGER.warn("except while find claim from token: {}", e.getMessage());
+            } catch (NoSuchFieldException e) {
+                LOGGER.warn("except while find claim from token: {}", e.getMessage());
+            }
+        }
+        return Collections.unmodifiableList(l);
+    }
+
+    private ClaimConfigurer getFieldOfClaimIfNotExistNull(final Claim c) throws IllegalAccessException, NoSuchFieldException {
+        for (Field f : SyrupPayToken.class.getDeclaredFields()) {
+            if (f.getType().isAssignableFrom(c.getConfigurer())) {
+                return (ClaimConfigurer) f.get(this);
+            }
+        }
+        return null;
+    }
+
+    public static enum Claim {
+        TO_SIGNUP(MerchantUserConfigurer.class), TO_LOGIN(MerchantUserConfigurer.class), TO_PAY(PayConfigurer.class), TO_CHECKOUT(OrderConfigurer.class), TO_MAP_USER(MapToSyrupPayUserConfigurer.class), TO_SUBSCRIPTION(SubscriptionConfigurer.class);
+
+        <C extends ClaimConfigurerAdapter> Claim(Class<C> configurer) {
+            this.configurer = configurer;
+        }
+
+        Class<?> configurer;
+
+        public Class<?> getConfigurer() {
+            return configurer;
+        }
+    }
+
 }

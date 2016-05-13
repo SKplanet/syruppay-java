@@ -63,17 +63,27 @@
 
 package com.skplanet.syruppay.token;
 
+import com.skplanet.jose.Jose;
+import com.skplanet.jose.JoseBuilders;
 import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
 import com.skplanet.syruppay.token.claims.PayConfigurer;
 import com.skplanet.syruppay.token.domain.Mocks;
 import com.skplanet.syruppay.token.domain.TokenHistories;
 import com.skplanet.syruppay.token.jwt.SyrupPayToken;
 import com.skplanet.syruppay.token.jwt.Token;
+import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.security.spec.KeySpec;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.*;
@@ -666,4 +676,131 @@ public class SyrupPayTokenBuilderTest {
         Token t = SyrupPayTokenBuilder.verify(TokenHistories.PHP_TO_PAY_VERSION_1_0_0.token, TokenHistories.PHP_TO_PAY_VERSION_1_0_0.key);
         System.out.println(new ObjectMapper().writeValueAsString(t));
     }
+
+    @Test
+    public void 자동결제를_위한_인증_토큰_생성() throws Exception {
+        // Given
+        // @formatter:off
+        String t = syrupPayTokenBuilder.of("가맹점")
+                .login()
+                    .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
+                    .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
+                    .withSsoCredential("SSO 를 발급 받았을 경우 입력")
+                .and()
+                .subscription()
+                    .withAutoPaymentId("시럽페이로부터 발급받은 자동결제 ID") // Optional
+                    .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional
+                .and()
+                .generateTokenBy("가맹점에게 전달한 비밀키");
+        // @formatter:on
+        System.out.printf(t);
+        // When
+        Token token = SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+
+        // Then
+        assertThat(token, is(notNullValue()));
+        assertThat(token.isValidInTime(), is(true));
+        assertThat(token.getIss(), is("가맹점"));
+    }
+
+    @Test
+    public void OCB_복호화() throws Exception {
+        String t = "eyJhbGciOiJBMTI4S1ciLCJlbmMiOiJBMTI4Q0JDLUhTMjU2Iiwia2lkIjoic2t0bWFsbF9zMDAyIiwidmVyIjoiMS4zLjIifQ.RTsmoCwCgsBViSsQUzYy4iNM3MYVTmpbf9J5be_Kpf9pw5s8xrdGAQ.7wrdUYUgLnTXfK-B_Bjlhg.WiffmU_pgYtsPWi95sfRmGNyM8bIBWNN7YTUPW6LX14zWgOu8O43YIADhgZtG5b_65iBxq--vS1D_cKEPp523okH4cDLwaubsw8xkkh1ke_E9mxpXhEvjdPRyK4Kv7khYeBn3T515cby3fzHX5Ubv5qx3uJ_1u9udkCJ8LqdZEzyIfWeTIHQZTt2C3NAVWBK2s8dGSGsQLsRzKks-7BAMMVyS-IE_UYoQ4OQ5q41kyMIxqbstEiheYx8A-BU32KvBU_EqcS_zeRE-LgwgVIjh35KezLmdQQnD1Sp3aDMrV0.cYCigQ6r-1hv0oDtxqs0dA";
+
+        String json = new Jose().configuration(
+                JoseBuilders.compactDeserializationBuilder()
+                        .serializedSource(t)
+                        .key("crTKa9RY5Re0J0UYSin9cFap6x5UDsib")
+        ).deserialization();
+        System.out.printf(json);
+    }
+
+    @Test
+    public void AES_MODE_별_테스트_ERROR() throws Exception {
+        final String keyFactorySalt = "65594821073030071593";
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "SunJCE");
+        SecretKeySpec secretKeySpec;
+        try {
+            KeySpec spec = new PBEKeySpec("7244798e1fab1a9175f752a8a7e12beafe2cd27b208f9f2f7ab43173358153fc5eae2499afa66f7386d74cb8cf4765133c513ae2e6acd521acde4f80d747".toCharArray(), keyFactorySalt.getBytes(), 1, 256);
+            SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            SecretKey secretKey = secretKeyFactory.generateSecret(spec);
+            secretKeySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
+        } catch (Exception e) {
+            throw e;
+        }
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, new IvParameterSpec(new byte[cipher.getBlockSize()]));
+        System.out.println(new String(cipher.doFinal(Base64.decodeBase64("yMvtcFwlhwBg22GF-biF4A".getBytes())), "UTF-8"));
+    }
+
+    @Test
+    public void AES_MODE_별_테스트() throws Exception {
+        final String keyFactorySalt = "65594821073030071593";
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "SunJCE");
+        SecretKeySpec secretKeySpec;
+        try {
+            KeySpec spec = new PBEKeySpec("56c32e32c94a9fbde34cbc25a3b232bf25e91ec3a8a67159cffef70b924a67dcca13fc364cdb10a7a265f5520469997709ce542e6644b861c585c7ccd2f3".toCharArray(), keyFactorySalt.getBytes(), 1, 256);
+            SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            SecretKey secretKey = secretKeyFactory.generateSecret(spec);
+            secretKeySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
+        } catch (Exception e) {
+            throw e;
+        }
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, new IvParameterSpec(new byte[cipher.getBlockSize()]));
+        System.out.println(new String(cipher.doFinal(Base64.decodeBase64("yMvtcFwlhwBg22GF-biF4A".getBytes())), "UTF-8"));
+    }
+
+    @Test
+    public void 자동결제를_위한_인증_토큰_생성_후_클래임_확인_테스트() throws Exception {
+        // Given
+        // @formatter:off
+        String t = syrupPayTokenBuilder.of("가맹점")
+                .login()
+                    .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
+                    .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
+                    .withSsoCredential("SSO 를 발급 받았을 경우 입력")
+                .and()
+                .subscription()
+                    .withAutoPaymentId("시럽페이로부터 발급받은 자동결제 ID") // Optional
+                    .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional
+                .and()
+                .generateTokenBy("가맹점에게 전달한 비밀키");
+        // @formatter:on
+        System.out.printf(t);
+        // When
+        Token token = SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+
+        // Then
+        assertThat(token, is(notNullValue()));
+        assertThat(token.getClaims(SyrupPayToken.Claim.TO_SUBSCRIPTION).size(), is(1));
+        assertThat(token.getClaims(SyrupPayToken.Claim.TO_LOGIN).size(), is(1));
+        assertThat(token.getClaims(SyrupPayToken.Claim.TO_PAY).size(), is(0));
+    }
+
+    @Test
+    public void 자동결제를_위한_인증_토큰_생성_후_개별_클래임_확인_테스트() throws Exception {
+        // Given
+        // @formatter:off
+        String t = syrupPayTokenBuilder.of("가맹점")
+                .login()
+                    .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
+                    .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
+                    .withSsoCredential("SSO 를 발급 받았을 경우 입력")
+                .and()
+                .subscription()
+                    .withAutoPaymentId("시럽페이로부터 발급받은 자동결제 ID") // Optional
+                    .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional
+                .and()
+                .generateTokenBy("가맹점에게 전달한 비밀키");
+        // @formatter:on
+        System.out.printf(t);
+        // When
+        Token token = SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+
+        // Then
+        assertThat(token, is(notNullValue()));
+        assertThat(token.getClaim(SyrupPayToken.Claim.TO_SUBSCRIPTION), is(notNullValue()));
+        assertThat(token.getClaim(SyrupPayToken.Claim.TO_LOGIN), is(notNullValue()));
+        assertThat(token.getClaim(SyrupPayToken.Claim.TO_PAY), is(nullValue()));
+    }
+
 }

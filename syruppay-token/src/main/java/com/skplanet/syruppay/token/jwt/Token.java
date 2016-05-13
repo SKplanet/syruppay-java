@@ -21,6 +21,7 @@
 
 package com.skplanet.syruppay.token.jwt;
 
+import com.skplanet.syruppay.token.ClaimConfigurer;
 import com.skplanet.syruppay.token.TokenBuilder;
 import com.skplanet.syruppay.token.claims.MapToSktUserConfigurer;
 import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
@@ -30,6 +31,7 @@ import com.skplanet.syruppay.token.claims.PayConfigurer;
 import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 시럽페이에서 사용하는 토큰에 대한 규격을 정의한다.
@@ -90,4 +92,21 @@ public interface Token extends Serializable, JwtToken {
      * @since 1.3.4
      */
     public SubscriptionConfigurer<? extends TokenBuilder> getSubscription();
+
+    /**
+     * 시럽페이 토큰에 포함된 Claim 정보를 확인하여 반환한다.
+     *
+     * @return claimConfigurer 목록
+     * @since 1.3.7
+     */
+    public List<ClaimConfigurer> getClaims(SyrupPayToken.Claim... claims);
+
+    /**
+     * 시럽페이 토큰에 포함된 Claim 정보를 확인하여 반환한다.
+     *
+     * @return claimConfigurer
+     * @since 1.3.7
+     */
+
+    public ClaimConfigurer getClaim(final SyrupPayToken.Claim claim);
 }

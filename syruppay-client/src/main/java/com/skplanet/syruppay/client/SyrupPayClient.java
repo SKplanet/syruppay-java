@@ -78,9 +78,10 @@ public final class SyrupPayClient {
     private String merchantSecret;
     private JweMessageBodyProvider jweMessageBodyProvider;
 
-    private MediaType accept = JOSE;
-    private MediaType contentType = JOSE;
+    private MediaType accept = MediaType.APPLICATION_JSON_TYPE;
+    private MediaType contentType = MediaType.APPLICATION_JSON_TYPE;
     public static MediaType JOSE = new MediaType("application", "jose");
+
 
     /**
      * Http Accept Type을 지정한다.
@@ -133,7 +134,10 @@ public final class SyrupPayClient {
         if (jweMessageBodyProvider != null) {
             throw new IllegalArgumentException("already set information to convert message in body. I recommend that you should user new object, because this object has status value.");
         }
+        accept = JOSE;
+        contentType = JOSE;
         jweMessageBodyProvider = new JweMessageBodyProvider(iss, secret);
+
     }
 
     private SSLContext sslContext() {
@@ -261,10 +265,8 @@ public final class SyrupPayClient {
                 out.append(buffer, 0, rsz);
             }
             in.close();
-        } catch (UnsupportedEncodingException ex) {
-            ex.printStackTrace();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LOGGER.warn(ex.getMessage());
         } finally {
             if (in != null) {
                 in.close();

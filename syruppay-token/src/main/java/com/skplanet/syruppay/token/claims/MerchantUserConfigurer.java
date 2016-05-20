@@ -80,6 +80,10 @@ public final class MerchantUserConfigurer<H extends TokenBuilder<H>> extends Abs
         return ssoCredential;
     }
 
+    public String getDeviceIdentifier() {
+        return deviceIdentifier;
+    }
+
     /**
      * 시럽페이로 자동 로그인 하기 위한 SSO Credential 을 입력한다.
      *

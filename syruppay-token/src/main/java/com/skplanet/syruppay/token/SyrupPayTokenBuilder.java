@@ -78,15 +78,11 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
     /**
      * JWT 토큰에 대한 무결성을 검증(JWS)한 후 {@link com.skplanet.syruppay.token.jwt.Token} 객체를 생성하여 반환한다.
      *
-     * @param token
-     *         문자열의 JWT
-     * @param key
-     *         토큰 무결성을 검증할 키
+     * @param token 문자열의 JWT
+     * @param key   토큰 무결성을 검증할 키
      * @return {@link com.skplanet.syruppay.token.jwt.Token}
-     * @throws java.io.IOException
-     *         토큰이 유효하지 않은 경우
-     * @throws com.skplanet.syruppay.token.InvalidTokenException
-     *         토큰이 논리적으로 유효하지 않은 경우
+     * @throws java.io.IOException                               토큰이 유효하지 않은 경우
+     * @throws com.skplanet.syruppay.token.InvalidTokenException 토큰이 논리적으로 유효하지 않은 경우
      */
     public static Token verify(String token, String key) throws IOException, InvalidTokenException {
         return verify(token, key.getBytes());
@@ -95,15 +91,11 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
     /**
      * JWT 토큰에 대한 무결성을 검증(JWS)한 후 {@link com.skplanet.syruppay.token.jwt.Token} 객체를 생성하여 반환한다.
      *
-     * @param token
-     *         문자열의 JWT
-     * @param key
-     *         토큰 무결성을 검증할 키
+     * @param token 문자열의 JWT
+     * @param key   토큰 무결성을 검증할 키
      * @return {@link com.skplanet.syruppay.token.jwt.Token}
-     * @throws java.io.IOException
-     *         토큰이 유효하지 않은 경우
-     * @throws com.skplanet.syruppay.token.InvalidTokenException
-     *         토큰이 논리적으로 유효하지 않은 경우
+     * @throws java.io.IOException                               토큰이 유효하지 않은 경우
+     * @throws com.skplanet.syruppay.token.InvalidTokenException 토큰이 논리적으로 유효하지 않은 경우
      */
     public static Token verify(String token, Key key) throws IOException, InvalidTokenException {
         return verify(token, key.getEncoded());
@@ -112,23 +104,29 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
     /**
      * JWT 토큰에 대한 무결성을 검증(JWS)한 후 {@link com.skplanet.syruppay.token.jwt.Token} 객체를 생성하여 반환한다.
      *
-     * @param token
-     *         문자열의 JWT
-     * @param key
-     *         토큰 무결성을 검증할 키
+     * @param token 문자열의 JWT
+     * @param key   토큰 무결성을 검증할 키
      * @return {@link com.skplanet.syruppay.token.jwt.Token}
-     * @throws java.io.IOException
-     *         토큰이 물맂거으로 유효하지 않은 경우
-     * @throws com.skplanet.syruppay.token.InvalidTokenException
-     *         토큰이 논리적으로 유효하지 않은 경우
+     * @throws java.io.IOException                               토큰이 물맂거으로 유효하지 않은 경우
+     * @throws com.skplanet.syruppay.token.InvalidTokenException 토큰이 논리적으로 유효하지 않은 경우
      */
     public static Token verify(String token, byte[] key) throws IOException, InvalidTokenException {
         try {
             final SyrupPayToken t = objectMapper.readValue(
                     new Jose().configuration(JoseBuilders.compactDeserializationBuilder().userAlgorithm(Jwa.HS256).serializedSource(token).key(key)).deserialization()
                     , SyrupPayToken.class);
-            if (checkValidationOfToken && !t.isValidInTime()) {
-                throw new InvalidTokenException(String.format("%d as exp of this token is over at now as %d", t.getExp(), System.currentTimeMillis() / 1000));
+            if (checkValidationOfToken) {
+                if (!t.isValidInTime()) {
+                    throw new InvalidTokenException(String.format("%d as exp of this token is over at now as %d", t.getExp(), System.currentTimeMillis() / 1000));
+                } else {
+                    for (final ClaimConfigurer c : t.getClaims()) {
+                        try {
+                            c.validRequired();
+                        } catch (Exception e) {
+                            throw new InvalidTokenException(String.format("occur exception from %s. cause by : %s", c.claimName(), e.getMessage()));
+                        }
+                    }
+                }
             }
             return t;
         } catch (IOException e) {
@@ -140,8 +138,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
     /**
      * 시럽페이 토큰 생성 주체를 설정한다.
      *
-     * @param merchantId
-     *         가맹점 ID
+     * @param merchantId 가맹점 ID
      * @return <code>this</code>
      */
     public SyrupPayTokenBuilder of(String merchantId) {
@@ -152,8 +149,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
     /**
      * JWT 의 sub 에 해당하는 서브 주제를 설정한다.
      *
-     * @param subject
-     *         the subject
+     * @param subject the subject
      * @return <code>this</code>
      */
     public SyrupPayTokenBuilder additionalSubject(String subject) {
@@ -164,8 +160,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
     /**
      * JWT 의 nbf 에 해당하는 값으로 토큰이 유효한 시작 시간을 설정한다.
      *
-     * @param milliseconds
-     *         밀리세컨드
+     * @param milliseconds 밀리세컨드
      * @return <code>this</code>
      */
     public SyrupPayTokenBuilder isNotValidBefore(long milliseconds) {
@@ -176,13 +171,10 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
     /**
      * JWT 의 nbf 에 해당하는 값으로 토큰이 유효한 시작 시간을 설정한다.
      *
-     * @param datetime
-     *         문자 형식의 일자
-     * @param f
-     *         문자 형식
+     * @param datetime 문자 형식의 일자
+     * @param f        문자 형식
      * @return <code>this</code>
-     * @throws java.text.ParseException
-     *         문자형식의 일자 오류
+     * @throws java.text.ParseException 문자형식의 일자 오류
      */
     public SyrupPayTokenBuilder isNotValidBefore(String datetime, SimpleDateFormat f) throws ParseException {
         this.nbf = f.parse(datetime).getTime() / 1000;
@@ -192,8 +184,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
     /**
      * 만료 시간을 생성 시점 이후로 분단위로 입력하여 설정한다.
      *
-     * @param expiredMinutes
-     *         만료되는 분
+     * @param expiredMinutes 만료되는 분
      * @return <code>this</code>
      */
     public SyrupPayTokenBuilder expiredMinutes(int expiredMinutes) {
@@ -205,8 +196,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * 시럽페이 로그인을 위한 설정 객체를 확인하여 반환한다.
      *
      * @return {@link com.skplanet.syruppay.token.claims.MerchantUserConfigurer}
-     * @throws Exception
-     *         the exception
+     * @throws Exception the exception
      */
     public MerchantUserConfigurer<SyrupPayTokenBuilder> login() throws Exception {
         return getOrApply(new MerchantUserConfigurer<SyrupPayTokenBuilder>());
@@ -216,8 +206,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * 시럽페이 회원가입을 위한 설정 객체를 확인하여 반환한다.
      *
      * @return {@link com.skplanet.syruppay.token.claims.MerchantUserConfigurer}
-     * @throws Exception
-     *         the exception
+     * @throws Exception the exception
      */
     public MerchantUserConfigurer<SyrupPayTokenBuilder> signUp() throws Exception {
         return getOrApply(new MerchantUserConfigurer<SyrupPayTokenBuilder>());
@@ -227,8 +216,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * 시럽페이 결제를 위한 설정 객체를 확인하여 반환한다.
      *
      * @return {@link com.skplanet.syruppay.token.claims.PayConfigurer}
-     * @throws Exception
-     *         the exception
+     * @throws Exception the exception
      */
     public PayConfigurer<SyrupPayTokenBuilder> pay() throws Exception {
         return getOrApply(new PayConfigurer<SyrupPayTokenBuilder>());
@@ -238,8 +226,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * 시럽페이 체크아웃 기느을 위한 설정 객체를 확인하여 반환한다.
      *
      * @return {@link com.skplanet.syruppay.token.claims.OrderConfigurer}
-     * @throws Exception
-     *         the exception
+     * @throws Exception the exception
      */
     public OrderConfigurer<SyrupPayTokenBuilder> checkout() throws Exception {
         return getOrApply(new OrderConfigurer<SyrupPayTokenBuilder>());
@@ -249,8 +236,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * 시럽페이 사용자 맵핑을 위한 설정 객체를 확인하여 반환한다.
      *
      * @return {@link com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer}
-     * @throws Exception
-     *         the exception
+     * @throws Exception the exception
      */
     public MapToSyrupPayUserConfigurer<SyrupPayTokenBuilder> mapToSyrupPayUser() throws Exception {
         return getOrApply(new MapToSyrupPayUserConfigurer<SyrupPayTokenBuilder>());
@@ -260,8 +246,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * SKT 사용자인 시럽페이 사용자 맵핑을 위한 설정 객체를 확인하여 반환한다.
      *
      * @return {@link com.skplanet.syruppay.token.claims.MapToSktUserConfigurer}
-     * @throws Exception
-     *         the exception
+     * @throws Exception the exception
      */
     public MapToSktUserConfigurer<SyrupPayTokenBuilder> mapToSktUser() throws Exception {
         return getOrApply(new MapToSktUserConfigurer<SyrupPayTokenBuilder>());
@@ -271,8 +256,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * SKT 사용자인 시럽페이 사용자 맵핑을 위한 설정 객체를 확인하여 반환한다.
      *
      * @return {@link com.skplanet.syruppay.token.claims.MapToSktUserConfigurer}
-     * @throws Exception
-     *         the exception
+     * @throws Exception the exception
      */
     public SubscriptionConfigurer<SyrupPayTokenBuilder> subscription() throws Exception {
         return getOrApply(new SubscriptionConfigurer<SyrupPayTokenBuilder>());
@@ -304,11 +288,9 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
     /**
      * JWT(JWS) 토큰을 생성하여 반환한다.
      *
-     * @param secret
-     *         Signing 할 Secret
+     * @param secret Signing 할 Secret
      * @return JWT(JWS)
-     * @throws Exception
-     *         the exception
+     * @throws Exception the exception
      */
     public String generateTokenBy(String secret) throws Exception {
         return generateTokenBy(secret.getBytes());
@@ -317,11 +299,9 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
     /**
      * JWT(JWS) 토큰을 생성하여 반환한다.
      *
-     * @param secret
-     *         Signing 할 Secret
+     * @param secret Signing 할 Secret
      * @return JWT(JWS)
-     * @throws Exception
-     *         the exception
+     * @throws Exception the exception
      */
     public String generateTokenBy(byte[] secret) throws Exception {
         JoseHeader h = new JoseHeader(Jwa.HS256);
@@ -333,11 +313,9 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
     /**
      * JWT(JWS) 토큰을 생성하여 반환한다.
      *
-     * @param secret
-     *         Signing 할 Secret
+     * @param secret Signing 할 Secret
      * @return JWT(JWS)
-     * @throws Exception
-     *         the exception
+     * @throws Exception the exception
      */
     public String generateTokenBy(Key secret) throws Exception {
         return generateTokenBy(secret.getEncoded());

@@ -120,12 +120,12 @@ project(':syruppay-token') {
 
     archivesBaseName = 'syruppay-token'
 
-    jar.dependsOn 'copyRuntimelib'
-
-    task copyRuntimelib(type:Copy) {
-        into 'libs'
-        from configurations.testRuntime
-    }
+//    jar.dependsOn 'copyRuntimelib'
+//
+//    task copyRuntimelib(type:Copy) {
+//        into 'libs'
+//        from configurations.testRuntime
+//    }
 
     jar {
         manifest {

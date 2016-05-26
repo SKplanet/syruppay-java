@@ -680,8 +680,8 @@ public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTo
         }
 
         public void validRequired() {
-            if (id == null || name == null || subscriberId == null) {
-                throw new IllegalArgumentException("Loyalty object couldn't be with null fields id : " + id + ", name : " + name + ", subscriberId : " + subscriberId);
+            if (id == null || name == null) {
+                throw new IllegalArgumentException("Loyalty object couldn't be with null fields id : " + id + ", name : " + name);
             }
 
             if (additionalDiscount != null) {

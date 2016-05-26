@@ -13,7 +13,7 @@
 ### Gradle 빌드 시
 ```groovy
 dependencies {
-     compile 'com.skplanet.syruppay:syruppay-token:1.3.8_SNAPSHOT_2'
+     compile 'com.skplanet.syruppay:syruppay-token:1.3.8_SNAPSHOT_3'
 }
 
 ```
@@ -24,7 +24,7 @@ dependencies {
 	<dependency>
 		<groupId>com.skplanet.syruppay</groupId>
 		<artifactId>syruppay-token</artifactId>
-		<version>1.3.8_SNAPSHOT_2</version>
+		<version>1.3.8_SNAPSHOT_3</version>
 	</dependency>
 </dependencies>
 ```
@@ -233,65 +233,41 @@ Token token = SyrupPayTokenBuilder.verify("토큰", "가맹점에게 전달한 �
 
 ### 참고 사항
 *이용하고자 하는 시럽페이 서비스 기능이 복합적인 경우 중첩하여 사용 가능하다.*
-##### 상황 1. 시럽페이 가입 여부를 모르는 상태에서 결제 하고자 하는 경우 (회원가입, 로그인, 결제 가능 토큰)
+##### 상황 1. 시럽페이에 자동 로그인 후 결제를 하고자 하는 경우 (자동 로그인, 결제 가능 토큰)
 ```java
 String token = new SyrupPayTokenBuilder().of("가맹점 ID")
-                    .signUp() 
-                        .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
-                        .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력") // Optional
-                    .and()
-                    .pay()
-                    	.withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID") // 가맹점 Transaction Id = mctTransAuthId
-                    	.withProductTitle("제품명")
-                    	.withProductUrls(
+                .login()
+                    .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
+                    .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력") // Optional
+                    .withSsoCredential("발급 받은 SSO")
+                .and()
+                .mapToSyrupPayUser() // Optional 사용자 개인정보를 이용하여 시럽페이 사용자와 동일 여부 검증 시 사용
+                    .withType(MapToSyrupPayUserConfigurer.MappingType.ENCRYPTED_PERSONAL_INFO)
+                    .withValue(new MapToSyrupPayUserConfigurer.Personal("홍길동", "8110281", "10122223333"), "가맹점 ID", "가맹점에 전달한 비밀키")
+                .and()
+                .pay()
+                    .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID") // 가맹점 Transaction Id = mctTransAuthId
+                    .withProductTitle("제품명")
+                    .withProductUrls(
                             "http://deal.11st.co.kr/product/SellerProductDetail.tmall?method=getSellerProductDetail&prdNo=1122841340",
                             "http://deal.11st.co.kr/product/SellerProductDetail.tmall?method=getSellerProductDetail&prdNo=1265508741"
-                            ) // Optional
-                        .withLanguageForDisplay(PayConfigurer.Language.KO) 
-                        .withAmount(50000)
-                        .withCurrency(PayConfigurer.Currency.KRW)
-                        .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "kr")) // Optional
-                        .withDeliveryPhoneNumber("01011112222") // Optional
-                        .withDeliveryName("배송 수신자") // Optional
-                        .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6")) // Optional
-                        .withBeAbleToExchangeToCash(false) // Optional
-                        .withRestrictionOf(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR) // Optional
-                        .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional. 가맹점과 시럽페이 사용자 동일 여부 확인 시에만 필요
-                    .and()
-                    .generateTokenBy("가맹점에게 전달한 비밀키");
-```
-
-##### 상황 2. 시럽페이에 자동 로그인 후 결제를 하고자 하는 경우 (자동 로그인, 결제 가능 토큰)
-```java
-String token = new SyrupPayTokenBuilder().of("가맹점 ID")
-                    .login() 
-                        .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
-                        .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력") // Optional
-                        .withSsoCredential("발급 받은 SSO")
-                    .and()
-                    .pay()
-                        .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID") // 가맹점 Transaction Id = mctTransAuthId
-                        .withProductTitle("제품명")
-                        .withProductUrls(
-                            "http://deal.11st.co.kr/product/SellerProductDetail.tmall?method=getSellerProductDetail&prdNo=1122841340",
-                            "http://deal.11st.co.kr/product/SellerProductDetail.tmall?method=getSellerProductDetail&prdNo=1265508741"
-                            ) // Optional
-                        .withLanguageForDisplay(PayConfigurer.Language.KO)  
-                        .withAmount(50000)
-                        .withCurrency(PayConfigurer.Currency.KRW)
-                        .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "kr")) // Optional
-                        .withDeliveryPhoneNumber("01011112222") // Optional
-                        .withDeliveryName("배송 수신자") // Optional
-                        .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6")) // Optional
-                        .withBeAbleToExchangeToCash(false) // Optional
-                        .withRestrictionOf(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR) // Optional
-                        .withMerchantDefinedValue("{" +
-                                                  "\"id_1\": \"value\"," +
-                                                  "\"id_2\": 2" +
-                                                  "}") // Optional, JSON 포맷 이용 시 Escape(\) 입력에 주의 필요, 1k 제한
-                        .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional. 가맹점과 시럽페이 사용자 동일 여부 확인 시에만 필요
-                    .and()
-                    .generateTokenBy("가맹점에게 전달한 비밀키");
+                    ) // Optional
+                    .withLanguageForDisplay(PayConfigurer.Language.KO)
+                    .withAmount(50000)
+                    .withCurrency(PayConfigurer.Currency.KRW)
+                    .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "kr")) // Optional
+                    .withDeliveryPhoneNumber("01011112222") // Optional
+                    .withDeliveryName("배송 수신자") // Optional
+                    .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6")) // Optional
+                    .withBeAbleToExchangeToCash(false) // Optional
+                    .withRestrictionOf(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR) // Optional
+                    .withMerchantDefinedValue("{" +
+                            "\"id_1\": \"value\"," +
+                            "\"id_2\": 2" +
+                            "}") // Optional, JSON 포맷 이용 시 Escape(\) 입력에 주의 필요, 1k 제한
+                    .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional. 가맹점과 시럽페이 사용자 동일 여부 확인 시에만 필요
+                .and()
+                .generateTokenBy("가맹점에 전달한 비밀키");
 ```
 
 ### 주의

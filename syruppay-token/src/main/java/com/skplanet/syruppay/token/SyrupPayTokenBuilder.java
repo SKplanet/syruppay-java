@@ -59,11 +59,16 @@ import java.text.SimpleDateFormat;
 public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<Jwt, SyrupPayTokenBuilder> implements ClaimBuilder<Jwt>, TokenBuilder<SyrupPayTokenBuilder> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SyrupPayTokenBuilder.class.getName());
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    static boolean checkValidationOfToken = true;
+    private static boolean checkHeaderOfToken = true;
+    private static boolean checkValidationOfToken = false;
 
     static {
         objectMapper.setVisibility(JsonMethod.FIELD, JsonAutoDetect.Visibility.ANY);
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
+    }
+
+    static void uncheckHeaderOfToken() {
+        checkHeaderOfToken = false;
     }
 
     static void uncheckValidationOfToken() {
@@ -115,16 +120,16 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
             final SyrupPayToken t = objectMapper.readValue(
                     new Jose().configuration(JoseBuilders.compactDeserializationBuilder().userAlgorithm(Jwa.HS256).serializedSource(token).key(key)).deserialization()
                     , SyrupPayToken.class);
+            if (checkHeaderOfToken && !t.isValidInTime()) {
+                throw new InvalidTokenException(String.format("%d as exp of this token is over at now as %d", t.getExp(), System.currentTimeMillis() / 1000));
+
+            }
             if (checkValidationOfToken) {
-                if (!t.isValidInTime()) {
-                    throw new InvalidTokenException(String.format("%d as exp of this token is over at now as %d", t.getExp(), System.currentTimeMillis() / 1000));
-                } else {
-                    for (final ClaimConfigurer c : t.getClaims()) {
-                        try {
-                            c.validRequired();
-                        } catch (Exception e) {
-                            throw new InvalidTokenException(String.format("occur exception from %s. cause by : %s", c.claimName(), e.getMessage()));
-                        }
+                for (final ClaimConfigurer c : t.getClaims()) {
+                    try {
+                        c.validRequired();
+                    } catch (Exception e) {
+                        throw new InvalidTokenException(String.format("occur exception from %s. cause by : %s", c.claimName(), e.getMessage()));
                     }
                 }
             }

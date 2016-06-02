@@ -31,7 +31,7 @@ import com.skplanet.syruppay.token.TokenBuilder;
  */
 public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<SubscriptionConfigurer<H>, H> {
     private String autoPaymentId;
-    private PayConfigurer.MatchedUser matchedUser;
+    private RegistrationRestrictions registrationRestrictions;
 
     public SubscriptionConfigurer<H> withAutoPaymentId(final String autoPaymentId) {
         this.autoPaymentId = autoPaymentId;
@@ -39,7 +39,7 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
     }
 
     public SubscriptionConfigurer<H> withRestrictionOf(final PayConfigurer.MatchedUser matchedUser) {
-        this.matchedUser = matchedUser;
+        this.registrationRestrictions.matchedUser = matchedUser;
         return this;
     }
 
@@ -47,8 +47,15 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
         return autoPaymentId;
     }
 
-    public PayConfigurer.MatchedUser getMatchedUser() {
-        return matchedUser;
+    public RegistrationRestrictions getRegistrationRestrictions() {
+        return registrationRestrictions;
+    }
+
+    public void setMatchedUser(final PayConfigurer.MatchedUser matchedUser) {
+        if(registrationRestrictions == null) {
+            registrationRestrictions = new RegistrationRestrictions();
+        }
+        registrationRestrictions.matchedUser = matchedUser;
     }
 
     public String claimName() {
@@ -57,5 +64,13 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
 
     public void validRequired() throws Exception {
         // ignored
+    }
+
+    public static class RegistrationRestrictions {
+        private PayConfigurer.MatchedUser matchedUser;
+
+        public PayConfigurer.MatchedUser getMatchedUser() {
+            return matchedUser;
+        }
     }
 }

@@ -60,7 +60,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
     private static final Logger LOGGER = LoggerFactory.getLogger(SyrupPayTokenBuilder.class.getName());
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static boolean checkHeaderOfToken = true;
-    private static boolean checkValidationOfToken = false;
+    private static boolean checkValidationOfToken = true;
 
     static {
         objectMapper.setVisibility(JsonMethod.FIELD, JsonAutoDetect.Visibility.ANY);

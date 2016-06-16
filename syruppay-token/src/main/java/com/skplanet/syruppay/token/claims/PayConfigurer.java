@@ -466,7 +466,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
                 throw new IllegalArgumentException("countryCode should meet the specifications of ISO-3166 Alpha2(as KR, US) except prefix like a2. yours : " + countryCode);
             }
 
-            if (defaultDeliveryCost <= 0) {
+            if (defaultDeliveryCost < 0) {
                 throw new IllegalArgumentException("defaultDeliveryCost field should be bigger than 0. yours : " + defaultDeliveryCost);
             }
         }

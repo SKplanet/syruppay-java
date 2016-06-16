@@ -39,6 +39,9 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
     }
 
     public SubscriptionConfigurer<H> withRestrictionOf(final PayConfigurer.MatchedUser matchedUser) {
+        if(registrationRestrictions == null) {
+            registrationRestrictions = new RegistrationRestrictions();
+        }
         this.registrationRestrictions.matchedUser = matchedUser;
         return this;
     }

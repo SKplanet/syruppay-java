@@ -119,7 +119,7 @@ public class SyrupPayTokenBuilderTest {
 
         // Then
         assertThat(s, is(notNullValue()));
-        assertThat(s.isEmpty(), is(false));
+        assertThat(s.length(), is(not(0)));
     }
 
     @Test
@@ -132,7 +132,7 @@ public class SyrupPayTokenBuilderTest {
 
         // Then
         assertThat(s, is(notNullValue()));
-        assertThat(s.isEmpty(), is(false));
+        assertThat(s.length(), is(not(0)));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -220,7 +220,7 @@ public class SyrupPayTokenBuilderTest {
 
         // Then
         assertThat(t, is(notNullValue()));
-        assertThat(t.isEmpty(), is(false));
+        assertThat(t.length(), is(not(0)));
     }
 
     @Test(expected = AlreadyBuiltException.class)
@@ -259,7 +259,7 @@ public class SyrupPayTokenBuilderTest {
 
         // Then
         assertThat(t, is(notNullValue()));
-        assertThat(t.isEmpty(), is(false));
+        assertThat(t.length(), is(not(0)));
     }
 
     @Test
@@ -860,7 +860,23 @@ public class SyrupPayTokenBuilderTest {
                 .and()
                 .mapToSyrupPayUser() // Optional 사용자 개인정보를 이용하여 시럽페이 사용자와 동일 여부 검증 시 사용
                     .withType(MapToSyrupPayUserConfigurer.MappingType.ENCRYPTED_PERSONAL_INFO)
-                    .withValue(new MapToSyrupPayUserConfigurer.Personal("홍길동", "8110281", "10122223333"), "가맹점 ID", "가맹점에 전달한 비밀키")
+                    .withValue(new MapToSyrupPayUserConfigurer.Personal()
+                            .setUsername("홍길동")
+                            .setSsnFirst7Digit("8011221")
+                            .setLineNumber("10122223333")
+                            .setOperatorCode(MapToSyrupPayUserConfigurer.OperatorCode.SKT)
+                            .setCiHash("HHHHHHAAAAAAAAAAAASSSSSSSSSSSSSSHHHHHHHHHHH")
+                            .setEmail("test@mail.com")
+                            .setPayableCard(
+                                    new MapToSyrupPayUserConfigurer.PayableCard()
+                                            .setCardNo("카드번호")
+                                            .setExpireDate("202012")
+                                            .setCardName("카드이름")
+                                            .setCardIssuerName("발급사명")
+                                            .setCardIssuer("발급사코드")
+                                            .setCardAcquirer("매입사코드")
+                                            .setCardType(MapToSyrupPayUserConfigurer.CardType.CREDIT))
+                            , "가맹점 ID", "가맹점에 전달한 비밀키")
                 .and()
                 .pay()
                     .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID") // 가맹점 Transaction Id = mctTransAuthId
@@ -955,5 +971,23 @@ public class SyrupPayTokenBuilderTest {
         assertThat(token, is(notNullValue()));
         assertThat(token.getClaim(SyrupPayToken.Claim.TO_PAY), is(notNullValue()));
         assertThat(token.getClaim(SyrupPayToken.Claim.TO_LOGIN), is(notNullValue()));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void 사용자_정보_Assert_테스트_SET_NULL_TO_사용자명() {
+        MapToSyrupPayUserConfigurer.Personal personal = new MapToSyrupPayUserConfigurer.Personal();
+        personal.setUsername(null);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void 사용자_정보_Assert_테스트_SET_BLANK_TO_사용자명() {
+        MapToSyrupPayUserConfigurer.Personal personal = new MapToSyrupPayUserConfigurer.Personal();
+        personal.setUsername("");
+    }
+
+    @Test
+    public void 사용자_정보_Assert_테스트_SET_HASH_TO_사용자명() {
+        MapToSyrupPayUserConfigurer.Personal personal = new MapToSyrupPayUserConfigurer.Personal();
+        personal.setUsername("홍길동");
     }
 }

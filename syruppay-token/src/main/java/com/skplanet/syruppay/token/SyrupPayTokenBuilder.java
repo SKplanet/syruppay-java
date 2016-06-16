@@ -278,7 +278,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
     }
 
     protected Jwt doBuild() throws Exception {
-        if (iss == null || iss.isEmpty()) {
+        if (iss == null || iss.length() == 0) {
             throw new IllegalArgumentException("issuer couldn't be null. you should set of by SyrupPayTokenBuilder#of(String of)");
         }
         Jwt c = new Jwt();

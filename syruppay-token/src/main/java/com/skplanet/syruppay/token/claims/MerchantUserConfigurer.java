@@ -149,7 +149,7 @@ public final class MerchantUserConfigurer<H extends TokenBuilder<H>> extends Abs
     }
 
     public void validRequired() throws Exception {
-        if (this.mctUserId == null || this.mctUserId.isEmpty()) {
+        if (this.mctUserId == null || this.mctUserId.length() == 0) {
             throw new IllegalArgumentException("when you try to login or sign up, merchant user id couldn't be null. you should set merchant user id  by SyrupPayTokenHandler.login().withMerchantUserId(String) or SyrupPayTokenHandler.signup().withMerchantUserId(String)");
         }
     }

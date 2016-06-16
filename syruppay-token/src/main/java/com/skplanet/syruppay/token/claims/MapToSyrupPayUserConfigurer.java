@@ -26,6 +26,7 @@ import com.skplanet.jose.JoseBuilders;
 import com.skplanet.jose.JoseHeader;
 import com.skplanet.jose.jwa.Jwa;
 import com.skplanet.syruppay.token.TokenBuilder;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -111,7 +112,7 @@ public class MapToSyrupPayUserConfigurer<H extends TokenBuilder<H>> extends Abst
         this.mappingValue = new Jose().configuration(
                 JoseBuilders.JsonEncryptionCompactSerializationBuilder()
                         .header(new JoseHeader(Jwa.A128KW, Jwa.A128CBC_HS256, kid))
-                        .payload(MAPPER.writeValueAsString(p))
+                        .payload(MAPPER.writeValueAsString(p.getValidPersonalIfNotThrowException()))
                         .key(key)
         ).serialization();
         return this;
@@ -147,10 +148,14 @@ public class MapToSyrupPayUserConfigurer<H extends TokenBuilder<H>> extends Abst
      */
     public static class Personal {
         private String username;
-        private String ssnFirst7Digit;
         private String lineNumber;
+        private OperatorCode operatorCode;
+        private String ssnFirst7Digit;
+        private String email;
+        private String ciHash;
+        private PayableCard payableCard;
 
-        public Personal(String username, String ssnFirst7Digit, String lineNumber) throws IllegalArgumentException {
+        public Personal(final String username, final String ssnFirst7Digit, final String lineNumber) throws IllegalArgumentException {
             if (username == null || ssnFirst7Digit == null || lineNumber == null) {
                 throw new IllegalArgumentException(String.format("you should set with valid parameters to create this instance. username: %s, ssnFirst7Digit: %s, lineNumber: %s", username, ssnFirst7Digit, lineNumber));
             } else if (ssnFirst7Digit.length() != 7) {
@@ -175,5 +180,181 @@ public class MapToSyrupPayUserConfigurer<H extends TokenBuilder<H>> extends Abst
         public String getLineNumber() {
             return lineNumber;
         }
+
+        public Personal setUsername(final String username) {
+            assert username != null && (username.length() > 0) : "username shouldn't be null and not empty.";
+            this.username = username;
+            return this;
+        }
+
+        public Personal setSsnFirst7Digit(final String ssnFirst7Digit) {
+            assert ssnFirst7Digit != null && (ssnFirst7Digit.length() > 0) : "ssnFirst7Digit shouldn't be null and not empty.";
+            assert ssnFirst7Digit.length() == 7 : String.format("length of ssnFirst7Digit should be 7. yours inputs is : %s", ssnFirst7Digit);
+            this.ssnFirst7Digit = ssnFirst7Digit;
+            return this;
+        }
+
+        public OperatorCode getOperatorCode() {
+            return operatorCode;
+        }
+
+        public Personal setOperatorCode(final OperatorCode operatorCode) {
+            this.operatorCode = operatorCode;
+            return this;
+        }
+
+        public Personal setLineNumber(final String lineNumber) {
+            assert lineNumber != null && (lineNumber.length() > 0) : "lineNumber shouldn't be null and not empty.";
+            this.lineNumber = lineNumber;
+            return this;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public Personal setEmail(final String email) {
+            this.email = email;
+            return this;
+        }
+
+        public String getCiHash() {
+            return ciHash;
+        }
+
+        public Personal setCiHash(final String ciHash) {
+            this.ciHash = ciHash;
+            return this;
+        }
+
+        public PayableCard getPayableCard() {
+            return payableCard;
+        }
+
+        public Personal setPayableCard(final PayableCard payableCard) {
+            this.payableCard = payableCard;
+            return this;
+        }
+
+        @JsonIgnore
+        public Personal getValidPersonalIfNotThrowException() {
+            // TODO 코드 작성 필요
+            return this;
+        }
+    }
+
+    public static enum OperatorCode {
+        SKT, KT, LGU, SKTM, KTM, LGUM, UNKNOWN
+    }
+
+    /**
+     * 가맹점으로 부터 카드 정보를 공유 받기 위한 DTO 를 정의한다
+     *
+     * @since 1.3.9
+     */
+    public static class PayableCard {
+        private String cardNo;
+        private String expireDate;
+        private String cardIssuer;
+        private String cardIssuerName;
+        private String cardName;
+        private String cardNameInEnglish;
+        private String cardAcquirer;
+        private CardType cardType;
+
+        public String getCardNo() {
+            return cardNo;
+        }
+
+        public PayableCard setCardNo(final String cardNo) {
+            assert cardNo != null && (cardNo.length() > 0) : "cardNo shouldn't be null and not empty.";
+            this.cardNo = cardNo;
+            return this;
+        }
+
+        public String getExpireDate() {
+            return expireDate;
+        }
+
+        public PayableCard setExpireDate(final String expireDate) {
+            assert expireDate != null && (expireDate.length() > 0) : "expireDate shouldn't be null and not empty.";
+            this.expireDate = expireDate;
+            return this;
+        }
+
+        public String getCardIssuer() {
+            return cardIssuer;
+        }
+
+        public PayableCard setCardIssuer(final String cardIssuer) {
+            assert cardIssuer != null && (cardIssuer.length() > 0) : "cardIssuer shouldn't be null and not empty.";
+            this.cardIssuer = cardIssuer;
+            return this;
+        }
+
+        public String getCardIssuerName() {
+            return cardIssuerName;
+        }
+
+        public PayableCard setCardIssuerName(final String cardIssuerName) {
+            assert cardIssuerName != null && (cardIssuerName.length() > 0) : "cardIssuerName shouldn't be null and not empty.";
+            this.cardIssuerName = cardIssuerName;
+            return this;
+        }
+
+        public String getCardName() {
+            return cardName;
+        }
+
+        public PayableCard setCardName(final String cardName) {
+            assert cardName != null && (cardName.length() > 0) : "cardNo shouldn't be null and not empty.";
+            this.cardName = cardName;
+            return this;
+        }
+
+        public String getCardAcquirer() {
+            return cardAcquirer;
+        }
+
+        public PayableCard setCardAcquirer(final String cardAcquirer) {
+            assert cardAcquirer != null && cardAcquirer.length() > 0 : "cardAcquirer shouldn't be null and not empty.";
+            this.cardAcquirer = cardAcquirer;
+            return this;
+        }
+
+        public CardType getCardType() {
+            return cardType;
+        }
+
+        public PayableCard setCardType(final CardType cardType) {
+            assert cardType != null : "cardType shouldn't be null.";
+            this.cardType = cardType;
+            return this;
+        }
+
+        public String getCardNameInEnglish() {
+            return cardNameInEnglish;
+        }
+
+        public PayableCard setCardNameInEnglish(final String cardNameInEnglish) {
+            this.cardNameInEnglish = cardNameInEnglish;
+            return this;
+        }
+    }
+
+    public enum CardType {
+        CREDIT("CC"),
+        CHECK("CH");
+
+        private String value;
+
+        CardType(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
     }
 }

@@ -229,10 +229,10 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
     }
 
     public void validRequired() throws Exception {
-        if (this.mctTransAuthId == null || this.mctTransAuthId.isEmpty()
-                || this.paymentInfo.productTitle == null || this.paymentInfo.productTitle.isEmpty()
-                || this.paymentInfo.lang == null || this.paymentInfo.lang.isEmpty()
-                || this.paymentInfo.currencyCode == null || this.paymentInfo.currencyCode.isEmpty()
+        if (this.mctTransAuthId == null || this.mctTransAuthId.length() == 0
+                || this.paymentInfo.productTitle == null || this.paymentInfo.productTitle.length() == 0
+                || this.paymentInfo.lang == null || this.paymentInfo.lang.length() == 0
+                || this.paymentInfo.currencyCode == null || this.paymentInfo.currencyCode.length() == 0
                 || this.paymentInfo.paymentAmt <= 0) {
             throw new IllegalArgumentException("some of required fields is null(or empty) or wrong. " +
                     "you should set orderIdOfMerchant : " + mctTransAuthId

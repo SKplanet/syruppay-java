@@ -112,7 +112,7 @@ public class MapToSyrupPayUserConfigurer<H extends TokenBuilder<H>> extends Abst
         this.mappingValue = new Jose().configuration(
                 JoseBuilders.JsonEncryptionCompactSerializationBuilder()
                         .header(new JoseHeader(Jwa.A128KW, Jwa.A128CBC_HS256, kid))
-                        .payload(MAPPER.writeValueAsString(p.getValidPersonalIfNotThrowException()))
+                        .payload(MAPPER.writeValueAsString(p))
                         .key(key)
         ).serialization();
         return this;
@@ -233,12 +233,6 @@ public class MapToSyrupPayUserConfigurer<H extends TokenBuilder<H>> extends Abst
 
         public Personal setPayableCard(final PayableCard payableCard) {
             this.payableCard = payableCard;
-            return this;
-        }
-
-        @JsonIgnore
-        public Personal getValidPersonalIfNotThrowException() {
-            // TODO 코드 작성 필요
             return this;
         }
     }

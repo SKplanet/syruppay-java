@@ -863,7 +863,7 @@ public class SyrupPayTokenBuilderTest {
                     .withValue(new MapToSyrupPayUserConfigurer.Personal()
                             .setUsername("홍길동")
                             .setSsnFirst7Digit("8011221")
-                            .setLineNumber("10122223333")
+                            .setLineNumber("01022223333")
                             .setOperatorCode(MapToSyrupPayUserConfigurer.OperatorCode.SKT)
                             .setCiHash("HHHHHHAAAAAAAAAAAASSSSSSSSSSSSSSHHHHHHHHHHH")
                             .setEmail("test@mail.com")

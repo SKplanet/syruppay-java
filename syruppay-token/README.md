@@ -74,7 +74,7 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL3BheS5zeXJ1cC5jby5rciI
 }
 ```
 
-### 결재 인증을 위한 Syrup Pay Token 생성
+### 결제 인증을 위한 Syrup Pay Token 생성
 ##### Java Code
 ```java
 String token = new SyrupPayTokenBuilder().of("가맹점 ID")

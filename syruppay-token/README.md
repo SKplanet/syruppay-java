@@ -277,6 +277,7 @@ String token = new SyrupPayTokenBuilder().of("가맹점 ID")
                      .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6")) // Optional
                      .withBeAbleToExchangeToCash(false) // Optional
                      .withRestrictionOf(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR) // Optional
+                     .withRestrictionPaymentTypeOf("MOBILE;BANK") // Optional
                      .withMerchantDefinedValue("{" +
                              "\"id_1\": \"value\"," +
                              "\"id_2\": 2" +

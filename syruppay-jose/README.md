@@ -12,12 +12,12 @@ JDK 1.5 or later
 <dependency>
 	<groupId>com.skplanet.syruppay</groupId>
 	<artifactId>jose_jdk1.5</artifactId>
-	<version>1.3.2</version>
+	<version>1.3.3</version>
 </dependency>
 ```
 ### Gradle
 ```
-compile 'com.skplanet.syruppay:jose_jdk1.5:1.3.2'
+compile 'com.skplanet.syruppay:jose_jdk1.5:1.3.3'
 ```
 
 ## Usage
@@ -176,6 +176,10 @@ RS256|RSASSA-PKCS1-v1_5 using SHA-256
 ES256|ECDSA using P-256 and SHA-256
 
 ## release note
+### 1.3.3
+- AESWrap/AESUnWrap provider change
+- JoseSupport class deprecated
+- Other bugs fix
 ### 1.3.2
 - JWE content encryption algorithms is added
   * A256CBC-HS256 algorithm

@@ -180,6 +180,7 @@ ES256|ECDSA using P-256 and SHA-256
 - AESWrap/AESUnWrap provider change
 - JoseSupport class deprecated
 - Other bugs fix
+
 ### 1.3.2
 - JWE content encryption algorithms is added
   * A256CBC-HS256 algorithm

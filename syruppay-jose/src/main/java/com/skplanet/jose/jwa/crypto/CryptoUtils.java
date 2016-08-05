@@ -25,18 +25,13 @@
 package com.skplanet.jose.jwa.crypto;
 
 import org.bouncycastle.crypto.BlockCipher;
-import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.engines.AESEngine;
-import org.bouncycastle.crypto.engines.AESWrapEngine;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.Mac;
-import javax.crypto.SecretKey;
+import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
@@ -115,9 +110,20 @@ public class CryptoUtils {
 	}
 
 	public static byte[] rsaDecrypt(Transformation transformation, byte[] encrypted, PrivateKey key) throws Exception {
-		Cipher cipher = Cipher.getInstance(transformation.getValue());
+		Cipher cipher = null;
+
+		try {
+			cipher = Cipher.getInstance(transformation.getValue());
+		} catch (NoSuchAlgorithmException e) {
+			if (Security.getProvider("BC") == null) {
+				Security.addProvider(new BouncyCastleProvider());
+			}
+
+			cipher = Cipher.getInstance(transformation.getValue());
+		}
+
 		cipher.init(Cipher.DECRYPT_MODE, key);
-		return  cipher.doFinal(encrypted);
+		return cipher.doFinal(encrypted);
 	}
 
 	public static RSAPublicKey generateRsaPublicKey(BigInteger modulus, BigInteger publicExponent) throws Exception {
@@ -177,6 +183,7 @@ public class CryptoUtils {
 		return verifier.verify(expectedBytes);
 	}
 
+	/*
 	public static byte[] KeyWrap(Transformation transformation, byte[] symmetricKey, byte[] cek) {
 		AESWrapEngine engine = new AESWrapEngine();
 		CipherParameters param = new KeyParameter(
@@ -184,13 +191,29 @@ public class CryptoUtils {
 		engine.init(true, param);
 		return engine.wrap(cek, 0, cek.length);
 	}
+	*/
+	public static byte[] KeyWrap(Transformation transformation, byte[] symmetricKey, byte[] cek)
+			throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException,
+			NoSuchProviderException {
+		Cipher cipher = Cipher.getInstance("AESWrap");
+		cipher.init(Cipher.WRAP_MODE, new SecretKeySpec(symmetricKey, transformation.getAlgorithm()));
+		return cipher.wrap(new SecretKeySpec(cek, transformation.getAlgorithm()));
+	}
 
+	/*
 	public static byte[] keyUnwrap(Transformation transformation, byte[] symmetricKey, byte[] cek) throws Exception {
 		AESWrapEngine engine = new AESWrapEngine();
 		CipherParameters param = new KeyParameter(
 				new SecretKeySpec(symmetricKey, transformation.getAlgorithm()).getEncoded());
 		engine.init(false, param);
 		return engine.unwrap(cek, 0, cek.length);
+	}
+	*/
+
+	public static byte[] keyUnwrap(Transformation transformation, byte[] symmetricKey, byte[] cek) throws Exception {
+		Cipher cipher = Cipher.getInstance("AESWrap");
+		cipher.init(Cipher.UNWRAP_MODE, new SecretKeySpec(symmetricKey, transformation.getAlgorithm()));
+		return cipher.unwrap(cek, transformation.getAlgorithm(), Cipher.SECRET_KEY).getEncoded();
 	}
 
 	public static byte[] generatorKey(Transformation transformation, int size) throws NoSuchAlgorithmException {

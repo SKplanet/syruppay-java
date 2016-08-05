@@ -56,8 +56,13 @@ public class AesKeyWrapAlgorithm implements JweAlgorithm {
 	public JweAlgResult encryption(byte[] key, ContentEncryptKeyGenerator cekGenerator) {
 		isValidKey(key);
 
+		Transformation transformation = new Transformation(Algorithm.AES);
 		byte[] cek = cekGenerator.generateRandomKey();
-		return new JweAlgResult(cek, CryptoUtils.KeyWrap(new Transformation(Algorithm.AES), key, cek));
+		try {
+			return new JweAlgResult(cek, CryptoUtils.KeyWrap(transformation, key, cek));
+		} catch (Exception e) {
+			throw new EncryptionException(transformation.getValue()+"KeyWrapException", e);
+		}
 	}
 
 	public byte[] decryption(byte[] key, byte[] cek) {

@@ -46,7 +46,7 @@ public class Sha256WithECDSAUsingP256Algorithm implements JwsAlgorithm {
 		} catch (Exception e) {
 			throw new KeyGenerateException("ECPublicKeyGenerateException", e);
 		}
-		return AsymmetricShaAlgoritm.verify(transformation, publicKey, actual, convertRandStoDer(expected));
+		return AsymmetricShaAlgorithm.verify(transformation, publicKey, actual, convertRandStoDer(expected));
 	}
 
 	public byte[] sign(byte[] key, byte[] bytes) {
@@ -57,7 +57,7 @@ public class Sha256WithECDSAUsingP256Algorithm implements JwsAlgorithm {
 		} catch (Exception e) {
 			throw new KeyGenerateException("ECPrivateKeyGenerateException", e);
 		}
-		return convertDertoRandS(AsymmetricShaAlgoritm.sign(transformation, privateKey, bytes), 32);
+		return convertDertoRandS(AsymmetricShaAlgorithm.sign(transformation, privateKey, bytes), 32);
 	}
 
 	public byte[] convertDertoRandS(byte derBytes[], int outputLength) {

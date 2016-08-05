@@ -45,7 +45,7 @@ public class Sha256WithRsaAlgorithm implements JwsAlgorithm {
 		} catch (Exception e) {
 			throw new KeyGenerateException("RSAPublicKeyGenerateException", e);
 		}
-		return AsymmetricShaAlgoritm.verify(transformation, publicKey, actual, expected);
+		return AsymmetricShaAlgorithm.verify(transformation, publicKey, actual, expected);
 	}
 
 	public byte[] sign(byte[] key, byte[] bytes) {
@@ -56,6 +56,6 @@ public class Sha256WithRsaAlgorithm implements JwsAlgorithm {
 		} catch (Exception e) {
 			throw new KeyGenerateException("RSAPrivateKeyGenerateException", e);
 		}
-		return AsymmetricShaAlgoritm.sign(transformation, privateKey, bytes);
+		return AsymmetricShaAlgorithm.sign(transformation, privateKey, bytes);
 	}
 }

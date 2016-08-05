@@ -70,7 +70,7 @@ public class JweSerializer implements JoseAction {
 
 	public String compactSerialization() {
 		JweAlgorithm jweAlgorithm = JwaFactory.getJweAlgorithm(jweParts.joseHeader.getAlgorithm());
-		JweEncryption jweEncryption = JwaFactory.getJweEncryption(jweParts.joseHeader.getEncrytion());
+		JweEncryption jweEncryption = JwaFactory.getJweEncryption(jweParts.joseHeader.getEncryption());
 
 		ContentEncryptKeyGenerator cekGenerator = jweEncryption.getContentEncryptionKeyGenerator();
 		cekGenerator.setUserEncryptionKey(jweParts.cek);
@@ -98,10 +98,10 @@ public class JweSerializer implements JoseAction {
 	}
 
 	private Jwa getDeserializeEncryption() {
-		if (userJoseHeader != null && userJoseHeader.getEncrytion() != null)
-			return userJoseHeader.getEncrytion();
+		if (userJoseHeader != null && userJoseHeader.getEncryption() != null)
+			return userJoseHeader.getEncryption();
 		else
-			return jweParts.joseHeader.getEncrytion();
+			return jweParts.joseHeader.getEncryption();
 	}
 
 	public String compactDeserialization() {

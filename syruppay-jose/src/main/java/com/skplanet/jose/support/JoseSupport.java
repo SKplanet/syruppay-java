@@ -39,6 +39,7 @@ import static com.skplanet.jose.JoseBuilders.*;
  *
  * @author 1000808 (byeongchan.park@sk.com)
  */
+@Deprecated
 public class JoseSupport {
 	/**
 	 * JOSE 규격 alg : A128KW, enc : A128CBC-HS256의 JWE 데이터를 생성한다.

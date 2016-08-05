@@ -32,24 +32,24 @@ import com.skplanet.jose.jws.JwsSerializationBuilder;
  */
 public class JoseBuilders {
 	public static JwsSerializationBuilder JsonSignatureCompactSerializationBuilder() {
-		return new JwsSerializationBuilder(JoseMethod.JWS, JoseActionType.SERIALIZATION);
+		return new JwsSerializationBuilder();
 	}
 
 	@Deprecated
 	public static DeserializationBuilder JsonSignatureCompactDeserializationBuilder() {
-		return new DeserializationBuilder(JoseMethod.JWS, JoseActionType.DESERIALIZATION);
+		return new DeserializationBuilder(JoseMethod.JWS);
 	}
 
 	public static JweSerializationBuilder JsonEncryptionCompactSerializationBuilder() {
-		return new JweSerializationBuilder(JoseMethod.JWE, JoseActionType.SERIALIZATION);
+		return new JweSerializationBuilder();
 	}
 
 	@Deprecated
 	public static DeserializationBuilder JsonEncryptionCompactDeserializationBuilder() {
-		return new DeserializationBuilder(JoseMethod.JWE, JoseActionType.DESERIALIZATION);
+		return new DeserializationBuilder(JoseMethod.JWE);
 	}
 
 	public static DeserializationBuilder compactDeserializationBuilder() {
-		return new DeserializationBuilder(JoseActionType.DESERIALIZATION);
+		return new DeserializationBuilder();
 	}
 }

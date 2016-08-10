@@ -24,6 +24,7 @@
 
 package com.skplanet.jose.jwa.enc;
 
+import com.skplanet.jose.commons.codec.binary.Base64;
 import com.skplanet.jose.exception.EncryptionException;
 import com.skplanet.jose.exception.IllegalAuthenticationTag;
 import com.skplanet.jose.exception.IllegalSignatureToken;
@@ -75,7 +76,9 @@ public class AesEncryptionWithHmacSha extends ContentEncryption {
 		byte[] actual = sign(key, iv, cipherText, aad);
 
 		if (!Arrays.equals(actual, expected)) {
-			throw new IllegalAuthenticationTag();
+			throw new IllegalAuthenticationTag("actual: " + Base64.encodeBase64URLSafeString(actual) +
+				"expected: "+Base64.encodeBase64URLSafeString(expected) +
+				"is not matched");
 		}
 	}
 
@@ -138,10 +141,5 @@ public class AesEncryptionWithHmacSha extends ContentEncryption {
 		public AesNoPaddingAndHmac(int keyLength, int ivLength, Algorithm hmacAlgorithm) {
 			super(keyLength, ivLength, new Transformation(Algorithm.AES, Mode.CBC, Padding.NoPadding), hmacAlgorithm);
 		}
-
-//		@Override
-//		public JweEncResult encryptAndSign(byte[] cek, byte[] iv, byte[] src, byte[] aad) {
-//			throw new UnsupportedOperationException("NoPadding AES Encryption");
-//		}
 	}
 }

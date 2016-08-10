@@ -35,12 +35,13 @@ public class DeserializationBuilder extends JoseCompactBuilder {
 	private JoseHeader userJoseHeader;
 	private String serializedSource;
 
-	public DeserializationBuilder(JoseActionType joseActionType) {
-		super.compactBuilder(joseActionType);
+	public DeserializationBuilder() {
+		super.compactBuilder(JoseActionType.DESERIALIZATION);
 	}
 
-	public DeserializationBuilder(JoseMethod joseMethod, JoseActionType joseActionType) {
-		super.compactBuilder(joseMethod, joseActionType);
+	@Deprecated
+	public DeserializationBuilder(JoseMethod joseMethod) {
+		super.compactBuilder(joseMethod, JoseActionType.DESERIALIZATION);
 	}
 
 	/**
@@ -83,11 +84,11 @@ public class DeserializationBuilder extends JoseCompactBuilder {
 
 		switch (joseSerializeType) {
 		case COMPACT_SERIALIZATION:
-			if (JoseMethod.JWE == joseMethod && JoseActionType.DESERIALIZATION == joseActionType) {
+			if (JoseMethod.JWE == joseMethod) {
 				JweSerializer serializer = new JweSerializer(serializedSource, key);
 				serializer.setUserJoseHeader(userJoseHeader);
 				return serializer;
-			} else if (JoseMethod.JWS == joseMethod && JoseActionType.DESERIALIZATION == joseActionType) {
+			} else if (JoseMethod.JWS == joseMethod) {
 				JwsSerializer serializer = new JwsSerializer(serializedSource, key);
 				serializer.setUserJoseHeader(userJoseHeader);
 				return serializer;

@@ -30,6 +30,6 @@ public class JoseHeaderTest extends TestCase {
 		joseHeader.setEncoded(header);
 
 		assertThat(joseHeader.getAlgorithm().getValue(), is(Jwa.A128KW.getValue()));
-		assertThat(joseHeader.getEncrytion().getValue(), is(Jwa.A128CBC_HS256.getValue()));
+		assertThat(joseHeader.getEncryption().getValue(), is(Jwa.A128CBC_HS256.getValue()));
 	}
 }

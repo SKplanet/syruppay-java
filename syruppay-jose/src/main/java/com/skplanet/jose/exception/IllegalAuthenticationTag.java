@@ -29,4 +29,8 @@ public class IllegalAuthenticationTag extends RuntimeException {
 	public IllegalAuthenticationTag() {
 		super();
 	}
+
+	public IllegalAuthenticationTag(String messsage) {
+		super(messsage);
+	}
 }

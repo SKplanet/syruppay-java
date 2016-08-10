@@ -36,7 +36,7 @@ import java.security.SignatureException;
 /**
  * Created by byeongchan.park@sk.com(1000808) on 2015-11-26.
  */
-public class AsymmetricShaAlgoritm {
+public class AsymmetricShaAlgorithm {
 	public static boolean verify(Transformation transformation, Key key, byte[] actual, byte[] expected) {
 		try {
 			return CryptoUtils.asymmetricSignatureVerify(transformation, key, actual, expected);

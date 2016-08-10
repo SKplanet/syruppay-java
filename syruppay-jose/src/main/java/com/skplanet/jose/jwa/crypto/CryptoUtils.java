@@ -25,7 +25,9 @@
 package com.skplanet.jose.jwa.crypto;
 
 import org.bouncycastle.crypto.BlockCipher;
+import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.engines.AESEngine;
+import org.bouncycastle.crypto.engines.AESWrapEngine;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -183,7 +185,6 @@ public class CryptoUtils {
 		return verifier.verify(expectedBytes);
 	}
 
-	/*
 	public static byte[] KeyWrap(Transformation transformation, byte[] symmetricKey, byte[] cek) {
 		AESWrapEngine engine = new AESWrapEngine();
 		CipherParameters param = new KeyParameter(
@@ -191,7 +192,8 @@ public class CryptoUtils {
 		engine.init(true, param);
 		return engine.wrap(cek, 0, cek.length);
 	}
-	*/
+
+	/*
 	public static byte[] KeyWrap(Transformation transformation, byte[] symmetricKey, byte[] cek)
 			throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException,
 			NoSuchProviderException {
@@ -199,8 +201,8 @@ public class CryptoUtils {
 		cipher.init(Cipher.WRAP_MODE, new SecretKeySpec(symmetricKey, transformation.getAlgorithm()));
 		return cipher.wrap(new SecretKeySpec(cek, transformation.getAlgorithm()));
 	}
+	*/
 
-	/*
 	public static byte[] keyUnwrap(Transformation transformation, byte[] symmetricKey, byte[] cek) throws Exception {
 		AESWrapEngine engine = new AESWrapEngine();
 		CipherParameters param = new KeyParameter(
@@ -208,13 +210,14 @@ public class CryptoUtils {
 		engine.init(false, param);
 		return engine.unwrap(cek, 0, cek.length);
 	}
-	*/
 
+	/*
 	public static byte[] keyUnwrap(Transformation transformation, byte[] symmetricKey, byte[] cek) throws Exception {
 		Cipher cipher = Cipher.getInstance("AESWrap");
 		cipher.init(Cipher.UNWRAP_MODE, new SecretKeySpec(symmetricKey, transformation.getAlgorithm()));
 		return cipher.unwrap(cek, transformation.getAlgorithm(), Cipher.SECRET_KEY).getEncoded();
 	}
+	*/
 
 	public static byte[] generatorKey(Transformation transformation, int size) throws NoSuchAlgorithmException {
 		SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");

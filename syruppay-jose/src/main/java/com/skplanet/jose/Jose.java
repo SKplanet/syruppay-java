@@ -24,11 +24,20 @@
 
 package com.skplanet.jose;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import java.security.Security;
+
 /**
  * Created by 박병찬 on 2015-07-15.
  */
 public class Jose {
 	private JoseAction joseAction;
+
+	static {
+		if (Security.getProvider("BC") == null)
+			Security.addProvider(new BouncyCastleProvider());
+	}
 
 	public SerializeAction configuration(JoseCompactBuilder joseCompactBuilder) {
 		final JoseActionType joseActionType = joseCompactBuilder.getJoseActionType();

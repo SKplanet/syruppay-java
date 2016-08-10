@@ -176,20 +176,23 @@ RS256|RSASSA-PKCS1-v1_5 using SHA-256
 ES256|ECDSA using P-256 and SHA-256
 
 ## release note
+### 1.3.4
+- AESWrap/AESUnWrap 하위호환성을 위한 원복 (jdk 1.8.0_45 이상에서 AESWarp/AESUnWrap key size check 처리 추가됨)
+
 ### 1.3.3
-- AESWrap/AESUnWrap provider change
+- AESWrap/AESUnWrap JCE provider로 변경
 - JoseSupport class deprecated
-- Other bugs fix
+- 기타버그 수정
 
 ### 1.3.2
-- JWE content encryption algorithms is added
+- JWE content encryption algorithms 추가
   * A256CBC-HS256 algorithm
   * A128GCM algorithm
   * A256GCM algorithm
-- unused apache common codec sources is deleted
-- JWE, JWS specific header class is added
-- JWE, JWS favorite algorithm suites is added
-- OpenSSL compatibility for IOS is added (only decryption supported)
+- 불필요한 apache common codec sources 삭제
+- JWE, JWS specific header class 추가
+- JWE, JWS favorite algorithm suites 기능 추가
+- OpenSSL 알고리즘 호환성 추가 (복호화 기능 제공)
   * RSA/NONE/PKCS1PADDING
   * AES/CBC/NOPADDING
 - v0.2.1 JWS header bugs compatibility is added

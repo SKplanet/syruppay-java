@@ -640,14 +640,6 @@ public class SyrupPayTokenBuilderTest {
     }
 
     @Test
-    public void 라이브러리_적용_전_버전_11번가_테스트() throws Exception {
-        SyrupPayTokenBuilder.uncheckHeaderOfToken();
-        Token t = SyrupPayTokenBuilder.verify(TokenHistories.BEFORE_11ST.token, TokenHistories.BEFORE_11ST.key);
-        assertThat(t.getTransactionInfo().getMctTransAuthId(), is(notNullValue()));
-        assertThat(t.getTransactionInfo().getPaymentRestrictions().getCardIssuerRegion(), is(notNullValue()));
-    }
-
-    @Test
     public void 하위버전_1_3_4_버전_CJOSHOPPING_테스트() throws Exception {
         SyrupPayTokenBuilder.uncheckHeaderOfToken();
         Token t = SyrupPayTokenBuilder.verify(TokenHistories.VERSION_1_3_4_BY_CJOSHOPPING.token, TokenHistories.VERSION_1_3_4_BY_CJOSHOPPING.key);

@@ -32,6 +32,7 @@ import com.skplanet.syruppay.token.TokenBuilder;
 public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<SubscriptionConfigurer<H>, H> {
     private String autoPaymentId;
     private RegistrationRestrictions registrationRestrictions;
+    private Plan plan;
 
     public SubscriptionConfigurer<H> withAutoPaymentId(final String autoPaymentId) {
         this.autoPaymentId = autoPaymentId;
@@ -44,6 +45,15 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
         }
         this.registrationRestrictions.matchedUser = matchedUser;
         return this;
+    }
+
+    public SubscriptionConfigurer<H> with(final Plan plan) {
+        this.plan = plan;
+        return this;
+    }
+
+    public Plan getPlan() {
+        return plan;
     }
 
     public String getAutoPaymentId() {
@@ -75,5 +85,28 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
         public PayConfigurer.MatchedUser getMatchedUser() {
             return matchedUser;
         }
+    }
+
+    public static class Plan {
+        private final Interval interval;
+        private final String name;
+
+        public Plan(final Interval interval, final String name) {
+            assert interval != null && name != null && !(name.length() == 0);
+            this.interval = interval;
+            this.name = name;
+        }
+
+        public Interval getInterval() {
+            return interval;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    public static enum Interval {
+        ONDEMAND, MONTHLY, WEEKLY, BIWEEKLY
     }
 }

@@ -76,7 +76,9 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
     }
 
     public void validRequired() throws Exception {
-        // ignored
+        if(plan != null) {
+            plan.valid();
+        }
     }
 
     public static class RegistrationRestrictions {
@@ -88,13 +90,16 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
     }
 
     public static class Plan {
-        private final Interval interval;
-        private final String name;
+        private Interval interval;
+        private String name;
 
         public Plan(final Interval interval, final String name) {
             assert interval != null && name != null && !(name.length() == 0);
             this.interval = interval;
             this.name = name;
+        }
+
+        public Plan(){
         }
 
         public Interval getInterval() {
@@ -103,6 +108,12 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
 
         public String getName() {
             return name;
+        }
+
+        public void valid() {
+            if(interval == null || name == null || name.length() == 0) {
+                throw new IllegalArgumentException("plan of subscription object couldn't be with null or empty fields interval : " + interval + ", name : " + name);
+            }
         }
     }
 

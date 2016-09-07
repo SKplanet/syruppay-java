@@ -48,6 +48,16 @@ public class MapToSyrupPayUserConfigurer<H extends TokenBuilder<H>> extends Abst
 
     private MappingType mappingType;
     private String mappingValue;
+    private String identityAuthenticationId;
+
+    public String getIdentityAuthenticationId() {
+        return identityAuthenticationId;
+    }
+
+    public MapToSyrupPayUserConfigurer withIdentityAuthenticationId(String identityAuthenticationId) {
+        this.identityAuthenticationId = identityAuthenticationId;
+        return this;
+    }
 
     /**
      * 시럽페이 사용자 정보를 맵핑하는 방식을 반환한다.

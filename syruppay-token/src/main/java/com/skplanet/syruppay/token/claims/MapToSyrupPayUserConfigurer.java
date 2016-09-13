@@ -49,7 +49,6 @@ public class MapToSyrupPayUserConfigurer<H extends TokenBuilder<H>> extends Abst
     private MappingType mappingType;
     private String mappingValue;
     private String identityAuthenticationId;
-    private String requestSessionId;
 
     public String getIdentityAuthenticationId() {
         return identityAuthenticationId;
@@ -57,15 +56,6 @@ public class MapToSyrupPayUserConfigurer<H extends TokenBuilder<H>> extends Abst
 
     public MapToSyrupPayUserConfigurer<H> withIdentityAuthenticationId(String identityAuthenticationId) {
         this.identityAuthenticationId = identityAuthenticationId;
-        return this;
-    }
-
-    public String getRequestSessionId() {
-        return requestSessionId;
-    }
-
-    public MapToSyrupPayUserConfigurer<H> withRequestSessionId(String requestSessionId) {
-        this.requestSessionId = requestSessionId;
         return this;
     }
 

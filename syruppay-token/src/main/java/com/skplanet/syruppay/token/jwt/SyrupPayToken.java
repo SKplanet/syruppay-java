@@ -149,9 +149,6 @@ public class SyrupPayToken implements Token {
      * {@inheritDoc}
      */
     public PayConfigurer getTransactionInfo() {
-        if (transactionInfo == null) {
-            transactionInfo = new PayConfigurer();
-        }
         return transactionInfo;
     }
 
@@ -183,25 +180,33 @@ public class SyrupPayToken implements Token {
     @Deprecated
     @JsonProperty("paymentInfo")
     public void setPaymentInfo(PayConfigurer.PaymentInformationBySeller paymentInfo) {
+        if(transactionInfo == null) {
+            LOGGER.warn("create transactionInfo to set payment information");
+            transactionInfo = new PayConfigurer();
+        }
         LOGGER.warn("set paymentInfo element by deprecated method");
-        getTransactionInfo().withAmount(paymentInfo.getPaymentAmt());
-        getTransactionInfo().withLanguageForDisplay(PayConfigurer.Language.valueOf(paymentInfo.getLang().toUpperCase()));
-        getTransactionInfo().withShippingAddress(paymentInfo.getShippingAddress());
-        getTransactionInfo().withProductTitle(paymentInfo.getProductTitle());
-        getTransactionInfo().withProductUrls(paymentInfo.getProductUrls());
-        getTransactionInfo().withCurrency(PayConfigurer.Currency.valueOf(paymentInfo.getCurrencyCode().toUpperCase()));
-        getTransactionInfo().withDeliveryName(paymentInfo.getDeliveryName());
-        getTransactionInfo().withDeliveryPhoneNumber(paymentInfo.getDeliveryPhoneNumber());
-        getTransactionInfo().withInstallmentPerCardInformation(paymentInfo.getCardInfoList());
+        transactionInfo.withAmount(paymentInfo.getPaymentAmt());
+        transactionInfo.withLanguageForDisplay(PayConfigurer.Language.valueOf(paymentInfo.getLang().toUpperCase()));
+        transactionInfo.withShippingAddress(paymentInfo.getShippingAddress());
+        transactionInfo.withProductTitle(paymentInfo.getProductTitle());
+        transactionInfo.withProductUrls(paymentInfo.getProductUrls());
+        transactionInfo.withCurrency(PayConfigurer.Currency.valueOf(paymentInfo.getCurrencyCode().toUpperCase()));
+        transactionInfo.withDeliveryName(paymentInfo.getDeliveryName());
+        transactionInfo.withDeliveryPhoneNumber(paymentInfo.getDeliveryPhoneNumber());
+        transactionInfo.withInstallmentPerCardInformation(paymentInfo.getCardInfoList());
     }
 
     @Deprecated
     @JsonProperty("paymentRestrictions")
     public void setPaymentRestrictions(PayConfigurer.PaymentRestriction paymentRestriction) {
+        if(transactionInfo == null) {
+            LOGGER.warn("create transactionInfo to set payment restrictions");
+            transactionInfo = new PayConfigurer();
+        }
         LOGGER.warn("set paymentRestrictions element by deprecated method");
         for (PayConfigurer.PayableLocaleRule r : PayConfigurer.PayableLocaleRule.values()) {
             if (r.toCode().equals(paymentRestriction.getCardIssuerRegion())) {
-                getTransactionInfo().withPayableRuleWithCard(r);
+                transactionInfo.withPayableRuleWithCard(r);
             }
         }
     }

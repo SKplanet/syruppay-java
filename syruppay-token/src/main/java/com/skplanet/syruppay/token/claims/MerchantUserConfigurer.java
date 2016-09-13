@@ -80,6 +80,10 @@ public final class MerchantUserConfigurer<H extends TokenBuilder<H>> extends Abs
         return ssoCredential;
     }
 
+    public String getDeviceIdentifier() {
+        return deviceIdentifier;
+    }
+
     /**
      * 시럽페이로 자동 로그인 하기 위한 SSO Credential 을 입력한다.
      *
@@ -145,7 +149,7 @@ public final class MerchantUserConfigurer<H extends TokenBuilder<H>> extends Abs
     }
 
     public void validRequired() throws Exception {
-        if (this.mctUserId == null || this.mctUserId.isEmpty()) {
+        if (this.mctUserId == null || this.mctUserId.length() == 0) {
             throw new IllegalArgumentException("when you try to login or sign up, merchant user id couldn't be null. you should set merchant user id  by SyrupPayTokenHandler.login().withMerchantUserId(String) or SyrupPayTokenHandler.signup().withMerchantUserId(String)");
         }
     }

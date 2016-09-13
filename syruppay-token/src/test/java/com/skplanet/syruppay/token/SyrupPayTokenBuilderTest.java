@@ -213,11 +213,12 @@ public class SyrupPayTokenBuilderTest {
                 .and()
                 .mapToSyrupPayUser()
                     .withType(MapToSyrupPayUserConfigurer.MappingType.CI_MAPPED_KEY)
-                    .withValue("4987234");
+                    .withValue("4987234")
+                    .withIdentityAuthenticationId("bddb74b0-981f-4070-8c02-0cdf324f46f6"); // Optional
         // @formatter:on
         // When
         String t = syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
-
+        System.out.println(t);
         // Then
         assertThat(t, is(notNullValue()));
         assertThat(t.length(), is(not(0)));

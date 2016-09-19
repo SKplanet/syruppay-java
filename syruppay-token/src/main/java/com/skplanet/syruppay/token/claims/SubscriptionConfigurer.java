@@ -22,11 +22,6 @@
 package com.skplanet.syruppay.token.claims;
 
 import com.skplanet.syruppay.token.TokenBuilder;
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * 정기/비정기 결제 정보에 대한 Claim 을 구성한다.
@@ -36,14 +31,55 @@ import java.util.List;
  */
 public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<SubscriptionConfigurer<H>, H> {
     private String autoPaymentId;
+    private RegistrationRestrictions registrationRestrictions;
+    private Plan plan;
+    private String mctSubscriptionRequestId;
 
     public SubscriptionConfigurer<H> withAutoPaymentId(final String autoPaymentId) {
         this.autoPaymentId = autoPaymentId;
         return this;
     }
 
+    public SubscriptionConfigurer<H> withRestrictionOf(final PayConfigurer.MatchedUser matchedUser) {
+        if(registrationRestrictions == null) {
+            registrationRestrictions = new RegistrationRestrictions();
+        }
+        this.registrationRestrictions.matchedUser = matchedUser;
+        return this;
+    }
+
+    public SubscriptionConfigurer<H> with(final Plan plan) {
+        this.plan = plan;
+        return this;
+    }
+
+    public SubscriptionConfigurer<H> withMerchantSubscriptionRequestId(String mctSubscriptionRequestId) {
+        this.mctSubscriptionRequestId = mctSubscriptionRequestId;
+        return this;
+    }
+
+    public String getMctSubscriptionRequestId() {
+        return mctSubscriptionRequestId;
+    }
+
+
+    public Plan getPlan() {
+        return plan;
+    }
+
     public String getAutoPaymentId() {
         return autoPaymentId;
+    }
+
+    public RegistrationRestrictions getRegistrationRestrictions() {
+        return registrationRestrictions;
+    }
+
+    public void setMatchedUser(final PayConfigurer.MatchedUser matchedUser) {
+        if(registrationRestrictions == null) {
+            registrationRestrictions = new RegistrationRestrictions();
+        }
+        registrationRestrictions.matchedUser = matchedUser;
     }
 
     public String claimName() {
@@ -51,6 +87,48 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
     }
 
     public void validRequired() throws Exception {
-        // ignored
+        if(plan != null) {
+            plan.valid();
+        }
+    }
+
+    public static class RegistrationRestrictions {
+        private PayConfigurer.MatchedUser matchedUser;
+
+        public PayConfigurer.MatchedUser getMatchedUser() {
+            return matchedUser;
+        }
+    }
+
+    public static class Plan {
+        private Interval interval;
+        private String name;
+
+        public Plan(final Interval interval, final String name) {
+            assert interval != null && name != null && !(name.length() == 0);
+            this.interval = interval;
+            this.name = name;
+        }
+
+        public Plan(){
+        }
+
+        public Interval getInterval() {
+            return interval;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void valid() {
+            if(interval == null || name == null || name.length() == 0) {
+                throw new IllegalArgumentException("plan of subscription object couldn't be with null or empty fields interval : " + interval + ", name : " + name);
+            }
+        }
+    }
+
+    public static enum Interval {
+        ONDEMAND, MONTHLY, WEEKLY, BIWEEKLY
     }
 }

@@ -199,12 +199,13 @@ String token = syrupPayTokenBuilder.of("가맹점 ID")
                     .withAutoPaymentId("시럽페이로부터 발급받은 자동결제 ID") //Optional,  자동결제 변경 시에만 필요, 자동결제 등록 시에는 필요 없음
                     .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional. 가맹점과 시럽페이 사용자 동일 여부 확인 시에만 필요
                     .withMerchantSubscriptionRequestId("가맹점에서 다시 전달받을 ID 문자열") // Optional
+                    .with(new SubscriptionConfigurer.Plan(SubscriptionConfigurer.Interval.WEEKLY, "결제명")) // Optional
                 .and()
                 .generateTokenBy("가맹점에게 전달한 비밀키");
 ```
 #### token 결과
 ```language
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IuqwgOunueygkCIsInZlciI6IjEuMy4yIn0.eyJhdWQiOiJodHRwczovL3BheS5zeXJ1cC5jby5rciIsInR5cCI6Impvc2UiLCJpc3MiOiLqsIDrp7nsoJAiLCJleHAiOjE0NjIzMzE0ODEsImlhdCI6MTQ2MjMzMDg4MSwianRpIjoiNTc1ZWFjY2UtZTBkOS00NzUyLWI3N2YtODIyMGRiMjlkNTcwIiwibmJmIjowLCJsb2dpbkluZm8iOnsibWN0VXNlcklkIjoi6rCA66e57KCQ7J2YIO2ajOybkCBJRCDrmJDripQg7Iud67OE7J6QIiwiZXh0cmFVc2VySWQiOiLtlbjrk5ztj7Dqs7wg6rCZ7J20IO2ajOybkCDrs4Qg7LaU6rCAIElEIOyytOqzhOqwgCDsobTsnqztlaAg6rK97JqwIOyeheugpSIsIlNTT0NyZWRlbnRpYWwiOiJTU08g66W8IOuwnOq4iSDrsJvslZjsnYQg6rK97JqwIOyeheugpSJ9LCJzdWJzY3JpcHRpb24iOnsiYXV0b1BheW1lbnRJZCI6IuyLnOufve2OmOydtOuhnOu2gO2EsCDrsJzquInrsJvsnYAg7J6Q64-Z6rKw7KCcIElEIiwibWF0Y2hlZFVzZXIiOiJDSV9NQVRDSEVEX09OTFkifX0.gY9mBAiOMtfThw5xSpAgHmRN4RSO1JMLKDvIqk-NVo8
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IuqwgOunueygkCIsInZlciI6IjEuMy4yIn0.eyJhdWQiOiJodHRwczovL3BheS5zeXJ1cC5jby5rciIsInR5cCI6Impvc2UiLCJpc3MiOiLqsIDrp7nsoJAiLCJleHAiOjE0NzQ0NDg0MzEsImlhdCI6MTQ3NDQ0NzgzMSwianRpIjoiYzgxOTM5OWEtZmY1Ny00OGU3LTg3ZWEtNmFiMjc2NWJlZDgwIiwibmJmIjowLCJsb2dpbkluZm8iOnsibWN0VXNlcklkIjoi6rCA66e57KCQ7J2YIO2ajOybkCBJRCDrmJDripQg7Iud67OE7J6QIiwiZXh0cmFVc2VySWQiOiLtlbjrk5ztj7Dqs7wg6rCZ7J20IO2ajOybkCDrs4Qg7LaU6rCAIElEIOyytOqzhOqwgCDsobTsnqztlaAg6rK97JqwIOyeheugpSIsIlNTT0NyZWRlbnRpYWwiOiJTU08g66W8IOuwnOq4iSDrsJvslZjsnYQg6rK97JqwIOyeheugpSJ9LCJzdWJzY3JpcHRpb24iOnsiYXV0b1BheW1lbnRJZCI6IuyLnOufve2OmOydtOuhnOu2gO2EsCDrsJzquInrsJvsnYAg7J6Q64-Z6rKw7KCcIElEIiwicmVnaXN0cmF0aW9uUmVzdHJpY3Rpb25zIjp7Im1hdGNoZWRVc2VyIjoiQ0lfTUFUQ0hFRF9PTkxZIn0sInBsYW4iOnsiaW50ZXJ2YWwiOiJXRUVLTFkiLCJuYW1lIjoi6rKw7KCc7J2066aEIn0sIm1jdFN1YnNjcmlwdGlvblJlcXVlc3RJZCI6IuqwgOunueygkOyXkOyEnCDri6Tsi5wg7KCE64us67Cb7J2EIElEIOusuOyekOyXtCJ9fQ.hr2iY2XGqyvqZKV94cyz7d0Nlg6hZ3EbNTdVgSFp82U
 ```
 
 ##### token의 내용
@@ -213,9 +214,9 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IuqwgOunueygkCIsInZlciI6IjEuMy4yIn0.
   "aud": "https://pay.syrup.co.kr",
   "typ": "jose",
   "iss": "가맹점",
-  "exp": 1462331481,
-  "iat": 1462330881,
-  "jti": "575eacce-e0d9-4752-b77f-8220db29d570",
+  "exp": 1474448431,
+  "iat": 1474447831,
+  "jti": "c819399a-ff57-48e7-87ea-6ab2765bed80",
   "nbf": 0,
   "loginInfo": {
     "mctUserId": "가맹점의 회원 ID 또는 식별자",
@@ -224,7 +225,14 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IuqwgOunueygkCIsInZlciI6IjEuMy4yIn0.
   },
   "subscription": {
     "autoPaymentId": "시럽페이로부터 발급받은 자동결제 ID",
-    "matchedUser": "CI_MATCHED_ONLY"
+    "registrationRestrictions": {
+      "matchedUser": "CI_MATCHED_ONLY"
+    },
+    "plan": {
+      "interval": "WEEKLY",
+      "name": "결제이름"
+    },
+    "mctSubscriptionRequestId": "가맹점에서 다시 전달받을 ID 문자열"
   }
 }
 ```

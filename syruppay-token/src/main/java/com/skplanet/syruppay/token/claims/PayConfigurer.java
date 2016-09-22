@@ -596,7 +596,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
     }
 
     public static enum MatchedUser {
-        CI_MATCHED_ONLY, FIRST_SIGNUP_IN_LIFETIME_ONLY
+        CI_MATCHED_ONLY
     }
 
     public static class Bank {

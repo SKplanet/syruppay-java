@@ -200,13 +200,13 @@ String token = syrupPayTokenBuilder.of("가맹점 ID")
                     .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional. 가맹점과 시럽페이 사용자 동일 여부 확인 시에만 필요
                     .withMerchantSubscriptionRequestId("가맹점에서 다시 전달받을 ID 문자열") // Optional
                     .with(new SubscriptionConfigurer.Plan(SubscriptionConfigurer.Interval.WEEKLY, "결제명")) // Optional
+                    .withPromotionCode("PROMOTION_CODE_001") // Optional
                 .and()
                 .generateTokenBy("가맹점에게 전달한 비밀키");
 ```
 #### token 결과
 ```language
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IuqwgOunueygkCIsInZlciI6IjEuMy4yIn0.eyJhdWQiOiJodHRwczovL3BheS5zeXJ1cC5jby5rciIsInR5cCI6Impvc2UiLCJpc3MiOiLqsIDrp7nsoJAiLCJleHAiOjE0NzQ0NDg0MzEsImlhdCI6MTQ3NDQ0NzgzMSwianRpIjoiYzgxOTM5OWEtZmY1Ny00OGU3LTg3ZWEtNmFiMjc2NWJlZDgwIiwibmJmIjowLCJsb2dpbkluZm8iOnsibWN0VXNlcklkIjoi6rCA66e57KCQ7J2YIO2ajOybkCBJRCDrmJDripQg7Iud67OE7J6QIiwiZXh0cmFVc2VySWQiOiLtlbjrk5ztj7Dqs7wg6rCZ7J20IO2ajOybkCDrs4Qg7LaU6rCAIElEIOyytOqzhOqwgCDsobTsnqztlaAg6rK97JqwIOyeheugpSIsIlNTT0NyZWRlbnRpYWwiOiJTU08g66W8IOuwnOq4iSDrsJvslZjsnYQg6rK97JqwIOyeheugpSJ9LCJzdWJzY3JpcHRpb24iOnsiYXV0b1BheW1lbnRJZCI6IuyLnOufve2OmOydtOuhnOu2gO2EsCDrsJzquInrsJvsnYAg7J6Q64-Z6rKw7KCcIElEIiwicmVnaXN0cmF0aW9uUmVzdHJpY3Rpb25zIjp7Im1hdGNoZWRVc2VyIjoiQ0lfTUFUQ0hFRF9PTkxZIn0sInBsYW4iOnsiaW50ZXJ2YWwiOiJXRUVLTFkiLCJuYW1lIjoi6rKw7KCc7J2066aEIn0sIm1jdFN1YnNjcmlwdGlvblJlcXVlc3RJZCI6IuqwgOunueygkOyXkOyEnCDri6Tsi5wg7KCE64us67Cb7J2EIElEIOusuOyekOyXtCJ9fQ.hr2iY2XGqyvqZKV94cyz7d0Nlg6hZ3EbNTdVgSFp82U
-```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IuqwgOunueygkCIsInZlciI6IjEuMy4yIn0.eyJhdWQiOiJodHRwczovL3BheS5zeXJ1cC5jby5rciIsInR5cCI6Impvc2UiLCJpc3MiOiLqsIDrp7nsoJAiLCJleHAiOjE0NzQ1MjU1ODAsImlhdCI6MTQ3NDUyNDk4MCwianRpIjoiYzZkNTc4NmMtN2I0MS00MzliLTk0NjgtMDNkYzRjMmFhZDc2IiwibmJmIjowLCJsb2dpbkluZm8iOnsibWN0VXNlcklkIjoi6rCA66e57KCQ7J2YIO2ajOybkCBJRCDrmJDripQg7Iud67OE7J6QIiwiZXh0cmFVc2VySWQiOiLtlbjrk5ztj7Dqs7wg6rCZ7J20IO2ajOybkCDrs4Qg7LaU6rCAIElEIOyytOqzhOqwgCDsobTsnqztlaAg6rK97JqwIOyeheugpSIsIlNTT0NyZWRlbnRpYWwiOiJTU08g66W8IOuwnOq4iSDrsJvslZjsnYQg6rK97JqwIOyeheugpSJ9LCJzdWJzY3JpcHRpb24iOnsiYXV0b1BheW1lbnRJZCI6IuyLnOufve2OmOydtOuhnOu2gO2EsCDrsJzquInrsJvsnYAg7J6Q64-Z6rKw7KCcIElEIiwicmVnaXN0cmF0aW9uUmVzdHJpY3Rpb25zIjp7Im1hdGNoZWRVc2VyIjoiQ0lfTUFUQ0hFRF9PTkxZIn0sInBsYW4iOnsiaW50ZXJ2YWwiOiJXRUVLTFkiLCJuYW1lIjoi6rKw7KCc66qFIn0sIm1jdFN1YnNjcmlwdGlvblJlcXVlc3RJZCI6IuqwgOunueygkOyXkOyEnCDri6Tsi5wg7KCE64us67Cb7J2EIElEIOusuOyekOyXtCIsInByb21vdGlvbkNvZGUiOiJQUk9NT1RJT05fQ09ERV8wMDEifX0.8Tu4pOkP4Sdi5j9cKoLopgl_V2MD69MsjF8iAyqIYLo```
 
 ##### token의 내용
 ```json
@@ -214,9 +214,9 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IuqwgOunueygkCIsInZlciI6IjEuMy4yIn0.
   "aud": "https://pay.syrup.co.kr",
   "typ": "jose",
   "iss": "가맹점",
-  "exp": 1474448431,
-  "iat": 1474447831,
-  "jti": "c819399a-ff57-48e7-87ea-6ab2765bed80",
+  "exp": 1474525580,
+  "iat": 1474524980,
+  "jti": "c6d5786c-7b41-439b-9468-03dc4c2aad76",
   "nbf": 0,
   "loginInfo": {
     "mctUserId": "가맹점의 회원 ID 또는 식별자",
@@ -230,9 +230,10 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IuqwgOunueygkCIsInZlciI6IjEuMy4yIn0.
     },
     "plan": {
       "interval": "WEEKLY",
-      "name": "결제이름"
+      "name": "결제명"
     },
-    "mctSubscriptionRequestId": "가맹점에서 다시 전달받을 ID 문자열"
+    "mctSubscriptionRequestId": "가맹점에서 다시 전달받을 ID 문자열",
+    "promotionCode": "PROMOTION_CODE_001"
   }
 }
 ```

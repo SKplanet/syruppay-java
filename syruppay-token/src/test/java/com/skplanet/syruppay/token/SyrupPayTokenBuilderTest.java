@@ -686,6 +686,7 @@ public class SyrupPayTokenBuilderTest {
                     .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional
                     .withMerchantSubscriptionRequestId("가맹점에서 다시 전달받을 ID 문자열") // Optional
                     .with(new SubscriptionConfigurer.Plan(SubscriptionConfigurer.Interval.WEEKLY, "결제명"))
+                    .withPromotionCode("PROMOTION_CODE_001")
                 .and()
                 .generateTokenBy("가맹점에게 전달한 비밀키");
         // @formatter:on

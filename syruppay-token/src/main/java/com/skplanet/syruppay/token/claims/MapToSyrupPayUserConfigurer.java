@@ -139,8 +139,8 @@ public class MapToSyrupPayUserConfigurer<H extends TokenBuilder<H>> extends Abst
     }
 
     public void validRequired() throws Exception {
-        if (this.mappingType == null || this.mappingValue == null) {
-            throw new IllegalArgumentException("fields to map couldn't be null. type : " + this.mappingType + "value : " + this.mappingValue);
+        if (this.mappingType != null && this.mappingValue == null) {
+            throw new IllegalArgumentException("fields to map couldn't be null. type : " + this.mappingType + ", value : " + this.mappingValue);
         }
     }
 

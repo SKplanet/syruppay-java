@@ -12,12 +12,12 @@ JDK 1.5 or later
 <dependency>
 	<groupId>com.skplanet.syruppay</groupId>
 	<artifactId>jose_jdk1.5</artifactId>
-	<version>1.3.2</version>
+	<version>1.3.5</version>
 </dependency>
 ```
 ### Gradle
 ```
-compile 'com.skplanet.syruppay:jose_jdk1.5:1.3.2'
+compile 'com.skplanet.syruppay:jose_jdk1.5:1.3.5'
 ```
 
 ## Usage

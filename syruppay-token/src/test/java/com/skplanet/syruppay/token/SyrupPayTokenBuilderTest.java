@@ -990,4 +990,27 @@ public class SyrupPayTokenBuilderTest {
         MapToSyrupPayUserConfigurer.Personal personal = new MapToSyrupPayUserConfigurer.Personal();
         personal.setUsername("홍길동");
     }
+
+    @Test
+    public void 시럽페이_사용자_정보에_SSO정책_추가입력_v1_3_11() throws Exception {
+        // Give
+        // @formatter:off
+        syrupPayTokenBuilder.of("가맹점")
+                .login()
+                    .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
+                    .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
+                    .withSsoCredential("SSO 를 발급 받았을 경우 입력")
+                    .isNotApplicableSso()
+        ;
+
+        // @formatter:on
+        // When
+        String t = syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
+        System.out.println(t);
+        // Then
+        assertThat(t, is(notNullValue()));
+        assertThat(t.length(), is(not(0)));
+
+        assertThat(SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키").getLoginInfo().getSsoPolicy(), is(notNullValue()));
+    }
 }

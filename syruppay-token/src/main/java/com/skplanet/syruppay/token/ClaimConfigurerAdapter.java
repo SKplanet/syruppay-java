@@ -21,16 +21,15 @@
 
 package com.skplanet.syruppay.token;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * 하위 클래스가 오직 자신의 관심사만 구현할 수 있도록 {@link com.skplanet.syruppay.token.ClaimConfigurer}의 베이스를 제공한다.
  * 또한 {@link com.skplanet.syruppay.token.ClaimConfigurer}을 사용하고 이미 설정된 {@link com.skplanet.syruppay.token.ClaimBuilder} 로의 접근을 확보하기 위한 매커니즘을 제공한다.
  *
- * @param <O>
- *         {@link com.skplanet.syruppay.token.ClaimBuilder} B 에 의해서 빌드된 객체.
- * @param <B>
- *         O 타입을 빌드 하는 {@link com.skplanet.syruppay.token.ClaimBuilder}의 타입이며 {@link com.skplanet.syruppay.token.ClaimBuilder}의해 설정되어지고 있는 타입
+ * @param <O> {@link com.skplanet.syruppay.token.ClaimBuilder} B 에 의해서 빌드된 객체.
+ * @param <B> O 타입을 빌드 하는 {@link com.skplanet.syruppay.token.ClaimBuilder}의 타입이며 {@link com.skplanet.syruppay.token.ClaimBuilder}의해 설정되어지고 있는 타입
  * @author 임형태
  * @since 1.0
  */
@@ -58,8 +57,7 @@ public abstract class ClaimConfigurerAdapter<O, B extends ClaimBuilder<O>> imple
      * {@link com.skplanet.syruppay.token.ClaimBuilder}를 반환하며 null 일 수 없다.
      *
      * @return the {@link com.skplanet.syruppay.token.ClaimBuilder}
-     * @throws IllegalStateException
-     *         {@link com.skplanet.syruppay.token.ClaimBuilder} is null
+     * @throws IllegalStateException {@link com.skplanet.syruppay.token.ClaimBuilder} is null
      */
     protected final B getBuilder() {
         if (builder == null) {
@@ -71,8 +69,7 @@ public abstract class ClaimConfigurerAdapter<O, B extends ClaimBuilder<O>> imple
     /**
      * {@link com.skplanet.syruppay.token.ClaimBuilder}를 세팅한다.
      *
-     * @param builder
-     *         세팅 하고자 하는 {@link com.skplanet.syruppay.token.ClaimBuilder}
+     * @param builder 세팅 하고자 하는 {@link com.skplanet.syruppay.token.ClaimBuilder}
      */
     public void setBuilder(B builder) {
         this.builder = builder;

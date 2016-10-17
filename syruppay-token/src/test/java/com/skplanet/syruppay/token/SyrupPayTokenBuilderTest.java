@@ -63,6 +63,7 @@
 
 package com.skplanet.syruppay.token;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skplanet.jose.Jose;
 import com.skplanet.jose.JoseBuilders;
 import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
@@ -73,7 +74,6 @@ import com.skplanet.syruppay.token.domain.TokenHistories;
 import com.skplanet.syruppay.token.jwt.SyrupPayToken;
 import com.skplanet.syruppay.token.jwt.Token;
 import org.apache.commons.codec.binary.Base64;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -21,8 +21,8 @@
 
 package com.skplanet.syruppay.token.claims;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skplanet.syruppay.token.TokenBuilder;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * 가맹점 사용자에 대한 Claim 설정을 정의한다.

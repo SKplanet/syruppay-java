@@ -13,7 +13,7 @@
 ### Gradle 빌드 시
 ```groovy
 dependencies {
-     compile 'com.skplanet.syruppay:syruppay-token:1.3.10'
+     compile 'com.skplanet.syruppay:syruppay-token:1.3.11'
 }
 
 ```
@@ -24,7 +24,7 @@ dependencies {
 	<dependency>
 		<groupId>com.skplanet.syruppay</groupId>
 		<artifactId>syruppay-token</artifactId>
-		<version>1.3.10</version>
+		<version>1.3.11</version>
 	</dependency>
 </dependencies>
 ```
@@ -40,6 +40,7 @@ String token = new SyrupPayTokenBuilder().of("가맹점 ID")
                         .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
                         .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
                         .withSsoCredential("SSO 를 발급 받았을 경우 입력")
+                        .isNotApplicableSso() // 자동로그인을 명시적으로 사용하지 않을 때
                     .and()
                     .generateTokenBy("가맹점에게 전달한 비밀키");
 // 회원 가입 시 
@@ -48,13 +49,14 @@ String token = new SyrupPayTokenBuilder().of("가맹점 ID")
                         .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
                         .extraId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
                         .ssoCredential("SSO 를 발급 받았을 경우 입력")
+                        .isNotApplicableSso() // 자동로그인을 명시적으로 사용하지 않을 때
                     .and()
                     .generateTokenBy("가맹점에게 전달한 비밀키");
 ```
 
 ##### token의 결과
 ```language
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL3BheS5zeXJ1cC5jby5rciIsInR5cCI6Impvc2UiLCJpc3MiOiLqsIDrp7nsoJAiLCJleHAiOjE0NDExNjE3OTEsImlhdCI6MTQ0MTE2MTE5MSwianRpIjoiMzRhM2QxNzMtZDY2OS00MzkyLTg2ZjUtY2Q4ZjI0NDRjMzM3IiwibmJmIjowLCJsb2dpbkluZm8iOnsibWN0VXNlcklkIjoi6rCA66e57KCQ7J2YIO2ajOybkCBJRCDrmJDripQg7Iud67OE7J6QIiwiZXh0cmFVc2VySWQiOiLtlbjrk5ztj7Dqs7wg6rCZ7J20IO2ajOybkCDrs4Qg7LaU6rCAIElEIOyytOqzhOqwgCDsobTsnqztlaAg6rK97JqwIOyeheugpSIsInNzb0NyZWRlbnRpYWwiOiJTU08g66W8IOuwnOq4iSDrsJvslZjsnYQg6rK97JqwIOyeheugpSJ9fQ.JZi3pz1CRukrSvXnrBUx1DLE-QY5xxY9NJm1cnpo_7Q
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IuqwgOunueygkCIsInZlciI6IjEuMy4yIn0.eyJhdWQiOiJodHRwczovL3BheS5zeXJ1cC5jby5rciIsInR5cCI6Impvc2UiLCJpc3MiOiLqsIDrp7nsoJAiLCJleHAiOjE0NzY2ODIyMjksImlhdCI6MTQ3NjY4MTYyOSwianRpIjoiODVjMjNiNjAtMTgyYi00NmQ1LWFkNjUtMTY1Yzg3ZTUzYjAyIiwibmJmIjowLCJsb2dpbkluZm8iOnsibWN0VXNlcklkIjoi6rCA66e57KCQ7J2YIO2ajOybkCBJRCDrmJDripQg7Iud67OE7J6QIiwiZXh0cmFVc2VySWQiOiLtlbjrk5ztj7Dqs7wg6rCZ7J20IO2ajOybkCDrs4Qg7LaU6rCAIElEIOyytOqzhOqwgCDsobTsnqztlaAg6rK97JqwIOyeheugpSIsIlNTT0NyZWRlbnRpYWwiOiJTU08g66W8IOuwnOq4iSDrsJvslZjsnYQg6rK97JqwIOyeheugpSIsIlNTT1BvbGljeSI6Ik5PVF9BUFBMSUNBQkxFIn19.VcGo0RmfVlrOn_1HmSsiMdpuuh07T23wRBRU2F6fU5s
 ```
 
 ##### token의 내용
@@ -63,13 +65,15 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL3BheS5zeXJ1cC5jby5rciI
   "aud": "https://pay.syrup.co.kr",
   "typ": "jose",
   "iss": "가맹점",
-  "exp": 1441161791,
-  "iat": 1441161191,
-  "jti": "34a3d173-d669-4392-86f5-cd8f2444c337",
+  "exp": 1476682229,
+  "iat": 1476681629,
+  "jti": "85c23b60-182b-46d5-ad65-165c87e53b02",
+  "nbf": 0,
   "loginInfo": {
     "mctUserId": "가맹점의 회원 ID 또는 식별자",
     "extraUserId": "핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력",
-    "ssoCredential": "SSO 를 발급 받았을 경우 입력"
+    "SSOCredential": "SSO 를 발급 받았을 경우 입력",
+    "SSOPolicy": "NOT_APPLICABLE"
   }
 }
 ```
@@ -200,12 +204,13 @@ String token = syrupPayTokenBuilder.of("가맹점 ID")
                     .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional. 가맹점과 시럽페이 사용자 동일 여부 확인 시에만 필요
                     .withMerchantSubscriptionRequestId("가맹점에서 다시 전달받을 ID 문자열") // Optional
                     .with(new SubscriptionConfigurer.Plan(SubscriptionConfigurer.Interval.WEEKLY, "결제명")) // Optional
+                    .withPromotionCode("PROMOTION_CODE_001") // Optional
                 .and()
                 .generateTokenBy("가맹점에게 전달한 비밀키");
 ```
 #### token 결과
 ```language
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IuqwgOunueygkCIsInZlciI6IjEuMy4yIn0.eyJhdWQiOiJodHRwczovL3BheS5zeXJ1cC5jby5rciIsInR5cCI6Impvc2UiLCJpc3MiOiLqsIDrp7nsoJAiLCJleHAiOjE0NzQ0NDg0MzEsImlhdCI6MTQ3NDQ0NzgzMSwianRpIjoiYzgxOTM5OWEtZmY1Ny00OGU3LTg3ZWEtNmFiMjc2NWJlZDgwIiwibmJmIjowLCJsb2dpbkluZm8iOnsibWN0VXNlcklkIjoi6rCA66e57KCQ7J2YIO2ajOybkCBJRCDrmJDripQg7Iud67OE7J6QIiwiZXh0cmFVc2VySWQiOiLtlbjrk5ztj7Dqs7wg6rCZ7J20IO2ajOybkCDrs4Qg7LaU6rCAIElEIOyytOqzhOqwgCDsobTsnqztlaAg6rK97JqwIOyeheugpSIsIlNTT0NyZWRlbnRpYWwiOiJTU08g66W8IOuwnOq4iSDrsJvslZjsnYQg6rK97JqwIOyeheugpSJ9LCJzdWJzY3JpcHRpb24iOnsiYXV0b1BheW1lbnRJZCI6IuyLnOufve2OmOydtOuhnOu2gO2EsCDrsJzquInrsJvsnYAg7J6Q64-Z6rKw7KCcIElEIiwicmVnaXN0cmF0aW9uUmVzdHJpY3Rpb25zIjp7Im1hdGNoZWRVc2VyIjoiQ0lfTUFUQ0hFRF9PTkxZIn0sInBsYW4iOnsiaW50ZXJ2YWwiOiJXRUVLTFkiLCJuYW1lIjoi6rKw7KCc7J2066aEIn0sIm1jdFN1YnNjcmlwdGlvblJlcXVlc3RJZCI6IuqwgOunueygkOyXkOyEnCDri6Tsi5wg7KCE64us67Cb7J2EIElEIOusuOyekOyXtCJ9fQ.hr2iY2XGqyvqZKV94cyz7d0Nlg6hZ3EbNTdVgSFp82U
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IuqwgOunueygkCIsInZlciI6IjEuMy4yIn0.eyJhdWQiOiJodHRwczovL3BheS5zeXJ1cC5jby5rciIsInR5cCI6Impvc2UiLCJpc3MiOiLqsIDrp7nsoJAiLCJleHAiOjE0NzQ1MjU1ODAsImlhdCI6MTQ3NDUyNDk4MCwianRpIjoiYzZkNTc4NmMtN2I0MS00MzliLTk0NjgtMDNkYzRjMmFhZDc2IiwibmJmIjowLCJsb2dpbkluZm8iOnsibWN0VXNlcklkIjoi6rCA66e57KCQ7J2YIO2ajOybkCBJRCDrmJDripQg7Iud67OE7J6QIiwiZXh0cmFVc2VySWQiOiLtlbjrk5ztj7Dqs7wg6rCZ7J20IO2ajOybkCDrs4Qg7LaU6rCAIElEIOyytOqzhOqwgCDsobTsnqztlaAg6rK97JqwIOyeheugpSIsIlNTT0NyZWRlbnRpYWwiOiJTU08g66W8IOuwnOq4iSDrsJvslZjsnYQg6rK97JqwIOyeheugpSJ9LCJzdWJzY3JpcHRpb24iOnsiYXV0b1BheW1lbnRJZCI6IuyLnOufve2OmOydtOuhnOu2gO2EsCDrsJzquInrsJvsnYAg7J6Q64-Z6rKw7KCcIElEIiwicmVnaXN0cmF0aW9uUmVzdHJpY3Rpb25zIjp7Im1hdGNoZWRVc2VyIjoiQ0lfTUFUQ0hFRF9PTkxZIn0sInBsYW4iOnsiaW50ZXJ2YWwiOiJXRUVLTFkiLCJuYW1lIjoi6rKw7KCc66qFIn0sIm1jdFN1YnNjcmlwdGlvblJlcXVlc3RJZCI6IuqwgOunueygkOyXkOyEnCDri6Tsi5wg7KCE64us67Cb7J2EIElEIOusuOyekOyXtCIsInByb21vdGlvbkNvZGUiOiJQUk9NT1RJT05fQ09ERV8wMDEifX0.8Tu4pOkP4Sdi5j9cKoLopgl_V2MD69MsjF8iAyqIYLo
 ```
 
 ##### token의 내용
@@ -214,9 +219,9 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IuqwgOunueygkCIsInZlciI6IjEuMy4yIn0.
   "aud": "https://pay.syrup.co.kr",
   "typ": "jose",
   "iss": "가맹점",
-  "exp": 1474448431,
-  "iat": 1474447831,
-  "jti": "c819399a-ff57-48e7-87ea-6ab2765bed80",
+  "exp": 1474525580,
+  "iat": 1474524980,
+  "jti": "c6d5786c-7b41-439b-9468-03dc4c2aad76",
   "nbf": 0,
   "loginInfo": {
     "mctUserId": "가맹점의 회원 ID 또는 식별자",
@@ -230,9 +235,10 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IuqwgOunueygkCIsInZlciI6IjEuMy4yIn0.
     },
     "plan": {
       "interval": "WEEKLY",
-      "name": "결제이름"
+      "name": "결제명"
     },
-    "mctSubscriptionRequestId": "가맹점에서 다시 전달받을 ID 문자열"
+    "mctSubscriptionRequestId": "가맹점에서 다시 전달받을 ID 문자열",
+    "promotionCode": "PROMOTION_CODE_001"
   }
 }
 ```
@@ -251,6 +257,7 @@ String token = new SyrupPayTokenBuilder().of("가맹점 ID")
                      .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
                      .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력") // Optional
                      .withSsoCredential("발급 받은 SSO")
+                     .isNotApplicableSso() // 자동로그인을 명시적으로 사용하지 않을 때
                  .and()
                  .mapToSyrupPayUser() // Optional 사용자 개인정보를 이용하여 시럽페이 사용자와 동일 여부 검증 시 사용(암호화된 사용자 정보 전송)
                      .withType(MapToSyrupPayUserConfigurer.MappingType.ENCRYPTED_PERSONAL_INFO)

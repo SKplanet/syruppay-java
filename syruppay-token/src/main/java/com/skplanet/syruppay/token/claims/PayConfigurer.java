@@ -21,9 +21,9 @@
 
 package com.skplanet.syruppay.token.claims;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skplanet.syruppay.token.TokenBuilder;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
     private PaymentRestriction paymentRestrictions = new PaymentRestriction();
     private CashReceiptDisplay cashReceiptDisplay;
 
-    public static enum CashReceiptDisplay {
+    public enum CashReceiptDisplay {
         YES, NO, DELEGATE_ADMIN
     }
 
@@ -252,15 +252,15 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
     }
 
 
-    public static enum Language {
+    public enum Language {
         KO, EN
     }
 
-    public static enum Currency {
+    public enum Currency {
         KRW, USD
     }
 
-    public static enum PayableLocaleRule {
+    public enum PayableLocaleRule {
         ONLY_ALLOWED_KOR("ALLOWED:KOR"), ONLY_NOT_ALLOWED_KOR("NOT_ALLOWED:KOR"), ONLY_ALLOWED_USA("ALLOWED:USA"), ONLY_NOT_ALLOWED_USA("NOT_ALLOWED:USA");
 
         String code;
@@ -274,11 +274,11 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
         }
     }
 
-    public static enum DeliveryRestriction {
+    public enum DeliveryRestriction {
         NOT_FAR_AWAY, FAR_AWAY, FAR_FAR_AWAY
     }
 
-    public static enum DeliveryType {
+    public enum DeliveryType {
         PREPAID, FREE, DIY, QUICK, PAYMENT_ON_DELIVERY
     }
 
@@ -595,7 +595,7 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
 
     }
 
-    public static enum MatchedUser {
+    public enum MatchedUser {
         CI_MATCHED_ONLY
     }
 

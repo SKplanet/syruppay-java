@@ -63,6 +63,7 @@
 
 package com.skplanet.syruppay.token;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skplanet.jose.Jose;
 import com.skplanet.jose.JoseBuilders;
 import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
@@ -73,7 +74,6 @@ import com.skplanet.syruppay.token.domain.TokenHistories;
 import com.skplanet.syruppay.token.jwt.SyrupPayToken;
 import com.skplanet.syruppay.token.jwt.Token;
 import org.apache.commons.codec.binary.Base64;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -686,6 +686,7 @@ public class SyrupPayTokenBuilderTest {
                     .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional
                     .withMerchantSubscriptionRequestId("가맹점에서 다시 전달받을 ID 문자열") // Optional
                     .with(new SubscriptionConfigurer.Plan(SubscriptionConfigurer.Interval.WEEKLY, "결제명"))
+                    .withPromotionCode("PROMOTION_CODE_001")
                 .and()
                 .generateTokenBy("가맹점에게 전달한 비밀키");
         // @formatter:on
@@ -988,5 +989,28 @@ public class SyrupPayTokenBuilderTest {
     public void 사용자_정보_Assert_테스트_SET_HASH_TO_사용자명() {
         MapToSyrupPayUserConfigurer.Personal personal = new MapToSyrupPayUserConfigurer.Personal();
         personal.setUsername("홍길동");
+    }
+
+    @Test
+    public void 시럽페이_사용자_정보에_SSO정책_추가입력_v1_3_11() throws Exception {
+        // Give
+        // @formatter:off
+        syrupPayTokenBuilder.of("가맹점")
+                .login()
+                    .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
+                    .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
+                    .withSsoCredential("SSO 를 발급 받았을 경우 입력")
+                    .isNotApplicableSso()
+        ;
+
+        // @formatter:on
+        // When
+        String t = syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
+        System.out.println(t);
+        // Then
+        assertThat(t, is(notNullValue()));
+        assertThat(t.length(), is(not(0)));
+
+        assertThat(SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키").getLoginInfo().getSsoPolicy(), is(notNullValue()));
     }
 }

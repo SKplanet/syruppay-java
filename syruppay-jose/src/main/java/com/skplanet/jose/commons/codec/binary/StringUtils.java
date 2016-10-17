@@ -52,7 +52,6 @@ import java.nio.charset.Charset;
  *
  * <p>This class is immutable and thread-safe.</p>
  *
- * @see CharEncoding
  * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
  * @version $Id: StringUtils.java 1637888 2014-11-10 15:29:02Z ggregory $
  * @since 1.4
@@ -98,9 +97,6 @@ public class StringUtils {
      * @param string
      *            the String to encode, may be <code>null</code>
      * @return encoded bytes, or <code>null</code> if the input string was <code>null</code>
-     * @throws NullPointerException
-     *             Thrown if {@link Charsets#UTF_8} is not initialized, which should never happen since it is
-     *             required by the Java platform specification.
      * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      * @see #getBytesUnchecked(String, String)
      * @since 1.11
@@ -116,9 +112,6 @@ public class StringUtils {
      * @param string
      *            the String to encode, may be <code>null</code>
      * @return encoded bytes, or <code>null</code> if the input string was <code>null</code>
-     * @throws NullPointerException
-     *             Thrown if {@link Charsets#ISO_8859_1} is not initialized, which should never happen since it is
-     *             required by the Java platform specification.
      * @since As of 1.7, throws {@link NullPointerException} instead of UnsupportedEncodingException
      * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      * @see #getBytesUnchecked(String, String)
@@ -144,7 +137,6 @@ public class StringUtils {
      * @throws IllegalStateException
      *             Thrown when a {@link UnsupportedEncodingException} is caught, which should never happen for a
      *             required charset name.
-     * @see CharEncoding
      * @see String#getBytes(String)
      */
     public static byte[] getBytesUnchecked(final String string, final String charsetName) {
@@ -166,9 +158,6 @@ public class StringUtils {
      * @param string
      *            the String to encode, may be <code>null</code>
      * @return encoded bytes, or <code>null</code> if the input string was <code>null</code>
-     * @throws NullPointerException
-     *             Thrown if {@link Charsets#UTF_8} is not initialized, which should never happen since it is
-     *             required by the Java platform specification.
      * @since As of 1.7, throws {@link NullPointerException} instead of UnsupportedEncodingException
      * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      * @see #getBytesUnchecked(String, String)
@@ -198,7 +187,6 @@ public class StringUtils {
      * @throws IllegalStateException
      *             Thrown when a {@link UnsupportedEncodingException} is caught, which should never happen for a
      *             required charset name.
-     * @see CharEncoding
      * @see String#String(byte[], String)
      */
     public static String newString(final byte[] bytes, final String charsetName) {
@@ -218,9 +206,6 @@ public class StringUtils {
      *            The bytes to be decoded into characters
      * @return A new <code>String</code> decoded from the specified array of bytes using the UTF-8 charset,
      *         or <code>null</code> if the input byte array was <code>null</code>.
-     * @throws NullPointerException
-     *             Thrown if {@link Charsets#UTF_8} is not initialized, which should never happen since it is
-     *             required by the Java platform specification.
      * @since As of 1.7, throws {@link NullPointerException} instead of UnsupportedEncodingException
      */
     public static String newStringUtf8(final byte[] bytes) {

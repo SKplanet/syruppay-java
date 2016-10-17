@@ -34,6 +34,7 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
     private RegistrationRestrictions registrationRestrictions;
     private Plan plan;
     private String mctSubscriptionRequestId;
+    private String promotionCode;
 
     public SubscriptionConfigurer<H> withAutoPaymentId(final String autoPaymentId) {
         this.autoPaymentId = autoPaymentId;
@@ -55,6 +56,15 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
 
     public SubscriptionConfigurer<H> withMerchantSubscriptionRequestId(String mctSubscriptionRequestId) {
         this.mctSubscriptionRequestId = mctSubscriptionRequestId;
+        return this;
+    }
+
+    public String getPromotionCode() {
+        return promotionCode;
+    }
+
+    public SubscriptionConfigurer<H> withPromotionCode(final String promotionCode) {
+        this.promotionCode = promotionCode;
         return this;
     }
 

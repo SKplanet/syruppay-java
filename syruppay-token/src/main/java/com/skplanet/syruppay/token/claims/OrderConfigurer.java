@@ -21,8 +21,8 @@
 
 package com.skplanet.syruppay.token.claims;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skplanet.syruppay.token.TokenBuilder;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -21,8 +21,8 @@
 
 package com.skplanet.syruppay.token.tav.mocks;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skplanet.syruppay.token.tav.TransactionAuthenticationValue;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 

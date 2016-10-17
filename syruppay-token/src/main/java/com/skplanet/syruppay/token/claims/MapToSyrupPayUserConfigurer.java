@@ -21,13 +21,12 @@
 
 package com.skplanet.syruppay.token.claims;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skplanet.jose.Jose;
 import com.skplanet.jose.JoseBuilders;
 import com.skplanet.jose.JoseHeader;
 import com.skplanet.jose.jwa.Jwa;
 import com.skplanet.syruppay.token.TokenBuilder;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 
@@ -139,8 +138,8 @@ public class MapToSyrupPayUserConfigurer<H extends TokenBuilder<H>> extends Abst
     }
 
     public void validRequired() throws Exception {
-        if (this.mappingType == null || this.mappingValue == null) {
-            throw new IllegalArgumentException("fields to map couldn't be null. type : " + this.mappingType + "value : " + this.mappingValue);
+        if (this.mappingType != null && this.mappingValue == null) {
+            throw new IllegalArgumentException("fields to map couldn't be null. type : " + this.mappingType + ", value : " + this.mappingValue);
         }
     }
 

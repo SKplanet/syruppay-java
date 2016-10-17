@@ -21,6 +21,8 @@
 
 package com.skplanet.syruppay.token.jwt;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skplanet.syruppay.token.ClaimConfigurer;
 import com.skplanet.syruppay.token.ClaimConfigurerAdapter;
 import com.skplanet.syruppay.token.claims.MapToSktUserConfigurer;
@@ -29,8 +31,6 @@ import com.skplanet.syruppay.token.claims.MerchantUserConfigurer;
 import com.skplanet.syruppay.token.claims.OrderConfigurer;
 import com.skplanet.syruppay.token.claims.PayConfigurer;
 import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

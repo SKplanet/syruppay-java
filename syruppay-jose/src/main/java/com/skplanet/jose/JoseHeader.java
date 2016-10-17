@@ -24,13 +24,13 @@
 
 package com.skplanet.jose;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skplanet.jose.commons.codec.binary.Base64;
 import com.skplanet.jose.exception.IllegalJoseHeaderException;
 import com.skplanet.jose.exception.UnsupportedJOSEAlgorithm;
 import com.skplanet.jose.jwa.Jwa;
 import com.skplanet.jose.jwa.JwaFactory;
 import com.skplanet.jose.util.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.util.HashMap;

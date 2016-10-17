@@ -34,8 +34,8 @@ public class SerializationBuilder extends JoseCompactBuilder {
 	protected JoseHeader header;
 	private String payload;
 
-	public SerializationBuilder(JoseMethod joseMethod, JoseActionType joseActionType) {
-		super.compactBuilder(joseMethod, joseActionType);
+	public SerializationBuilder(JoseMethod joseMethod) {
+		super.compactBuilder(joseMethod, JoseActionType.SERIALIZATION);
 
 		header = new JoseHeader();
 	}
@@ -53,9 +53,9 @@ public class SerializationBuilder extends JoseCompactBuilder {
 	public JoseAction create() {
 		switch (joseSerializeType) {
 		case COMPACT_SERIALIZATION:
-			if (JoseMethod.JWE == joseMethod && JoseActionType.SERIALIZATION == joseActionType) {
+			if (JoseMethod.JWE == joseMethod) {
 				return new JweSerializer(header, payload, key);
-			} else if (JoseMethod.JWS == joseMethod && JoseActionType.SERIALIZATION == joseActionType) {
+			} else if (JoseMethod.JWS == joseMethod) {
 				return new JwsSerializer(header, payload, key);
 			} else {
 				throw new IllegalArgumentException("unknown JoseSerializeType and JoseActionType");

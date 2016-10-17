@@ -103,13 +103,16 @@ public class JoseHeader {
 		return this;
 	}
 
-	public Jwa getEncrytion() {
+	public Jwa getEncryption() {
 		if (!header.containsKey(JoseHeaderKeySpec.ENCRYPTION))
 			return null;
 		return Enum.valueOf(Jwa.class, getHeader(JoseHeaderKeySpec.ENCRYPTION).replace("-", "_"));
 	}
 
 	public String getEncoded() {
+		if (encoded != null)
+			return encoded;
+
 		if (!header.containsKey(JoseHeaderKeySpec.VER)) {
 			String version = this.getClass().getPackage().getImplementationVersion();
 			if (StringUtils.isNotEmpty(version))
@@ -117,25 +120,22 @@ public class JoseHeader {
 		}
 
 		ObjectMapper objectMapper = new ObjectMapper();
-		byte[] json = null;
 		try {
-			json = StringUtils.stringtoBytes(objectMapper.writeValueAsString(header));
+			return Base64.encodeBase64URLSafeString(StringUtils.stringtoBytes(objectMapper.writeValueAsString(header)));
 		} catch (IOException e) {
 			throw new IllegalJoseHeaderException("json encode exception");
 		}
-
-		return encoded != null? encoded : Base64.encodeBase64URLSafeString(json);
 	}
 
 	public JoseHeader setEncoded(String encoded) {
 		String[] token = encoded.split("\\.");
 		if (token != null && token.length == 3 || token.length == 5) {
-			encoded = token[0];
+			this.encoded = token[0];
+		} else {
+			this.encoded = encoded;
 		}
 
-		this.encoded = encoded;
-
-		String json = StringUtils.byteToString(Base64.decodeBase64(encoded));
+		String json = StringUtils.byteToString(Base64.decodeBase64(this.encoded));
 
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
@@ -146,10 +146,10 @@ public class JoseHeader {
 
 		Jwa alg = getAlgorithm();
 		if (!JoseSupportAlgorithm.isSupported(alg)) {
-			throw new IllegalJoseHeaderException("unsupported algoritm "+alg);
+			throw new IllegalJoseHeaderException("unsupported algorithm "+alg);
 		}
 
-		Jwa enc = getEncrytion();
+		Jwa enc = getEncryption();
 		if (enc != null && !JoseSupportEncryption.isSupported(enc)) {
 			throw new IllegalJoseHeaderException("unsupported encryption "+enc);
 		}

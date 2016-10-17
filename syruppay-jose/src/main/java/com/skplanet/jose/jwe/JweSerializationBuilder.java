@@ -24,7 +24,6 @@
 
 package com.skplanet.jose.jwe;
 
-import com.skplanet.jose.JoseActionType;
 import com.skplanet.jose.JoseMethod;
 import com.skplanet.jose.SerializationBuilder;
 
@@ -32,8 +31,8 @@ import com.skplanet.jose.SerializationBuilder;
  * Created by byeongchan.park@sk.com(1000808) on 2015-12-22.
  */
 public class JweSerializationBuilder extends SerializationBuilder {
-	public JweSerializationBuilder(JoseMethod joseMethod, JoseActionType joseActionType) {
-		super(joseMethod, joseActionType);
+	public JweSerializationBuilder() {
+		super(JoseMethod.JWE);
 	}
 
 	public SerializationBuilder header(JweHeader header) {

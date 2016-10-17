@@ -34,9 +34,12 @@ import java.security.Security;
 public class Jose {
 	private JoseAction joseAction;
 
-	public SerializeAction configuration(JoseCompactBuilder joseCompactBuilder) {
-		Security.addProvider(new BouncyCastleProvider());
+	static {
+		if (Security.getProvider("BC") == null)
+			Security.addProvider(new BouncyCastleProvider());
+	}
 
+	public SerializeAction configuration(JoseCompactBuilder joseCompactBuilder) {
 		final JoseActionType joseActionType = joseCompactBuilder.getJoseActionType();
 		joseAction = joseCompactBuilder.create();
 

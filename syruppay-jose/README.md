@@ -176,6 +176,9 @@ RS256|RSASSA-PKCS1-v1_5 using SHA-256
 ES256|ECDSA using P-256 and SHA-256
 
 ## release note
+### 1.3.5
+- Json 라이브러리 변경 : codehaus > fasterxml 
+
 ### 1.3.4
 - AESWrap/AESUnWrap 하위호환성을 위한 원복 (jdk 1.8.0_45 이상에서 AESWarp/AESUnWrap key size check 처리 추가됨)
 

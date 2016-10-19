@@ -161,7 +161,7 @@ public final class MerchantUserConfigurer<H extends TokenBuilder<H>> extends Abs
         }
     }
 
-    private enum SsoPolicy {
-        NOT_APPLICABLE;
+    public enum SsoPolicy {
+        NOT_APPLICABLE
     }
 }

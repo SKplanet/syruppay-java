@@ -3,22 +3,22 @@
 Java로 구현한 JOSE(Javascript Object Signing and Encryption) - [RFC 7516](https://tools.ietf.org/html/rfc7516), [RFC 7515](https://tools.ietf.org/html/rfc7515) 규격입니다. 
 JOSE 규격은 SyrupPay 결제 데이터 암복호화 및 AccessToken 발행 등에 사용되며 SyrupPay 서비스의 가맹점에 배포하기 위한 목적으로 라이브러리가 구현되었습니다.
 
-## Required
+## Required### maven
+           ```
+           <dependency>
+           	<groupId>com.skplanet.syruppay</groupId>
+           	<artifactId>jose_jdk1.5</artifactId>
+           	<version>1.3.6</version>
+           </dependency>
+           ```
+           ### Gradle
+           ```
+           compile 'com.skplanet.syruppay:jose_jdk1.5:1.3.6'
+           ```
 JDK 1.5 or later
 
 ## Installation
-### maven
-```
-<dependency>
-	<groupId>com.skplanet.syruppay</groupId>
-	<artifactId>jose_jdk1.5</artifactId>
-	<version>1.3.5</version>
-</dependency>
-```
-### Gradle
-```
-compile 'com.skplanet.syruppay:jose_jdk1.5:1.3.5'
-```
+
 
 ## Usage
 ### JWE
@@ -176,6 +176,9 @@ RS256|RSASSA-PKCS1-v1_5 using SHA-256
 ES256|ECDSA using P-256 and SHA-256
 
 ## release note
+### 1.3.6
+- Json 라이브러리 버전 변경 : 2.8 > 2.3
+
 ### 1.3.5
 - Json 라이브러리 변경 : codehaus > fasterxml 
 

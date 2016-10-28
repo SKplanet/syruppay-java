@@ -8,12 +8,12 @@ JOSE 규격은 SyrupPay 결제 데이터 암복호화 및 AccessToken 발행 등
            <dependency>
            	<groupId>com.skplanet.syruppay</groupId>
            	<artifactId>jose_jdk1.5</artifactId>
-           	<version>1.3.6</version>
+           	<version>1.3.13</version>
            </dependency>
            ```
            ### Gradle
            ```
-           compile 'com.skplanet.syruppay:jose_jdk1.5:1.3.6'
+           compile 'com.skplanet.syruppay:jose_jdk1.5:1.3.13'
            ```
 JDK 1.5 or later
 

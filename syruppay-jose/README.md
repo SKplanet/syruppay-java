@@ -176,8 +176,9 @@ RS256|RSASSA-PKCS1-v1_5 using SHA-256
 ES256|ECDSA using P-256 and SHA-256
 
 ## release note
-### 1.3.7
+### 1.3.13
 - Json 라이브러리 버전 변경 : 2.3 > 2.1
+- 토큰과 별도 버전 표기 통일
 
 ### 1.3.6
 - Json 라이브러리 버전 변경 : 2.8 > 2.3

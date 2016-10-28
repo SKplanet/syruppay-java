@@ -13,7 +13,7 @@
 ### Gradle 빌드 시
 ```groovy
 dependencies {
-     compile 'com.skplanet.syruppay:syruppay-token:1.3.12'
+     compile 'com.skplanet.syruppay:syruppay-token:1.3.13'
 }
 
 ```
@@ -24,7 +24,7 @@ dependencies {
 	<dependency>
 		<groupId>com.skplanet.syruppay</groupId>
 		<artifactId>syruppay-token</artifactId>
-		<version>1.3.12</version>
+		<version>1.3.13</version>
 	</dependency>
 </dependencies>
 ```

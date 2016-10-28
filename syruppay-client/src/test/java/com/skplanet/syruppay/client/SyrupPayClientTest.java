@@ -236,4 +236,42 @@ public class SyrupPayClientTest {
         ApproveEvent.ResponseApprove response = syrupPayClient.approve(request);
 
     }
+
+    @Test
+    public void testGet_Certificated_Information_WITH_BASIC_AUTHENTICATION() throws IOException {
+        URL url = new URL("https://devqapay.syrup.co.kr/api-basic/merchants/sktmall_s002/users/authentications/sms/f83b9d72-f8a0-42df-a4d6-0b9bf3670503");
+
+        String encoding = org.apache.commons.codec.binary.Base64.encodeBase64String("sktmall_s002:W9n7yLQrpt2Sm1zpqFpxr9k95BWNRXxs".getBytes());
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Authorization", "Basic " + encoding);
+        connection.setRequestProperty("Accept", "application/jose");
+        connection.setRequestProperty("Content-type", "application/jose");
+
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line;
+            StringBuilder buf = new StringBuilder();
+            while ((line = in.readLine()) != null) {
+                buf.append(line);
+            }
+
+            String response = new Jose().configuration(
+                    JoseBuilders.compactDeserializationBuilder()
+                            .serializedSource(buf.toString())
+                            .key("G3aIW7hYmlTjag3FDc63OGLNWwvagVUU")
+            ).deserialization();
+
+            System.out.println(response);
+
+            in.close();
+        } catch (FileNotFoundException fe) {
+            // 사용자 없음
+            System.out.println("User Not Found");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

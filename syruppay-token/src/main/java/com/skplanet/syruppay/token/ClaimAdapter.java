@@ -25,15 +25,15 @@ package com.skplanet.syruppay.token;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- * 하위 클래스가 오직 자신의 관심사만 구현할 수 있도록 {@link com.skplanet.syruppay.token.ClaimConfigurer}의 베이스를 제공한다.
- * 또한 {@link com.skplanet.syruppay.token.ClaimConfigurer}을 사용하고 이미 설정된 {@link com.skplanet.syruppay.token.ClaimBuilder} 로의 접근을 확보하기 위한 매커니즘을 제공한다.
+ * 하위 클래스가 오직 자신의 관심사만 구현할 수 있도록 {@link Claim}의 베이스를 제공한다.
+ * 또한 {@link Claim}을 사용하고 이미 설정된 {@link com.skplanet.syruppay.token.ClaimBuilder} 로의 접근을 확보하기 위한 매커니즘을 제공한다.
  *
  * @param <O> {@link com.skplanet.syruppay.token.ClaimBuilder} B 에 의해서 빌드된 객체.
  * @param <B> O 타입을 빌드 하는 {@link com.skplanet.syruppay.token.ClaimBuilder}의 타입이며 {@link com.skplanet.syruppay.token.ClaimBuilder}의해 설정되어지고 있는 타입
  * @author 임형태
  * @since 1.0
  */
-public abstract class ClaimConfigurerAdapter<O, B extends ClaimBuilder<O>> implements ClaimConfigurer<O, B> {
+public abstract class ClaimAdapter<O, B extends ClaimBuilder<O>> implements Claim<O, B> {
     @JsonIgnore
     private B builder;
 
@@ -44,7 +44,7 @@ public abstract class ClaimConfigurerAdapter<O, B extends ClaimBuilder<O>> imple
     }
 
     /**
-     * {@link com.skplanet.syruppay.token.ClaimConfigurer}를 사용하고자 할 때 {@link com.skplanet.syruppay.token.ClaimBuilder}를 반환한다.
+     * {@link Claim}를 사용하고자 할 때 {@link com.skplanet.syruppay.token.ClaimBuilder}를 반환한다.
      * 이러한 방식은 메소드를 연결하여 사용할 때 매우 유용하다.
      *
      * @return B

@@ -23,7 +23,6 @@ package com.skplanet.syruppay.token.jwt;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.skplanet.syruppay.token.ClaimConfigurer;
 import com.skplanet.syruppay.token.claims.*;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -66,6 +65,10 @@ public class SyrupPayToken implements Token {
      */
     public OrderClaim getCheckoutInfo() {
         return checkoutInfo;
+    }
+
+    public boolean isPayableOnCheckout() {
+        return this.checkoutInfo != null;
     }
 
     /**
@@ -146,6 +149,10 @@ public class SyrupPayToken implements Token {
         return transactionInfo;
     }
 
+    public boolean isPayable() {
+        return this.transactionInfo != null;
+    }
+
     @Deprecated
     @JsonProperty("transactionInfo")
     public void setTransactionInfo(PayClaim transactionInfo) {
@@ -162,6 +169,10 @@ public class SyrupPayToken implements Token {
      */
     public MapToUserClaim getUserInfoMapper() {
         return userInfoMapper;
+    }
+
+    public boolean isAbleToMapToUser() {
+        return this.userInfoMapper != null;
     }
 
     /**
@@ -209,13 +220,17 @@ public class SyrupPayToken implements Token {
         return subscription;
     }
 
-    @Deprecated
-    public List<ClaimConfigurer> getClaims() {
-        return getClaims(Claim.values());
+    public boolean isSubscriptable() {
+        return this.subscription != null;
     }
 
     @Deprecated
-    public ClaimConfigurer getClaim(final Claim claim) {
+    public List<com.skplanet.syruppay.token.Claim> getClaims() {
+        return getClaims(Token.Claim.values());
+    }
+
+    @Deprecated
+    public com.skplanet.syruppay.token.Claim getClaim(final Claim claim) {
         try {
             return getFieldOfClaimIfNotExistNull(claim);
         } catch (IllegalAccessException e) {
@@ -227,11 +242,11 @@ public class SyrupPayToken implements Token {
     }
 
     @Deprecated
-    public List<ClaimConfigurer> getClaims(final Claim... claims) {
-        List<ClaimConfigurer> l = new ArrayList<ClaimConfigurer>();
+    public List<com.skplanet.syruppay.token.Claim> getClaims(final Claim... claims) {
+        List<com.skplanet.syruppay.token.Claim> l = new ArrayList<com.skplanet.syruppay.token.Claim>();
         for (Claim c : claims) {
             try {
-                ClaimConfigurer cc = getFieldOfClaimIfNotExistNull(c);
+                com.skplanet.syruppay.token.Claim cc = getFieldOfClaimIfNotExistNull(c);
                 if (cc != null) {
                     l.add(cc);
                 }
@@ -245,10 +260,10 @@ public class SyrupPayToken implements Token {
     }
 
     @Deprecated
-    private ClaimConfigurer getFieldOfClaimIfNotExistNull(final Claim c) throws IllegalAccessException, NoSuchFieldException {
+    private com.skplanet.syruppay.token.Claim getFieldOfClaimIfNotExistNull(final Claim c) throws IllegalAccessException, NoSuchFieldException {
         for (Field f : SyrupPayToken.class.getDeclaredFields()) {
             if (f.getType().isAssignableFrom(c.getConfigurer())) {
-                return (ClaimConfigurer) f.get(this);
+                return (com.skplanet.syruppay.token.Claim) f.get(this);
             }
         }
         return null;

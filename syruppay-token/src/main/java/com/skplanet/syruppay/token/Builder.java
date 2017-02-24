@@ -31,23 +31,23 @@ package com.skplanet.syruppay.token;
  */
 public interface Builder<H extends Builder<H>> extends ClaimBuilder<Jwt> {
     /**
-     * 클래스 네임을 기준으로 {@link com.skplanet.syruppay.token.ClaimConfigurer}를 반환하거나 존재하지 않을 경우 <code>null</code> 을 반환할 수 있다.
+     * 클래스 네임을 기준으로 {@link Claim}를 반환하거나 존재하지 않을 경우 <code>null</code> 을 반환할 수 있다.
      * 주의할 점은 객체 간의 상하위 관계(상속, 포함) 관계는 고려되지 않았다.
      *
      * @param clazz
-     *         찾기를 시도하려는 {@link com.skplanet.syruppay.token.ClaimConfigurer} 클래스
-     * @return 찾은 {@link com.skplanet.syruppay.token.ClaimConfigurer}을 반환하거나 찾지 못했을 경우 null 을 반환한다.
+     *         찾기를 시도하려는 {@link Claim} 클래스
+     * @return 찾은 {@link Claim}을 반환하거나 찾지 못했을 경우 null 을 반환한다.
      */
-    <C extends ClaimConfigurer<Jwt, H>> C getConfigurer(Class<C> clazz);
+    <C extends Claim<Jwt, H>> C getConfigurer(Class<C> clazz);
 
     /**
-     * 클래스 이름을 기준으로 {@link com.skplanet.syruppay.token.ClaimConfigurer} 를 제거하여 반환하거나 존재하지 않을 경우 <code>null</code>을 반환한다.
+     * 클래스 이름을 기준으로 {@link Claim} 를 제거하여 반환하거나 존재하지 않을 경우 <code>null</code>을 반환한다.
      * 주의할 점은 객체 간의 상하위 관계(상속, 포함) 관계는 고려되지 않았다.
      * considered.
      *
      * @param clazz
-     *         제거를 시도하려는 {@link com.skplanet.syruppay.token.ClaimConfigurer} 클래스
-     * @return 제거된 {@link com.skplanet.syruppay.token.ClaimConfigurer}을 반환하거나 찾지 못했을 경우 null 을 반환한다.
+     *         제거를 시도하려는 {@link Claim} 클래스
+     * @return 제거된 {@link Claim}을 반환하거나 찾지 못했을 경우 null 을 반환한다.
      */
-    <C extends ClaimConfigurer<Jwt, H>> C removeConfigurer(Class<C> clazz);
+    <C extends Claim<Jwt, H>> C removeConfigurer(Class<C> clazz);
 }

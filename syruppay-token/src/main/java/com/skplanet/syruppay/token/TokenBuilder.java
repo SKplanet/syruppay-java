@@ -46,13 +46,13 @@ import java.text.SimpleDateFormat;
 /**
  * Syrup Pay 에서 사용하는 토큰을 생성 및 암/복호화에 대한 기능을 수행한다.
  * <p>
- * 토큰은 JWT 규격을 준수하며 Claim 에 대한 확장은 {@link com.skplanet.syruppay.token.ClaimConfigurer}를 이용하여 확장할 수 있으며
+ * 토큰은 JWT 규격을 준수하며 Claim 에 대한 확장은 {@link Claim}를 이용하여 확장할 수 있으며
  * 이에 대한 인터페이스는 {@link TokenBuilder}를 통해 {@link #pay()}와 {@link #login()}와 같이 노출해야 한다.
  *
  * @author 임형태
  * @since 1.0
  */
-public final class TokenBuilder extends AbstractConfiguredTokenBuilder<Jwt, TokenBuilder> implements ClaimBuilder<Jwt>, Builder<TokenBuilder> {
+public final class TokenBuilder extends AbstractTokenBuilder<Jwt, TokenBuilder> implements ClaimBuilder<Jwt>, Builder<TokenBuilder> {
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenBuilder.class.getName());
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static boolean checkHeaderOfToken = true;
@@ -121,7 +121,7 @@ public final class TokenBuilder extends AbstractConfiguredTokenBuilder<Jwt, Toke
 
             }
             if (checkValidationOfToken) {
-                for (final ClaimConfigurer c : t.getClaims()) {
+                for (final Claim c : t.getClaims()) {
                     try {
                         c.validRequired();
                     } catch (Exception e) {
@@ -264,7 +264,7 @@ public final class TokenBuilder extends AbstractConfiguredTokenBuilder<Jwt, Toke
     }
 
     @SuppressWarnings("unchecked")
-    private <C extends ClaimConfigurerAdapter<Jwt, TokenBuilder>> C getOrApply(C configurer)
+    private <C extends ClaimAdapter<Jwt, TokenBuilder>> C getOrApply(C configurer)
             throws Exception {
         C existingConfig = (C) getConfigurer(configurer.getClass());
         if (existingConfig != null) {
@@ -325,7 +325,7 @@ public final class TokenBuilder extends AbstractConfiguredTokenBuilder<Jwt, Toke
     protected String toJson() throws Exception {
         JsonNode n = objectMapper.readTree(objectMapper.writeValueAsString(build()));
         for (Class clz : getClasses()) {
-            ClaimConfigurer c = getConfigurer(clz);
+            Claim c = getConfigurer(clz);
             c.validRequired();
             ((ObjectNode) n).putPOJO(c.claimName(), c);
         }

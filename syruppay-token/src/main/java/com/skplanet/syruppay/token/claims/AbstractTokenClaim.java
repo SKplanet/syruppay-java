@@ -21,12 +21,13 @@
 
 package com.skplanet.syruppay.token.claims;
 
-import com.skplanet.syruppay.token.ClaimConfigurerAdapter;
+import com.skplanet.syruppay.token.Claim;
+import com.skplanet.syruppay.token.ClaimAdapter;
 import com.skplanet.syruppay.token.Jwt;
 import com.skplanet.syruppay.token.Builder;
 
 /**
- * Syrup Pay Token 생성 시 필요한 {@link com.skplanet.syruppay.token.ClaimConfigurer} 기반의 인스턴스들에게 필요한 편리 기능을 추가한다.
+ * Syrup Pay Token 생성 시 필요한 {@link Claim} 기반의 인스턴스들에게 필요한 편리 기능을 추가한다.
  *
  * @param <T>
  *         {@link com.skplanet.syruppay.token.ClaimBuilder} B 에 의해서 빌드된 토큰 객체.
@@ -35,7 +36,7 @@ import com.skplanet.syruppay.token.Builder;
  * @author 임형태
  * @since 1.0
  */
-abstract class AbstractTokenClaim<T extends AbstractTokenClaim<T, B>, B extends Builder<B>> extends ClaimConfigurerAdapter<Jwt, B> {
+abstract class AbstractTokenClaim<T extends AbstractTokenClaim<T, B>, B extends Builder<B>> extends ClaimAdapter<Jwt, B> {
 
     /**
      * {@link AbstractTokenClaim} 을 토큰 Claim 빌드 목록에서 제거한다.

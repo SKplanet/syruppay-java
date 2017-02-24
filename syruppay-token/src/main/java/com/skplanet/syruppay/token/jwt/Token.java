@@ -22,8 +22,7 @@
 package com.skplanet.syruppay.token.jwt;
 
 import com.skplanet.syruppay.token.Builder;
-import com.skplanet.syruppay.token.ClaimConfigurer;
-import com.skplanet.syruppay.token.ClaimConfigurerAdapter;
+import com.skplanet.syruppay.token.ClaimAdapter;
 import com.skplanet.syruppay.token.claims.*;
 
 import java.io.Serializable;
@@ -50,12 +49,16 @@ public interface Token extends Serializable, JwtToken {
      */
     PayClaim<? extends Builder> getTransactionInfo();
 
+    boolean isPayable();
+
     /**
      * 시럽페이 사용자를 매칭하기 위한 객체를 구성하여 반환한다.
      *
      * @return {@link MapToUserClaim}
      */
     MapToUserClaim<? extends Builder> getUserInfoMapper();
+
+    boolean isAbleToMapToUser();
 
     /**
      * Expired Time 기준과 Not Before Time 을 기준하여 토큰이 유효한 시간 안에 있는지 여부를 검증하여 반환한다.
@@ -80,6 +83,7 @@ public interface Token extends Serializable, JwtToken {
 
     OrderClaim<? extends Builder> getCheckoutInfo();
 
+    boolean isPayableOnCheckout();
 
     /**
      * 시럽페이 정기 결제를 이용하기 위한 정보를 구성하여 반환한다.
@@ -89,13 +93,15 @@ public interface Token extends Serializable, JwtToken {
      */
     SubscriptionClaim<? extends Builder> getSubscription();
 
+    boolean isSubscriptable();
+
     /**
      * 시럽페이 토큰에 포함된 Claim 정보를 확인하여 반환한다.
      *
      * @return claimConfigurer 목록
      * @since 1.3.7
      */
-    List<ClaimConfigurer> getClaims(SyrupPayToken.Claim... claims);
+    List<com.skplanet.syruppay.token.Claim> getClaims(Claim... claims);
 
     /**
      * 시럽페이 토큰에 포함된 Claim 정보를 확인하여 반환한다.
@@ -104,12 +110,13 @@ public interface Token extends Serializable, JwtToken {
      * @since 1.3.7
      */
 
-    ClaimConfigurer getClaim(final SyrupPayToken.Claim claim);
+    com.skplanet.syruppay.token.Claim getClaim(final Claim claim);
 
+    @Deprecated
     enum Claim {
         TO_SIGNUP(MerchantUserClaim.class), TO_LOGIN(MerchantUserClaim.class), TO_PAY(PayClaim.class), TO_CHECKOUT(OrderClaim.class), TO_MAP_USER(MapToUserClaim.class), TO_SUBSCRIPTION(SubscriptionClaim.class);
 
-        <C extends ClaimConfigurerAdapter> Claim(Class<C> configurer) {
+        <C extends ClaimAdapter> Claim(Class<C> configurer) {
             this.configurer = configurer;
         }
 

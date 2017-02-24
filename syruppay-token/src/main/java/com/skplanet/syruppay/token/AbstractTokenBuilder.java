@@ -32,22 +32,22 @@ import java.util.Set;
  * @author 임형태
  * @since 1.0
  */
-public abstract class AbstractConfiguredTokenBuilder<O, B extends ClaimBuilder<O>> extends AbstractClaimBuilder<O> {
-    private final LinkedHashMap<Class<? extends ClaimConfigurer<O, B>>, List<ClaimConfigurer<O, B>>> configurers = new LinkedHashMap<Class<? extends ClaimConfigurer<O, B>>, List<ClaimConfigurer<O, B>>>();
+public abstract class AbstractTokenBuilder<O, B extends ClaimBuilder<O>> extends AbstractClaimBuilder<O> {
+    private final LinkedHashMap<Class<? extends Claim<O, B>>, List<Claim<O, B>>> configurers = new LinkedHashMap<Class<? extends Claim<O, B>>, List<Claim<O, B>>>();
 
     /**
-     * 등록되어 있는 {@link com.skplanet.syruppay.token.ClaimConfigurer}를 해당 구현 클래스 이름으로 조회하여 반환한다.
+     * 등록되어 있는 {@link Claim}를 해당 구현 클래스 이름으로 조회하여 반환한다.
      * 만약 존재하지 않을 경우 <code>null</code> 을 반환할 수 있다.
      * <p>
      * 객체에 대한 포함관계는 고려되지 않았으니 주의하기 바란다.
      *
      * @param clazz
      *         구현 클래스 이름
-     * @return {@link com.skplanet.syruppay.token.ClaimConfigurer}
+     * @return {@link Claim}
      */
     @SuppressWarnings("unchecked")
-    public <C extends ClaimConfigurer<O, B>> C getConfigurer(Class<C> clazz) {
-        List<ClaimConfigurer<O, B>> configs = this.configurers.get(clazz);
+    public <C extends Claim<O, B>> C getConfigurer(Class<C> clazz) {
+        List<Claim<O, B>> configs = this.configurers.get(clazz);
         if (configs == null) {
             return null;
         }
@@ -58,18 +58,18 @@ public abstract class AbstractConfiguredTokenBuilder<O, B extends ClaimBuilder<O
     }
 
     /**
-     * 등록되어 있는 {@link com.skplanet.syruppay.token.ClaimConfigurer}를 해당 구현 클래스 이름으로 제외할 후 반환한다.
+     * 등록되어 있는 {@link Claim}를 해당 구현 클래스 이름으로 제외할 후 반환한다.
      * 만약 존재하지 않을 경우 <code>null</code> 을 반환할 수 있다.
      * <p>
      * 객체에 대한 포함관계는 고려되지 않았으니 주의하기 바란다.
      *
      * @param clazz
      *         구현 클래스 이름
-     * @return {@link com.skplanet.syruppay.token.ClaimConfigurer}
+     * @return {@link Claim}
      */
     @SuppressWarnings("unchecked")
-    public <C extends ClaimConfigurer<O, B>> C removeConfigurer(Class<C> clazz) {
-        List<ClaimConfigurer<O, B>> configs = this.configurers.remove(clazz);
+    public <C extends Claim<O, B>> C removeConfigurer(Class<C> clazz) {
+        List<Claim<O, B>> configs = this.configurers.remove(clazz);
         if (configs == null) {
             return null;
         }
@@ -80,18 +80,18 @@ public abstract class AbstractConfiguredTokenBuilder<O, B extends ClaimBuilder<O
     }
 
     /**
-     * {@link com.skplanet.syruppay.token.ClaimConfigurerAdapter}에 {@link com.skplanet.syruppay.token.ClaimBuilder}를 적용하고
-     * 어떠한 {@link com.skplanet.syruppay.token.ClaimConfigurerAdapter#setBuilder(com.skplanet.syruppay.token.ClaimBuilder)}를 호출한다.
+     * {@link ClaimAdapter}에 {@link com.skplanet.syruppay.token.ClaimBuilder}를 적용하고
+     * 어떠한 {@link ClaimAdapter#setBuilder(com.skplanet.syruppay.token.ClaimBuilder)}를 호출한다.
      * <p>
      * 객체에 대한 포함관계는 고려되지 않았으니 주의하기 바란다.
      *
      * @param configurer
-     *         {@link com.skplanet.syruppay.token.ClaimConfigurer}
-     * @return {@link com.skplanet.syruppay.token.ClaimConfigurer}
+     *         {@link Claim}
+     * @return {@link Claim}
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    public <C extends ClaimConfigurerAdapter<O, B>> C apply(C configurer)
+    public <C extends ClaimAdapter<O, B>> C apply(C configurer)
             throws Exception {
         add(configurer);
         configurer.setBuilder((B) this);
@@ -99,28 +99,28 @@ public abstract class AbstractConfiguredTokenBuilder<O, B extends ClaimBuilder<O
     }
 
     /**
-     * 필요하다면 바로 {@link com.skplanet.syruppay.token.ClaimConfigurer#init(com.skplanet.syruppay.token.ClaimBuilder)} 를 호출하고 이러한 것이 허용된
-     * {@link com.skplanet.syruppay.token.ClaimConfigurer}를 추가한다.
+     * 필요하다면 바로 {@link Claim#init(com.skplanet.syruppay.token.ClaimBuilder)} 를 호출하고 이러한 것이 허용된
+     * {@link Claim}를 추가한다.
      *
      * @param configurer
-     *         추가 하기 위한 {@link com.skplanet.syruppay.token.ClaimConfigurer}
+     *         추가 하기 위한 {@link Claim}
      * @throws Exception
      *         내부 오류 발생 시
      */
     @SuppressWarnings("unchecked")
-    private <C extends ClaimConfigurer<O, B>> void add(C configurer) throws Exception {
-        Class<? extends ClaimConfigurer<O, B>> clazz = (Class<? extends ClaimConfigurer<O, B>>) configurer.getClass();
+    private <C extends Claim<O, B>> void add(C configurer) throws Exception {
+        Class<? extends Claim<O, B>> clazz = (Class<? extends Claim<O, B>>) configurer.getClass();
         synchronized (configurers) {
-            List<ClaimConfigurer<O, B>> configs = this.configurers.get(clazz);
+            List<Claim<O, B>> configs = this.configurers.get(clazz);
             if (configs == null) {
-                configs = new ArrayList<ClaimConfigurer<O, B>>(1);
+                configs = new ArrayList<Claim<O, B>>(1);
             }
             configs.add(configurer);
             this.configurers.put(clazz, configs);
         }
     }
 
-    public Set<Class<? extends ClaimConfigurer<O, B>>> getClasses() {
+    public Set<Class<? extends Claim<O, B>>> getClasses() {
         return this.configurers.keySet();
     }
 }

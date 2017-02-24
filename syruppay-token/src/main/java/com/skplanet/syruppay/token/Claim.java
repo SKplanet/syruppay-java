@@ -26,7 +26,7 @@ import java.io.Serializable;
 
 /**
  * {@link com.skplanet.syruppay.token.ClaimBuilder}를 설정할 수 있도록 지원합니다.
- * 모든 {@link com.skplanet.syruppay.token.ClaimConfigurer} 는 가자 우선 {@link #init(com.skplanet.syruppay.token.ClaimBuilder)} 메소드가 호출되어야 한다.
+ * 모든 {@link Claim} 는 가자 우선 {@link #init(com.skplanet.syruppay.token.ClaimBuilder)} 메소드가 호출되어야 한다.
  * 모든 {@link #init(com.skplanet.syruppay.token.ClaimBuilder)}호출 된 후에 각각의 {@link #configure(com.skplanet.syruppay.token.ClaimBuilder)} 메소드가 호출 된다.
  *
  * @param <O>
@@ -36,7 +36,7 @@ import java.io.Serializable;
  * @author 임형태
  * @since 1.0
  */
-public interface ClaimConfigurer<O, B extends ClaimBuilder<O>> extends Serializable {
+public interface Claim<O, B extends ClaimBuilder<O>> extends Serializable {
 
     String claimName();
 
@@ -63,7 +63,7 @@ public interface ClaimConfigurer<O, B extends ClaimBuilder<O>> extends Serializa
     void configure(B builder) throws Exception;
 
     /**
-     * {@link com.skplanet.syruppay.token.ClaimConfigurer} 에 대한 Required 사항에 대해 준수하였는지 여부를 검증해야 하며
+     * {@link Claim} 에 대한 Required 사항에 대해 준수하였는지 여부를 검증해야 하며
      * 준수하지 않았을 경우 적절한 Exception 을 throw 해야 한다.
      *
      * @throws Exception

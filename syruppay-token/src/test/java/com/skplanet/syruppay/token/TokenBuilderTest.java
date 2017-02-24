@@ -741,9 +741,9 @@ public class TokenBuilderTest {
 
         // Then
         assertThat(token, is(notNullValue()));
-        assertThat(token.getClaims(SyrupPayToken.Claim.TO_SUBSCRIPTION).size(), is(1));
-        assertThat(token.getClaims(SyrupPayToken.Claim.TO_LOGIN).size(), is(1));
-        assertThat(token.getClaims(SyrupPayToken.Claim.TO_PAY).size(), is(0));
+        assertThat(token.getClaims(Token.Claim.TO_SUBSCRIPTION).size(), is(1));
+        assertThat(token.getClaims(Token.Claim.TO_LOGIN).size(), is(1));
+        assertThat(token.getClaims(Token.Claim.TO_PAY).size(), is(0));
     }
 
     @Test
@@ -768,9 +768,9 @@ public class TokenBuilderTest {
 
         // Then
         assertThat(token, is(notNullValue()));
-        assertThat(token.getClaim(SyrupPayToken.Claim.TO_SUBSCRIPTION), is(notNullValue()));
-        assertThat(token.getClaim(SyrupPayToken.Claim.TO_LOGIN), is(notNullValue()));
-        assertThat(token.getClaim(SyrupPayToken.Claim.TO_PAY), is(nullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_SUBSCRIPTION), is(notNullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_LOGIN), is(notNullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_PAY), is(nullValue()));
     }
 
     @Test
@@ -795,8 +795,8 @@ public class TokenBuilderTest {
 
         // Then
         assertThat(token, is(notNullValue()));
-        assertThat(token.getClaim(SyrupPayToken.Claim.TO_LOGIN), is(notNullValue()));
-        assertThat(token.getClaim(SyrupPayToken.Claim.TO_MAP_USER), is(notNullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_LOGIN), is(notNullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_MAP_USER), is(notNullValue()));
         assertThat(token.getUserInfoMapper().getPersonalIfNotExistThenNullWith("가맹점에게 전달한 비밀"), is(notNullValue()));
     }
 
@@ -814,9 +814,9 @@ public class TokenBuilderTest {
 
         // Then
         assertThat(token, is(notNullValue()));
-        assertThat(token.getClaim(SyrupPayToken.Claim.TO_SUBSCRIPTION), is(nullValue()));
-        assertThat(token.getClaim(SyrupPayToken.Claim.TO_LOGIN), is(notNullValue()));
-        assertThat(token.getClaim(SyrupPayToken.Claim.TO_CHECKOUT), is(notNullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_SUBSCRIPTION), is(nullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_LOGIN), is(notNullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_CHECKOUT), is(notNullValue()));
     }
 
 
@@ -881,8 +881,8 @@ public class TokenBuilderTest {
 
         // Then
         assertThat(t, is(notNullValue()));
-        assertThat(t.getClaim(SyrupPayToken.Claim.TO_LOGIN), is(notNullValue()));
-        assertThat(t.getClaim(SyrupPayToken.Claim.TO_MAP_USER), is(notNullValue()));
+        assertThat(t.getClaim(Token.Claim.TO_LOGIN), is(notNullValue()));
+        assertThat(t.getClaim(Token.Claim.TO_MAP_USER), is(notNullValue()));
         assertThat(t.getUserInfoMapper().getPersonalIfNotExistThenNullWith("가맹점에 전달한 비밀키"), is(notNullValue()));
     }
 
@@ -903,8 +903,8 @@ public class TokenBuilderTest {
 
         // Then
         assertThat(token, is(notNullValue()));
-        assertThat(token.getClaim(SyrupPayToken.Claim.TO_LOGIN), is(notNullValue()));
-        assertThat(token.getClaim(SyrupPayToken.Claim.TO_MAP_USER), is(notNullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_LOGIN), is(notNullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_MAP_USER), is(notNullValue()));
         assertThat(token.getUserInfoMapper().getPersonalIfNotExistThenNullWith("가맹점에게 전달한 비밀"), is(notNullValue()));
     }
 
@@ -926,8 +926,8 @@ public class TokenBuilderTest {
 
         // Then
         assertThat(token, is(notNullValue()));
-        assertThat(token.getClaim(SyrupPayToken.Claim.TO_LOGIN), is(notNullValue()));
-        assertThat(token.getClaim(SyrupPayToken.Claim.TO_PAY), is(nullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_LOGIN), is(notNullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_PAY), is(nullValue()));
     }
 
     @Test
@@ -942,8 +942,8 @@ public class TokenBuilderTest {
 
         // Then
         assertThat(token, is(notNullValue()));
-        assertThat(token.getClaim(SyrupPayToken.Claim.TO_PAY), is(notNullValue()));
-        assertThat(token.getClaim(SyrupPayToken.Claim.TO_LOGIN), is(notNullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_PAY), is(notNullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_LOGIN), is(notNullValue()));
     }
 
     @Test(expected = AssertionError.class)
@@ -1022,5 +1022,34 @@ public class TokenBuilderTest {
         assertThat(bytes, is(notNullValue()));
 
         assertThat(bytes.length, greaterThan(0));
+    }
+
+    @Test
+    public void 결제수단인증_일반결제_테스트() throws Exception {
+        // Given
+        // @formatter:off
+        String t = tokenBuilder.of("가맹점")
+                .login()
+                    .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
+                .and()
+                .pay()
+                    .forAuthenticating(PayClaim.AuthenticatableMeans.CREDIT_CARD)
+                    .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
+                    .withProductTitle("쇼핑몰")
+                    .withAmount(50000)
+                    .withInstallmentPerCardInformation(new PayClaim.CardInstallmentInformation("07", "NN1"))
+                .and()
+                .generateTokenBy("가맹점에게 전달한 비밀키");
+        // @formatter:on
+        System.out.printf(t);
+        // When
+        Token token = TokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+
+        // Then
+        assertThat(token, is(notNullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_LOGIN), is(notNullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_PAY), is(notNullValue()));
+        assertThat(token.getTransactionInfo().getPaymentType(), is(PayClaim.PaymentType.AUTH_MEANS));
+        assertThat(token.getTransactionInfo().getAuthenticatableMeans(), is(PayClaim.AuthenticatableMeans.CREDIT_CARD));
     }
 }

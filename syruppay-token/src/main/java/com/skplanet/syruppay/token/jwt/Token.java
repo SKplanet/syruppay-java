@@ -21,10 +21,10 @@
 
 package com.skplanet.syruppay.token.jwt;
 
-import com.skplanet.syruppay.token.ClaimConfigurer;
 import com.skplanet.syruppay.token.Builder;
+import com.skplanet.syruppay.token.ClaimConfigurer;
+import com.skplanet.syruppay.token.ClaimConfigurerAdapter;
 import com.skplanet.syruppay.token.claims.*;
-import com.skplanet.syruppay.token.claims.OrderClaim;
 
 import java.io.Serializable;
 import java.util.List;
@@ -41,35 +41,35 @@ public interface Token extends Serializable, JwtToken {
      *
      * @return {@link MerchantUserClaim}
      */
-    public MerchantUserClaim<? extends Builder> getLoginInfo();
+    MerchantUserClaim<? extends Builder> getLoginInfo();
 
     /**
      * 거래(주문)에 대하여 결제를 시도하기 위한 객체를 구성하여 반환한다.
      *
      * @return {@link PayClaim}
      */
-    public PayClaim<? extends Builder> getTransactionInfo();
+    PayClaim<? extends Builder> getTransactionInfo();
 
     /**
      * 시럽페이 사용자를 매칭하기 위한 객체를 구성하여 반환한다.
      *
      * @return {@link MapToUserClaim}
      */
-    public MapToUserClaim<? extends Builder> getUserInfoMapper();
+    MapToUserClaim<? extends Builder> getUserInfoMapper();
 
     /**
      * Expired Time 기준과 Not Before Time 을 기준하여 토큰이 유효한 시간 안에 있는지 여부를 검증하여 반환한다.
      *
      * @return boolean
      */
-    public boolean isValidInTime();
+    boolean isValidInTime();
 
     /**
      * 가맹점 사용자가 가입된 SKT 통신회선의 가입 정보를 확인하기 위한 객체를 구성하여 반환한다.
      *
      * @return {@link MapToSktUserClaim}
      */
-    public MapToSktUserClaim<? extends Builder> getLineInfo();
+    MapToSktUserClaim<? extends Builder> getLineInfo();
 
     /**
      * 시럽페이 체크 아웃을 이용하기 위한 정보를 구성하여 반환한다.
@@ -78,7 +78,7 @@ public interface Token extends Serializable, JwtToken {
      * @since 1.1
      */
 
-    public OrderClaim<? extends Builder> getCheckoutInfo();
+    OrderClaim<? extends Builder> getCheckoutInfo();
 
 
     /**
@@ -87,7 +87,7 @@ public interface Token extends Serializable, JwtToken {
      * @return the subscription
      * @since 1.3.4
      */
-    public SubscriptionClaim<? extends Builder> getSubscription();
+    SubscriptionClaim<? extends Builder> getSubscription();
 
     /**
      * 시럽페이 토큰에 포함된 Claim 정보를 확인하여 반환한다.
@@ -95,7 +95,7 @@ public interface Token extends Serializable, JwtToken {
      * @return claimConfigurer 목록
      * @since 1.3.7
      */
-    public List<ClaimConfigurer> getClaims(SyrupPayToken.Claim... claims);
+    List<ClaimConfigurer> getClaims(SyrupPayToken.Claim... claims);
 
     /**
      * 시럽페이 토큰에 포함된 Claim 정보를 확인하여 반환한다.
@@ -104,5 +104,19 @@ public interface Token extends Serializable, JwtToken {
      * @since 1.3.7
      */
 
-    public ClaimConfigurer getClaim(final SyrupPayToken.Claim claim);
+    ClaimConfigurer getClaim(final SyrupPayToken.Claim claim);
+
+    enum Claim {
+        TO_SIGNUP(MerchantUserClaim.class), TO_LOGIN(MerchantUserClaim.class), TO_PAY(PayClaim.class), TO_CHECKOUT(OrderClaim.class), TO_MAP_USER(MapToUserClaim.class), TO_SUBSCRIPTION(SubscriptionClaim.class);
+
+        <C extends ClaimConfigurerAdapter> Claim(Class<C> configurer) {
+            this.configurer = configurer;
+        }
+
+        Class<?> configurer;
+
+        public Class<?> getConfigurer() {
+            return configurer;
+        }
+    }
 }

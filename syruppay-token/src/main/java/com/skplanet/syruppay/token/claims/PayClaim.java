@@ -40,9 +40,25 @@ public final class PayClaim<H extends Builder<H>> extends AbstractTokenClaim<Pay
 
     private String mctTransAuthId;
     private String mctDefinedValue;
+    private PaymentType paymentType = PaymentType.PAY;
+    private AuthenticatableMeans authenticatableMeans;
     private PaymentInformationBySeller paymentInfo = new PaymentInformationBySeller();
     private PaymentRestriction paymentRestrictions = new PaymentRestriction();
     private CashReceiptDisplay cashReceiptDisplay;
+
+    public PayClaim<H> forAuthenticating(final AuthenticatableMeans authenticatableMeans) {
+        this.paymentType = PaymentType.AUTH_MEANS;
+        this.authenticatableMeans = authenticatableMeans;
+        return this;
+    }
+
+    public PaymentType getPaymentType() {
+        return paymentType;
+    }
+
+    public AuthenticatableMeans getAuthenticatableMeans() {
+        return authenticatableMeans;
+    }
 
     public enum CashReceiptDisplay {
         YES, NO, DELEGATE_ADMIN
@@ -604,5 +620,13 @@ public final class PayClaim<H extends Builder<H>> extends AbstractTokenClaim<Pay
             this.bankCode = bankCode;
             return this;
         }
+    }
+
+    public enum AuthenticatableMeans {
+        CREDIT_CARD, BANK_TRANSFER, PHONE_BILL
+    }
+
+    public enum PaymentType {
+        PAY, CHECKOUT, SUBSCRIPTION, AUTH_MEANS
     }
 }

@@ -24,9 +24,7 @@ package com.skplanet.syruppay.token.jwt;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skplanet.syruppay.token.ClaimConfigurer;
-import com.skplanet.syruppay.token.ClaimConfigurerAdapter;
 import com.skplanet.syruppay.token.claims.*;
-import com.skplanet.syruppay.token.claims.MerchantUserClaim;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,7 +174,7 @@ public class SyrupPayToken implements Token {
     @Deprecated
     @JsonProperty("paymentInfo")
     public void setPaymentInfo(PayClaim.PaymentInformationBySeller paymentInfo) {
-        if(transactionInfo == null) {
+        if (transactionInfo == null) {
             LOGGER.warn("create transactionInfo to set payment information");
             transactionInfo = new PayClaim();
         }
@@ -195,7 +193,7 @@ public class SyrupPayToken implements Token {
     @Deprecated
     @JsonProperty("paymentRestrictions")
     public void setPaymentRestrictions(PayClaim.PaymentRestriction paymentRestriction) {
-        if(transactionInfo == null) {
+        if (transactionInfo == null) {
             LOGGER.warn("create transactionInfo to set payment restrictions");
             transactionInfo = new PayClaim();
         }
@@ -211,10 +209,12 @@ public class SyrupPayToken implements Token {
         return subscription;
     }
 
+    @Deprecated
     public List<ClaimConfigurer> getClaims() {
         return getClaims(Claim.values());
     }
 
+    @Deprecated
     public ClaimConfigurer getClaim(final Claim claim) {
         try {
             return getFieldOfClaimIfNotExistNull(claim);
@@ -226,6 +226,7 @@ public class SyrupPayToken implements Token {
         return null;
     }
 
+    @Deprecated
     public List<ClaimConfigurer> getClaims(final Claim... claims) {
         List<ClaimConfigurer> l = new ArrayList<ClaimConfigurer>();
         for (Claim c : claims) {
@@ -243,6 +244,7 @@ public class SyrupPayToken implements Token {
         return Collections.unmodifiableList(l);
     }
 
+    @Deprecated
     private ClaimConfigurer getFieldOfClaimIfNotExistNull(final Claim c) throws IllegalAccessException, NoSuchFieldException {
         for (Field f : SyrupPayToken.class.getDeclaredFields()) {
             if (f.getType().isAssignableFrom(c.getConfigurer())) {
@@ -250,20 +252,6 @@ public class SyrupPayToken implements Token {
             }
         }
         return null;
-    }
-
-    public static enum Claim {
-        TO_SIGNUP(MerchantUserClaim.class), TO_LOGIN(MerchantUserClaim.class), TO_PAY(PayClaim.class), TO_CHECKOUT(OrderClaim.class), TO_MAP_USER(MapToUserClaim.class), TO_SUBSCRIPTION(SubscriptionClaim.class);
-
-        <C extends ClaimConfigurerAdapter> Claim(Class<C> configurer) {
-            this.configurer = configurer;
-        }
-
-        Class<?> configurer;
-
-        public Class<?> getConfigurer() {
-            return configurer;
-        }
     }
 
 }

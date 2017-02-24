@@ -22,7 +22,7 @@
 package com.skplanet.syruppay.token.claims;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.skplanet.syruppay.token.Builder;
+import com.skplanet.syruppay.token.TokenBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import java.util.Map;
  * @author 임형태
  * @since 1.1
  */
-public final class OrderClaim<H extends Builder<H>> extends AbstractTokenClaim<OrderClaim<H>, H> {
+public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<OrderConfigurer<H>, H> {
     private int productPrice;
     private String submallName;
     private String privacyPolicyRequirements;
@@ -46,9 +46,9 @@ public final class OrderClaim<H extends Builder<H>> extends AbstractTokenClaim<O
     private ProductDeliveryInfo productDeliveryInfo;
     private List<Offer> offerList = new ArrayList<Offer>();
     private List<Loyalty> loyaltyList = new ArrayList<Loyalty>();
-    private List<PayClaim.ShippingAddress> shippingAddressList = new ArrayList<PayClaim.ShippingAddress>();
+    private List<PayConfigurer.ShippingAddress> shippingAddressList = new ArrayList<PayConfigurer.ShippingAddress>();
     private List<MonthlyInstallment> monthlyInstallmentList = new ArrayList<MonthlyInstallment>();
-    private List<PayClaim.Bank> bankInfoList = new ArrayList<PayClaim.Bank>();
+    private List<PayConfigurer.Bank> bankInfoList = new ArrayList<PayConfigurer.Bank>();
 
     public List<MonthlyInstallment> getMonthlyInstallmentList() {
         return Collections.unmodifiableList(monthlyInstallmentList);
@@ -75,7 +75,7 @@ public final class OrderClaim<H extends Builder<H>> extends AbstractTokenClaim<O
         return this.productDeliveryInfo;
     }
 
-    public List<PayClaim.Bank> getBankInfoList() {
+    public List<PayConfigurer.Bank> getBankInfoList() {
         return bankInfoList;
     }
 
@@ -98,7 +98,7 @@ public final class OrderClaim<H extends Builder<H>> extends AbstractTokenClaim<O
         for (Loyalty l : loyaltyList) {
             l.validRequired();
         }
-        for (PayClaim.ShippingAddress a : shippingAddressList) {
+        for (PayConfigurer.ShippingAddress a : shippingAddressList) {
             a.validRequiredToCheckout();
         }
         for (MonthlyInstallment m : monthlyInstallmentList) {
@@ -106,43 +106,43 @@ public final class OrderClaim<H extends Builder<H>> extends AbstractTokenClaim<O
         }
     }
 
-    public OrderClaim<H> withBankInfoList(final List<PayClaim.Bank> bankInfoList) {
+    public OrderConfigurer<H> withBankInfoList(final List<PayConfigurer.Bank> bankInfoList) {
         this.bankInfoList.addAll(bankInfoList);
         return this;
     }
 
-    public OrderClaim<H> withBankInfoList(final PayClaim.Bank... bank) {
+    public OrderConfigurer<H> withBankInfoList(final PayConfigurer.Bank... bank) {
         return withBankInfoList(Arrays.asList(bank));
     }
 
-    public OrderClaim<H> withPrivacyPolicyRequirements(String privacyPolicyRequirements) {
+    public OrderConfigurer<H> withPrivacyPolicyRequirements(String privacyPolicyRequirements) {
         this.privacyPolicyRequirements = privacyPolicyRequirements;
         return this;
     }
 
-    public OrderClaim<H> disableMainShippingAddressSetting() {
+    public OrderConfigurer<H> disableMainShippingAddressSetting() {
         this.mainShippingAddressSettingDisabled = true;
         return this;
     }
 
-    public OrderClaim<H> enableMainShippingAddressSetting() {
+    public OrderConfigurer<H> enableMainShippingAddressSetting() {
         this.mainShippingAddressSettingDisabled = false;
         return this;
     }
 
-    public OrderClaim<H> withShippingAddresses(PayClaim.ShippingAddress... shippingAddress) {
+    public OrderConfigurer<H> withShippingAddresses(PayConfigurer.ShippingAddress... shippingAddress) {
         return withShippingAddresses(Arrays.asList(shippingAddress));
     }
 
-    public OrderClaim<H> withShippingAddresses(List<PayClaim.ShippingAddress> shippingAddresses) {
-        for (PayClaim.ShippingAddress a : shippingAddresses) {
+    public OrderConfigurer<H> withShippingAddresses(List<PayConfigurer.ShippingAddress> shippingAddresses) {
+        for (PayConfigurer.ShippingAddress a : shippingAddresses) {
             a.validRequiredToCheckout();
         }
         shippingAddressList.addAll(shippingAddresses);
         return this;
     }
 
-    public OrderClaim<H> withProductPrice(int productPrice) {
+    public OrderConfigurer<H> withProductPrice(int productPrice) {
         if (productPrice <= 0) {
             throw new IllegalArgumentException("Cannot be smaller than 0. Check yours input value : " + productPrice);
         }
@@ -150,21 +150,21 @@ public final class OrderClaim<H extends Builder<H>> extends AbstractTokenClaim<O
         return this;
     }
 
-    public OrderClaim<H> withSubmallName(String submallName) {
+    public OrderConfigurer<H> withSubmallName(String submallName) {
         this.submallName = submallName;
         return this;
     }
 
-    public OrderClaim<H> withProductDeliveryInfo(ProductDeliveryInfo productDeliveryInfo) {
+    public OrderConfigurer<H> withProductDeliveryInfo(ProductDeliveryInfo productDeliveryInfo) {
         this.productDeliveryInfo = productDeliveryInfo;
         return this;
     }
 
-    public OrderClaim<H> withOffers(Offer... offer) {
+    public OrderConfigurer<H> withOffers(Offer... offer) {
         return withOffers(Arrays.asList(offer));
     }
 
-    public OrderClaim<H> withOffers(List<Offer> offers) {
+    public OrderConfigurer<H> withOffers(List<Offer> offers) {
         for (Offer o : offers) {
             o.validRequired();
         }
@@ -172,11 +172,11 @@ public final class OrderClaim<H extends Builder<H>> extends AbstractTokenClaim<O
         return this;
     }
 
-    public OrderClaim<H> withLoyalties(Loyalty... loyalty) {
+    public OrderConfigurer<H> withLoyalties(Loyalty... loyalty) {
         return withLoyalties(Arrays.asList(loyalty));
     }
 
-    public OrderClaim<H> withLoyalties(List<Loyalty> loyalties) {
+    public OrderConfigurer<H> withLoyalties(List<Loyalty> loyalties) {
         for (Loyalty l : loyalties) {
             l.validRequired();
         }
@@ -184,11 +184,11 @@ public final class OrderClaim<H extends Builder<H>> extends AbstractTokenClaim<O
         return this;
     }
 
-    public OrderClaim<H> withMonthlyInstallment(MonthlyInstallment... monthlyInstallment) {
+    public OrderConfigurer<H> withMonthlyInstallment(MonthlyInstallment... monthlyInstallment) {
         return withMonthlyInstallment(Arrays.asList(monthlyInstallment));
     }
 
-    public OrderClaim<H> withMonthlyInstallment(List<MonthlyInstallment> monthlyInstallments) {
+    public OrderConfigurer<H> withMonthlyInstallment(List<MonthlyInstallment> monthlyInstallments) {
         for (MonthlyInstallment s : monthlyInstallments) {
             s.validRequired();
         }
@@ -204,7 +204,7 @@ public final class OrderClaim<H extends Builder<H>> extends AbstractTokenClaim<O
         return Collections.unmodifiableList(loyaltyList);
     }
 
-    public List<PayClaim.ShippingAddress> getShippingAddressList() {
+    public List<PayConfigurer.ShippingAddress> getShippingAddressList() {
         return Collections.unmodifiableList(shippingAddressList);
     }
 
@@ -279,7 +279,7 @@ public final class OrderClaim<H extends Builder<H>> extends AbstractTokenClaim<O
     public static final class ProductDeliveryInfo implements Serializable, Element {
         private static final long serialVersionUID = 2327522688494682416L;
 
-        private PayClaim.DeliveryType deliveryType;
+        private PayConfigurer.DeliveryType deliveryType;
         private String deliveryName;
         private boolean defaultDeliveryCostApplied;
         private boolean additionalDeliveryCostApplied;
@@ -294,11 +294,11 @@ public final class OrderClaim<H extends Builder<H>> extends AbstractTokenClaim<O
             return this;
         }
 
-        public PayClaim.DeliveryType getDeliveryType() {
+        public PayConfigurer.DeliveryType getDeliveryType() {
             return deliveryType;
         }
 
-        public ProductDeliveryInfo setDeliveryType(PayClaim.DeliveryType deliveryType) {
+        public ProductDeliveryInfo setDeliveryType(PayConfigurer.DeliveryType deliveryType) {
             this.deliveryType = deliveryType;
             return this;
         }

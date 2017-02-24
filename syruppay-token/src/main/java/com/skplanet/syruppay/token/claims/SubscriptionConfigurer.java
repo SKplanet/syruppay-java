@@ -21,7 +21,7 @@
 
 package com.skplanet.syruppay.token.claims;
 
-import com.skplanet.syruppay.token.Builder;
+import com.skplanet.syruppay.token.TokenBuilder;
 
 import java.io.Serializable;
 
@@ -31,20 +31,19 @@ import java.io.Serializable;
  * @author 임형태
  * @since 1.3
  */
-public class SubscriptionClaim<H extends Builder<H>> extends AbstractTokenClaim<SubscriptionClaim<H>, H> {
+public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<SubscriptionConfigurer<H>, H> {
     private String autoPaymentId;
     private RegistrationRestrictions registrationRestrictions;
     private Plan plan;
     private String mctSubscriptionRequestId;
     private String promotionCode;
 
-
-    public SubscriptionClaim<H> withAutoPaymentId(final String autoPaymentId) {
+    public SubscriptionConfigurer<H> withAutoPaymentId(final String autoPaymentId) {
         this.autoPaymentId = autoPaymentId;
         return this;
     }
 
-    public SubscriptionClaim<H> withRestrictionOf(final PayClaim.MatchedUser matchedUser) {
+    public SubscriptionConfigurer<H> withRestrictionOf(final PayConfigurer.MatchedUser matchedUser) {
         if (registrationRestrictions == null) {
             registrationRestrictions = new RegistrationRestrictions();
         }
@@ -52,12 +51,12 @@ public class SubscriptionClaim<H extends Builder<H>> extends AbstractTokenClaim<
         return this;
     }
 
-    public SubscriptionClaim<H> with(final Plan plan) {
+    public SubscriptionConfigurer<H> with(final Plan plan) {
         this.plan = plan;
         return this;
     }
 
-    public SubscriptionClaim<H> withMerchantSubscriptionRequestId(String mctSubscriptionRequestId) {
+    public SubscriptionConfigurer<H> withMerchantSubscriptionRequestId(String mctSubscriptionRequestId) {
         this.mctSubscriptionRequestId = mctSubscriptionRequestId;
         return this;
     }
@@ -66,11 +65,10 @@ public class SubscriptionClaim<H extends Builder<H>> extends AbstractTokenClaim<
         return promotionCode;
     }
 
-    public SubscriptionClaim<H> withPromotionCode(final String promotionCode) {
+    public SubscriptionConfigurer<H> withPromotionCode(final String promotionCode) {
         this.promotionCode = promotionCode;
         return this;
     }
-
 
     public String getMctSubscriptionRequestId() {
         return mctSubscriptionRequestId;
@@ -89,7 +87,7 @@ public class SubscriptionClaim<H extends Builder<H>> extends AbstractTokenClaim<
         return registrationRestrictions;
     }
 
-    public void setMatchedUser(final PayClaim.MatchedUser matchedUser) {
+    public void setMatchedUser(final PayConfigurer.MatchedUser matchedUser) {
         if (registrationRestrictions == null) {
             registrationRestrictions = new RegistrationRestrictions();
         }
@@ -107,9 +105,9 @@ public class SubscriptionClaim<H extends Builder<H>> extends AbstractTokenClaim<
     }
 
     public static class RegistrationRestrictions implements Serializable {
-        private PayClaim.MatchedUser matchedUser;
+        private PayConfigurer.MatchedUser matchedUser;
 
-        public PayClaim.MatchedUser getMatchedUser() {
+        public PayConfigurer.MatchedUser getMatchedUser() {
             return matchedUser;
         }
     }
@@ -142,7 +140,7 @@ public class SubscriptionClaim<H extends Builder<H>> extends AbstractTokenClaim<
         }
     }
 
-    public enum Interval {
+    public static enum Interval {
         ONDEMAND, MONTHLY, WEEKLY, BIWEEKLY
     }
 }

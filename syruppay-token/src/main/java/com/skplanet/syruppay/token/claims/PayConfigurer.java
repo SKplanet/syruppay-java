@@ -23,7 +23,7 @@ package com.skplanet.syruppay.token.claims;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.skplanet.syruppay.token.Builder;
+import com.skplanet.syruppay.token.TokenBuilder;
 
 import java.io.Serializable;
 import java.util.*;
@@ -34,31 +34,15 @@ import java.util.*;
  * @author 임형태
  * @since 1.0
  */
-public final class PayClaim<H extends Builder<H>> extends AbstractTokenClaim<PayClaim<H>, H> {
+public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<PayConfigurer<H>, H> {
     private static final Set<String> ISO_LANGUAGES = new HashSet<String>(Arrays.asList(Locale.getISOLanguages()));
     private static final Set<String> ISO_COUNTRIES = new HashSet<String>(Arrays.asList(Locale.getISOCountries()));
 
     private String mctTransAuthId;
     private String mctDefinedValue;
-    private PaymentType paymentType = PaymentType.PAY;
-    private AuthenticatableMeans authenticatableMeans;
     private PaymentInformationBySeller paymentInfo = new PaymentInformationBySeller();
     private PaymentRestriction paymentRestrictions = new PaymentRestriction();
     private CashReceiptDisplay cashReceiptDisplay;
-
-    public PayClaim<H> forAuthenticating(final AuthenticatableMeans authenticatableMeans) {
-        this.paymentType = PaymentType.AUTH_MEANS;
-        this.authenticatableMeans = authenticatableMeans;
-        return this;
-    }
-
-    public PaymentType getPaymentType() {
-        return paymentType;
-    }
-
-    public AuthenticatableMeans getAuthenticatableMeans() {
-        return authenticatableMeans;
-    }
 
     public enum CashReceiptDisplay {
         YES, NO, DELEGATE_ADMIN
@@ -68,7 +52,7 @@ public final class PayClaim<H extends Builder<H>> extends AbstractTokenClaim<Pay
         return cashReceiptDisplay;
     }
 
-    public PayClaim<H> withCashReceiptDisplay(final CashReceiptDisplay cashReceiptDisplay) {
+    public PayConfigurer<H> withCashReceiptDisplay(final CashReceiptDisplay cashReceiptDisplay) {
         this.cashReceiptDisplay = cashReceiptDisplay;
         return this;
     }
@@ -99,12 +83,12 @@ public final class PayClaim<H extends Builder<H>> extends AbstractTokenClaim<Pay
         return paymentRestrictions;
     }
 
-    public PayClaim<H> withOrderIdOfMerchant(final String orderId) {
+    public PayConfigurer<H> withOrderIdOfMerchant(final String orderId) {
         mctTransAuthId = orderId;
         return this;
     }
 
-    public PayClaim<H> withMerchantDefinedValue(final String merchantDefinedValue) {
+    public PayConfigurer<H> withMerchantDefinedValue(final String merchantDefinedValue) {
         this.mctDefinedValue = merchantDefinedValue;
         return this;
     }
@@ -120,12 +104,12 @@ public final class PayClaim<H extends Builder<H>> extends AbstractTokenClaim<Pay
         return mctDefinedValue;
     }
 
-    public PayClaim<H> withProductTitle(final String productTitle) {
+    public PayConfigurer<H> withProductTitle(final String productTitle) {
         paymentInfo.productTitle = productTitle;
         return this;
     }
 
-    public PayClaim<H> withProductUrls(final List<String> productUrls) {
+    public PayConfigurer<H> withProductUrls(final List<String> productUrls) {
         for (String productDetail : productUrls) {
             if (!(productDetail.startsWith("http") || productDetail.startsWith("https"))) {
                 throw new IllegalArgumentException("product details should be contained http or https urls. check your input!");
@@ -135,40 +119,40 @@ public final class PayClaim<H extends Builder<H>> extends AbstractTokenClaim<Pay
         return this;
     }
 
-    public PayClaim<H> withProductUrls(final String... url) {
+    public PayConfigurer<H> withProductUrls(final String... url) {
         return withProductUrls(Arrays.asList(url));
     }
 
-    public PayClaim<H> withBankInfoList(final List<Bank> bankInfoList) {
+    public PayConfigurer<H> withBankInfoList(final List<Bank> bankInfoList) {
         paymentInfo.bankInfoList.addAll(bankInfoList);
         return this;
     }
 
-    public PayClaim<H> withBankInfoList(final Bank... bank) {
+    public PayConfigurer<H> withBankInfoList(final Bank... bank) {
         return withBankInfoList(Arrays.asList(bank));
     }
 
-    public PayClaim<H> withLanguageForDisplay(final Language l) {
+    public PayConfigurer<H> withLanguageForDisplay(final Language l) {
         paymentInfo.lang = l.toString();
         return this;
     }
 
-    public PayClaim<H> withCurrency(final Currency c) {
+    public PayConfigurer<H> withCurrency(final Currency c) {
         paymentInfo.currencyCode = c.toString();
         return this;
     }
 
-    public PayClaim<H> withShippingAddress(final ShippingAddress shippingAddress) {
+    public PayConfigurer<H> withShippingAddress(final ShippingAddress shippingAddress) {
         paymentInfo.shippingAddress = shippingAddress.mapToStringForFds();
         return this;
     }
 
-    public PayClaim<H> withShippingAddress(final String shippingAddress) {
+    public PayConfigurer<H> withShippingAddress(final String shippingAddress) {
         paymentInfo.shippingAddress = shippingAddress;
         return this;
     }
 
-    public PayClaim<H> withAmount(final int paymentAmount) {
+    public PayConfigurer<H> withAmount(final int paymentAmount) {
         if (paymentAmount <= 0) {
             throw new IllegalArgumentException("Cannot be smaller than 0. Check yours input value : " + paymentAmount);
         }
@@ -176,59 +160,59 @@ public final class PayClaim<H extends Builder<H>> extends AbstractTokenClaim<Pay
         return this;
     }
 
-    public PayClaim<H> withDeliveryPhoneNumber(final String deliveryPhoneNumber) {
+    public PayConfigurer<H> withDeliveryPhoneNumber(final String deliveryPhoneNumber) {
         paymentInfo.deliveryPhoneNumber = deliveryPhoneNumber;
         return this;
     }
 
-    public PayClaim<H> withDeliveryName(final String deliveryName) {
+    public PayConfigurer<H> withDeliveryName(final String deliveryName) {
         paymentInfo.deliveryName = deliveryName;
         return this;
     }
 
-    public PayClaim<H> withDeliveryType(final DeliveryType deliveryType) {
+    public PayConfigurer<H> withDeliveryType(final DeliveryType deliveryType) {
         paymentInfo.deliveryType = deliveryType;
         return this;
     }
 
-    public PayClaim<H> withBeAbleToExchangeToCash(final boolean exchangeable) {
+    public PayConfigurer<H> withBeAbleToExchangeToCash(final boolean exchangeable) {
         paymentInfo.isExchangeable = exchangeable;
         return this;
     }
 
-    public PayClaim<H> withInstallmentPerCardInformation(final List<CardInstallmentInformation> cards) {
+    public PayConfigurer<H> withInstallmentPerCardInformation(final List<CardInstallmentInformation> cards) {
         paymentInfo.cardInfoList.addAll(cards);
         return this;
     }
 
-    public PayClaim<H> withInstallmentPerCardInformation(final CardInstallmentInformation... card) {
+    public PayConfigurer<H> withInstallmentPerCardInformation(final CardInstallmentInformation... card) {
         paymentInfo.cardInfoList.addAll(Arrays.asList(card));
         return this;
     }
 
-    public PayClaim<H> withRestrictionOf(final PayableLocaleRule r) {
+    public PayConfigurer<H> withRestrictionOf(final PayableLocaleRule r) {
         paymentRestrictions.cardIssuerRegion = r.toCode();
         return this;
     }
 
     @Deprecated
-    public PayClaim<H> withPayableRuleWithCard(final PayableLocaleRule r) {
+    public PayConfigurer<H> withPayableRuleWithCard(final PayableLocaleRule r) {
         paymentRestrictions.cardIssuerRegion = r.toCode();
         return this;
     }
 
-    public PayClaim<H> withRestrictionOf(final MatchedUser matchedUser) {
+    public PayConfigurer<H> withRestrictionOf(final MatchedUser matchedUser) {
         paymentRestrictions.matchedUser = matchedUser;
         return this;
     }
 
     @Deprecated
-    public PayClaim<H> withMatchedUser(final MatchedUser matchedUser) {
+    public PayConfigurer<H> withMatchedUser(final MatchedUser matchedUser) {
         paymentRestrictions.matchedUser = matchedUser;
         return this;
     }
 
-    public PayClaim<H> withRestrictionPaymentTypeOf(final String paymentType) {
+    public PayConfigurer<H> withRestrictionPaymentTypeOf(final String paymentType) {
         paymentRestrictions.paymentType = paymentType;
         return this;
     }
@@ -620,13 +604,5 @@ public final class PayClaim<H extends Builder<H>> extends AbstractTokenClaim<Pay
             this.bankCode = bankCode;
             return this;
         }
-    }
-
-    public enum AuthenticatableMeans {
-        CREDIT_CARD, BANK_TRANSFER, PHONE_BILL
-    }
-
-    public enum PaymentType {
-        PAY, CHECKOUT, SUBSCRIPTION, AUTH_MEANS
     }
 }

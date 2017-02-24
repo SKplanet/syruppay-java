@@ -21,10 +21,14 @@
 
 package com.skplanet.syruppay.token.jwt;
 
-import com.skplanet.syruppay.token.Builder;
 import com.skplanet.syruppay.token.ClaimConfigurer;
-import com.skplanet.syruppay.token.ClaimConfigurerAdapter;
-import com.skplanet.syruppay.token.claims.*;
+import com.skplanet.syruppay.token.TokenBuilder;
+import com.skplanet.syruppay.token.claims.MapToSktUserConfigurer;
+import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
+import com.skplanet.syruppay.token.claims.MerchantUserConfigurer;
+import com.skplanet.syruppay.token.claims.OrderConfigurer;
+import com.skplanet.syruppay.token.claims.PayConfigurer;
+import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
 
 import java.io.Serializable;
 import java.util.List;
@@ -39,46 +43,46 @@ public interface Token extends Serializable, JwtToken {
     /**
      * 가맹점의 사용자 정보를 인증(Authentication) 하기 위한 객체를 구성하여 반환한다.
      *
-     * @return {@link MerchantUserClaim}
+     * @return {@link com.skplanet.syruppay.token.claims.MerchantUserConfigurer}
      */
-    MerchantUserClaim<? extends Builder> getLoginInfo();
+    public MerchantUserConfigurer<? extends TokenBuilder> getLoginInfo();
 
     /**
      * 거래(주문)에 대하여 결제를 시도하기 위한 객체를 구성하여 반환한다.
      *
-     * @return {@link PayClaim}
+     * @return {@link com.skplanet.syruppay.token.claims.PayConfigurer}
      */
-    PayClaim<? extends Builder> getTransactionInfo();
+    public PayConfigurer<? extends TokenBuilder> getTransactionInfo();
 
     /**
      * 시럽페이 사용자를 매칭하기 위한 객체를 구성하여 반환한다.
      *
-     * @return {@link MapToUserClaim}
+     * @return {@link com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer}
      */
-    MapToUserClaim<? extends Builder> getUserInfoMapper();
+    public MapToSyrupPayUserConfigurer<? extends TokenBuilder> getUserInfoMapper();
 
     /**
      * Expired Time 기준과 Not Before Time 을 기준하여 토큰이 유효한 시간 안에 있는지 여부를 검증하여 반환한다.
      *
      * @return boolean
      */
-    boolean isValidInTime();
+    public boolean isValidInTime();
 
     /**
      * 가맹점 사용자가 가입된 SKT 통신회선의 가입 정보를 확인하기 위한 객체를 구성하여 반환한다.
      *
-     * @return {@link MapToSktUserClaim}
+     * @return {@link com.skplanet.syruppay.token.claims.MapToSktUserConfigurer}
      */
-    MapToSktUserClaim<? extends Builder> getLineInfo();
+    public MapToSktUserConfigurer<? extends TokenBuilder> getLineInfo();
 
     /**
      * 시럽페이 체크 아웃을 이용하기 위한 정보를 구성하여 반환한다.
      *
-     * @return {@link OrderClaim}
+     * @return {@link com.skplanet.syruppay.token.claims.OrderConfigurer}
      * @since 1.1
      */
 
-    OrderClaim<? extends Builder> getCheckoutInfo();
+    public OrderConfigurer<? extends TokenBuilder> getCheckoutInfo();
 
 
     /**
@@ -87,7 +91,7 @@ public interface Token extends Serializable, JwtToken {
      * @return the subscription
      * @since 1.3.4
      */
-    SubscriptionClaim<? extends Builder> getSubscription();
+    public SubscriptionConfigurer<? extends TokenBuilder> getSubscription();
 
     /**
      * 시럽페이 토큰에 포함된 Claim 정보를 확인하여 반환한다.
@@ -95,7 +99,7 @@ public interface Token extends Serializable, JwtToken {
      * @return claimConfigurer 목록
      * @since 1.3.7
      */
-    List<ClaimConfigurer> getClaims(SyrupPayToken.Claim... claims);
+    public List<ClaimConfigurer> getClaims(SyrupPayToken.Claim... claims);
 
     /**
      * 시럽페이 토큰에 포함된 Claim 정보를 확인하여 반환한다.
@@ -104,19 +108,5 @@ public interface Token extends Serializable, JwtToken {
      * @since 1.3.7
      */
 
-    ClaimConfigurer getClaim(final SyrupPayToken.Claim claim);
-
-    enum Claim {
-        TO_SIGNUP(MerchantUserClaim.class), TO_LOGIN(MerchantUserClaim.class), TO_PAY(PayClaim.class), TO_CHECKOUT(OrderClaim.class), TO_MAP_USER(MapToUserClaim.class), TO_SUBSCRIPTION(SubscriptionClaim.class);
-
-        <C extends ClaimConfigurerAdapter> Claim(Class<C> configurer) {
-            this.configurer = configurer;
-        }
-
-        Class<?> configurer;
-
-        public Class<?> getConfigurer() {
-            return configurer;
-        }
-    }
+    public ClaimConfigurer getClaim(final SyrupPayToken.Claim claim);
 }

@@ -21,21 +21,15 @@
 
 package com.skplanet.syruppay.token.claims;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skplanet.jose.Jose;
 import com.skplanet.jose.JoseBuilders;
 import com.skplanet.jose.JoseHeader;
 import com.skplanet.jose.jwa.Jwa;
-import com.skplanet.syruppay.token.Builder;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+import com.skplanet.syruppay.token.TokenBuilder;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 시럽페이 사용자 정보 검색을 위한 Claim 을 정의한다.
@@ -44,24 +38,23 @@ import java.util.Map;
  * 시럽페이 사용자를 맵핑하는 방식은 {@code MappingType.CI_HASH}와 {@code MappingType.CI_MAPPED_KEY} 를 지원한다.
  * {@code MappingType.CI_HASH} 를 사용하는 경우 사용자 CI에 대한 SHA256 해쉬로 시럽페이 사용자를 검색하여 {@code MappingType.CI_MAPPED_KEY} 를 이용하는 경우 SK Planet 의 CI 인프라 자원을 활용하여 지정된 Key 값을 기준으로 시럽페이 사용자를 맵핑한다.
  *
- * @param <H> {@link Builder}
+ * @param <H> {@link com.skplanet.syruppay.token.TokenBuilder}
  * @author 임형태
- * @see MapToUserClaim.MappingType
+ * @see com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer.MappingType
  * @since 1.0
  */
-public class MapToUserClaim<H extends Builder<H>> extends AbstractTokenClaim<MapToUserClaim<H>, H> {
+public class MapToSyrupPayUserConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<MapToSyrupPayUserConfigurer<H>, H> {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private MappingType mappingType;
     private String mappingValue;
     private String identityAuthenticationId;
-    private volatile Map<String, String> miscellaneous;
 
     public String getIdentityAuthenticationId() {
         return identityAuthenticationId;
     }
 
-    public MapToUserClaim<H> withIdentityAuthenticationId(String identityAuthenticationId) {
+    public MapToSyrupPayUserConfigurer<H> withIdentityAuthenticationId(String identityAuthenticationId) {
         this.identityAuthenticationId = identityAuthenticationId;
         return this;
     }
@@ -69,8 +62,8 @@ public class MapToUserClaim<H extends Builder<H>> extends AbstractTokenClaim<Map
     /**
      * 시럽페이 사용자 정보를 맵핑하는 방식을 반환한다.
      *
-     * @return {@link MapToUserClaim.MappingType}
-     * @see MapToUserClaim.MappingType
+     * @return {@link com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer.MappingType}
+     * @see com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer.MappingType
      */
     public MappingType getMappingType() {
         return mappingType;
@@ -96,10 +89,10 @@ public class MapToUserClaim<H extends Builder<H>> extends AbstractTokenClaim<Map
     /**
      * 시럽페이 사용자 정보를 맵핑하기 위한 방식을 지정한다.
      *
-     * @param type {@link MapToUserClaim.MappingType}
+     * @param type {@link com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer.MappingType}
      * @return <code>this</code>
      */
-    public MapToUserClaim<H> withType(final MappingType type) {
+    public MapToSyrupPayUserConfigurer<H> withType(final MappingType type) {
         this.mappingType = type;
         return this;
     }
@@ -107,10 +100,10 @@ public class MapToUserClaim<H extends Builder<H>> extends AbstractTokenClaim<Map
     /**
      * 시럽페이 사용자 정보를 매핑하기 위한 값을 지정한다.
      *
-     * @param value {@link MapToUserClaim.MappingType}의 값
+     * @param value {@link com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer.MappingType}의 값
      * @return <code>this</code>
      */
-    public MapToUserClaim<H> withValue(final String value) {
+    public MapToSyrupPayUserConfigurer<H> withValue(final String value) {
         this.mappingValue = value;
         return this;
     }
@@ -125,7 +118,7 @@ public class MapToUserClaim<H extends Builder<H>> extends AbstractTokenClaim<Map
      * @throws IOException
      * @since 1.3.8
      */
-    public MapToUserClaim<H> withValue(final Personal p, final String kid, final String key) throws IOException {
+    public MapToSyrupPayUserConfigurer<H> withValue(final Personal p, final String kid, final String key) throws IOException {
         this.mappingValue = new Jose().configuration(
                 JoseBuilders.JsonEncryptionCompactSerializationBuilder()
                         .header(new JoseHeader(Jwa.A128KW, Jwa.A128CBC_HS256, kid))
@@ -163,7 +156,7 @@ public class MapToUserClaim<H extends Builder<H>> extends AbstractTokenClaim<Map
      *
      * @since 1.3.8
      */
-    public static class Personal implements Serializable {
+    public static class Personal implements Serializable  {
         private String username;
         private String lineNumber;
         private OperatorCode operatorCode;
@@ -366,46 +359,6 @@ public class MapToUserClaim<H extends Builder<H>> extends AbstractTokenClaim<Map
         public String getValue() {
             return value;
         }
-    }
 
-    public synchronized MapToUserClaim<H> withMisc() {
-        if (miscellaneous == null) {
-            miscellaneous = new HashMap<String, String>();
-        }
-        return this;
     }
-
-    public MapToUserClaim<H> setAuthenticatedAt(DateTime when) {
-        if (miscellaneous == null) {
-            throw new IllegalArgumentException("call method this after this.withMisc() to init.");
-        }
-        miscellaneous.put("authenticatedAt", when.withZone(DateTimeZone.UTC).toString());
-        return this;
-    }
-
-    public MapToUserClaim<H> setAuthenticatedBy(AuthMethod authMethod) {
-        if (miscellaneous == null) {
-            throw new IllegalArgumentException("call method this after this.withMisc() to init.");
-        }
-        miscellaneous.put("authenticatedBy", authMethod.toString());
-        return this;
-    }
-
-    public MapToUserClaim<H> setHasTransaction(boolean has) {
-        if (miscellaneous == null) {
-            throw new IllegalArgumentException("call method this after this.withMisc() to init.");
-        }
-        miscellaneous.put("hasTransaction", Boolean.toString(has));
-        return this;
-    }
-
-    @JsonIgnore
-    public Map<String, String> getMisc() {
-        return Collections.unmodifiableMap(miscellaneous);
-    }
-
-    public enum AuthMethod {
-        CELLPHONE, AUTH_CERT, CREDIT_CARD
-    }
-
 }

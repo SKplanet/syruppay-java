@@ -24,7 +24,13 @@ package com.skplanet.syruppay.token.jwt;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skplanet.syruppay.token.ClaimConfigurer;
-import com.skplanet.syruppay.token.claims.*;
+import com.skplanet.syruppay.token.ClaimConfigurerAdapter;
+import com.skplanet.syruppay.token.claims.MapToSktUserConfigurer;
+import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
+import com.skplanet.syruppay.token.claims.MerchantUserConfigurer;
+import com.skplanet.syruppay.token.claims.OrderConfigurer;
+import com.skplanet.syruppay.token.claims.PayConfigurer;
+import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,17 +60,17 @@ public class SyrupPayToken implements Token {
     private Long nbf;
     private String sub;
 
-    private MerchantUserClaim loginInfo;
-    private PayClaim transactionInfo;
-    private MapToUserClaim userInfoMapper;
-    private MapToSktUserClaim lineInfo;
-    private OrderClaim checkoutInfo;
-    private SubscriptionClaim subscription;
+    private MerchantUserConfigurer loginInfo;
+    private PayConfigurer transactionInfo;
+    private MapToSyrupPayUserConfigurer userInfoMapper;
+    private MapToSktUserConfigurer lineInfo;
+    private OrderConfigurer checkoutInfo;
+    private SubscriptionConfigurer subscription;
 
     /**
      * {@inheritDoc}
      */
-    public OrderClaim getCheckoutInfo() {
+    public OrderConfigurer getCheckoutInfo() {
         return checkoutInfo;
     }
 
@@ -135,20 +141,20 @@ public class SyrupPayToken implements Token {
     /**
      * {@inheritDoc}
      */
-    public MerchantUserClaim getLoginInfo() {
+    public MerchantUserConfigurer getLoginInfo() {
         return loginInfo;
     }
 
     /**
      * {@inheritDoc}
      */
-    public PayClaim getTransactionInfo() {
+    public PayConfigurer getTransactionInfo() {
         return transactionInfo;
     }
 
     @Deprecated
     @JsonProperty("transactionInfo")
-    public void setTransactionInfo(PayClaim transactionInfo) {
+    public void setTransactionInfo(PayConfigurer transactionInfo) {
         if (this.transactionInfo != null && this.transactionInfo.getMctTransAuthId() == null && transactionInfo.getPaymentInfo().getProductTitle() == null) {
             LOGGER.warn("set only mctTransAuthId of transactionInfo element by deprecated method");
             this.transactionInfo.withOrderIdOfMerchant(transactionInfo.getMctTransAuthId());
@@ -160,31 +166,31 @@ public class SyrupPayToken implements Token {
     /**
      * {@inheritDoc}
      */
-    public MapToUserClaim getUserInfoMapper() {
+    public MapToSyrupPayUserConfigurer getUserInfoMapper() {
         return userInfoMapper;
     }
 
     /**
      * {@inheritDoc}
      */
-    public MapToSktUserClaim getLineInfo() {
+    public MapToSktUserConfigurer getLineInfo() {
         return lineInfo;
     }
 
     @Deprecated
     @JsonProperty("paymentInfo")
-    public void setPaymentInfo(PayClaim.PaymentInformationBySeller paymentInfo) {
-        if (transactionInfo == null) {
+    public void setPaymentInfo(PayConfigurer.PaymentInformationBySeller paymentInfo) {
+        if(transactionInfo == null) {
             LOGGER.warn("create transactionInfo to set payment information");
-            transactionInfo = new PayClaim();
+            transactionInfo = new PayConfigurer();
         }
         LOGGER.warn("set paymentInfo element by deprecated method");
         transactionInfo.withAmount(paymentInfo.getPaymentAmt());
-        transactionInfo.withLanguageForDisplay(PayClaim.Language.valueOf(paymentInfo.getLang().toUpperCase()));
+        transactionInfo.withLanguageForDisplay(PayConfigurer.Language.valueOf(paymentInfo.getLang().toUpperCase()));
         transactionInfo.withShippingAddress(paymentInfo.getShippingAddress());
         transactionInfo.withProductTitle(paymentInfo.getProductTitle());
         transactionInfo.withProductUrls(paymentInfo.getProductUrls());
-        transactionInfo.withCurrency(PayClaim.Currency.valueOf(paymentInfo.getCurrencyCode().toUpperCase()));
+        transactionInfo.withCurrency(PayConfigurer.Currency.valueOf(paymentInfo.getCurrencyCode().toUpperCase()));
         transactionInfo.withDeliveryName(paymentInfo.getDeliveryName());
         transactionInfo.withDeliveryPhoneNumber(paymentInfo.getDeliveryPhoneNumber());
         transactionInfo.withInstallmentPerCardInformation(paymentInfo.getCardInfoList());
@@ -192,29 +198,27 @@ public class SyrupPayToken implements Token {
 
     @Deprecated
     @JsonProperty("paymentRestrictions")
-    public void setPaymentRestrictions(PayClaim.PaymentRestriction paymentRestriction) {
-        if (transactionInfo == null) {
+    public void setPaymentRestrictions(PayConfigurer.PaymentRestriction paymentRestriction) {
+        if(transactionInfo == null) {
             LOGGER.warn("create transactionInfo to set payment restrictions");
-            transactionInfo = new PayClaim();
+            transactionInfo = new PayConfigurer();
         }
         LOGGER.warn("set paymentRestrictions element by deprecated method");
-        for (PayClaim.PayableLocaleRule r : PayClaim.PayableLocaleRule.values()) {
+        for (PayConfigurer.PayableLocaleRule r : PayConfigurer.PayableLocaleRule.values()) {
             if (r.toCode().equals(paymentRestriction.getCardIssuerRegion())) {
                 transactionInfo.withPayableRuleWithCard(r);
             }
         }
     }
 
-    public SubscriptionClaim getSubscription() {
+    public SubscriptionConfigurer getSubscription() {
         return subscription;
     }
 
-    @Deprecated
     public List<ClaimConfigurer> getClaims() {
         return getClaims(Claim.values());
     }
 
-    @Deprecated
     public ClaimConfigurer getClaim(final Claim claim) {
         try {
             return getFieldOfClaimIfNotExistNull(claim);
@@ -226,7 +230,6 @@ public class SyrupPayToken implements Token {
         return null;
     }
 
-    @Deprecated
     public List<ClaimConfigurer> getClaims(final Claim... claims) {
         List<ClaimConfigurer> l = new ArrayList<ClaimConfigurer>();
         for (Claim c : claims) {
@@ -244,7 +247,6 @@ public class SyrupPayToken implements Token {
         return Collections.unmodifiableList(l);
     }
 
-    @Deprecated
     private ClaimConfigurer getFieldOfClaimIfNotExistNull(final Claim c) throws IllegalAccessException, NoSuchFieldException {
         for (Field f : SyrupPayToken.class.getDeclaredFields()) {
             if (f.getType().isAssignableFrom(c.getConfigurer())) {
@@ -252,6 +254,20 @@ public class SyrupPayToken implements Token {
             }
         }
         return null;
+    }
+
+    public static enum Claim {
+        TO_SIGNUP(MerchantUserConfigurer.class), TO_LOGIN(MerchantUserConfigurer.class), TO_PAY(PayConfigurer.class), TO_CHECKOUT(OrderConfigurer.class), TO_MAP_USER(MapToSyrupPayUserConfigurer.class), TO_SUBSCRIPTION(SubscriptionConfigurer.class);
+
+        <C extends ClaimConfigurerAdapter> Claim(Class<C> configurer) {
+            this.configurer = configurer;
+        }
+
+        Class<?> configurer;
+
+        public Class<?> getConfigurer() {
+            return configurer;
+        }
     }
 
 }

@@ -20,13 +20,13 @@ public class PlanTest {
 
     @Test(expected = AssertionError.class)
     public void testContsruct_with_null() {
-        new SubscriptionClaim.Plan(null, null);
+        new SubscriptionConfigurer.Plan(null, null);
 
     }
 
     @Test(expected = AssertionError.class)
     public void testContsruct_with_empty() {
-        new SubscriptionClaim.Plan(SubscriptionClaim.Interval.ONDEMAND, "");
+        new SubscriptionConfigurer.Plan(SubscriptionConfigurer.Interval.ONDEMAND, "");
     }
 
 }

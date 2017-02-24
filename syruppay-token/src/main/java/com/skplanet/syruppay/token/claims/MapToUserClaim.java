@@ -21,15 +21,21 @@
 
 package com.skplanet.syruppay.token.claims;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skplanet.jose.Jose;
 import com.skplanet.jose.JoseBuilders;
 import com.skplanet.jose.JoseHeader;
 import com.skplanet.jose.jwa.Jwa;
 import com.skplanet.syruppay.token.Builder;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 시럽페이 사용자 정보 검색을 위한 Claim 을 정의한다.
@@ -49,6 +55,7 @@ public class MapToUserClaim<H extends Builder<H>> extends AbstractTokenClaim<Map
     private MappingType mappingType;
     private String mappingValue;
     private String identityAuthenticationId;
+    private volatile Map<String, String> miscellaneous;
 
     public String getIdentityAuthenticationId() {
         return identityAuthenticationId;
@@ -156,7 +163,7 @@ public class MapToUserClaim<H extends Builder<H>> extends AbstractTokenClaim<Map
      *
      * @since 1.3.8
      */
-    public static class Personal implements Serializable  {
+    public static class Personal implements Serializable {
         private String username;
         private String lineNumber;
         private OperatorCode operatorCode;
@@ -359,6 +366,46 @@ public class MapToUserClaim<H extends Builder<H>> extends AbstractTokenClaim<Map
         public String getValue() {
             return value;
         }
-
     }
+
+    public synchronized MapToUserClaim<H> withMisc() {
+        if (miscellaneous == null) {
+            miscellaneous = new HashMap<String, String>();
+        }
+        return this;
+    }
+
+    public MapToUserClaim<H> setAuthenticatedAt(DateTime when) {
+        if (miscellaneous == null) {
+            throw new IllegalArgumentException("call method this after this.withMisc() to init.");
+        }
+        miscellaneous.put("authenticatedAt", when.withZone(DateTimeZone.UTC).toString());
+        return this;
+    }
+
+    public MapToUserClaim<H> setAuthenticatedBy(AuthMethod authMethod) {
+        if (miscellaneous == null) {
+            throw new IllegalArgumentException("call method this after this.withMisc() to init.");
+        }
+        miscellaneous.put("authenticatedBy", authMethod.toString());
+        return this;
+    }
+
+    public MapToUserClaim<H> setHasTransaction(boolean has) {
+        if (miscellaneous == null) {
+            throw new IllegalArgumentException("call method this after this.withMisc() to init.");
+        }
+        miscellaneous.put("hasTransaction", Boolean.toString(has));
+        return this;
+    }
+
+    @JsonIgnore
+    public Map<String, String> getMisc() {
+        return Collections.unmodifiableMap(miscellaneous);
+    }
+
+    public enum AuthMethod {
+        CELLPHONE, AUTH_CERT, CREDIT_CARD
+    }
+
 }

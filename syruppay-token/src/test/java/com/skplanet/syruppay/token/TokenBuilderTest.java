@@ -71,33 +71,35 @@ import com.skplanet.syruppay.token.domain.Mocks;
 import com.skplanet.syruppay.token.domain.TokenHistories;
 import com.skplanet.syruppay.token.jwt.SyrupPayToken;
 import com.skplanet.syruppay.token.jwt.Token;
-import org.apache.commons.codec.binary.Base64;
+import org.joda.time.DateTime;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.security.spec.KeySpec;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
 
 public class TokenBuilderTest {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     TokenBuilder tokenBuilder;
+    Token token;
 
     @Before
     public void setUp() throws Exception {
         tokenBuilder = new TokenBuilder();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        if (token != null) {
+            assertThat(serializable(token), is(true));
+        }
+
     }
 
     @Test
@@ -703,23 +705,6 @@ public class TokenBuilderTest {
     }
 
     @Test
-    public void AES_MODE_별_테스트_ERROR() throws Exception {
-        final String keyFactorySalt = "65594821073030071593";
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "SunJCE");
-        SecretKeySpec secretKeySpec;
-        try {
-            KeySpec spec = new PBEKeySpec("7244798e1fab1a9175f752a8a7e12beafe2cd27b208f9f2f7ab43173358153fc5eae2499afa66f7386d74cb8cf4765133c513ae2e6acd521acde4f80d747".toCharArray(), keyFactorySalt.getBytes(), 1, 256);
-            SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-            SecretKey secretKey = secretKeyFactory.generateSecret(spec);
-            secretKeySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
-        } catch (Exception e) {
-            throw e;
-        }
-        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, new IvParameterSpec(new byte[cipher.getBlockSize()]));
-        System.out.println(new String(cipher.doFinal(Base64.decodeBase64("yMvtcFwlhwBg22GF-biF4A".getBytes())), "UTF-8"));
-    }
-
-    @Test
     public void 자동결제를_위한_인증_토큰_생성_후_클래임_확인_테스트() throws Exception {
         // Given
         // @formatter:off
@@ -1013,15 +998,15 @@ public class TokenBuilderTest {
 
         Token token = TokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
 
+        // Then
+        assertThat(serializable(token), is(true));
+    }
+
+    private boolean serializable(Token token) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutput out = new ObjectOutputStream(bos);
         out.writeObject(token);
-        final byte[] bytes = bos.toByteArray();
-
-        // Then
-        assertThat(bytes, is(notNullValue()));
-
-        assertThat(bytes.length, greaterThan(0));
+        return bos.toByteArray().length > 0;
     }
 
     @Test
@@ -1051,5 +1036,55 @@ public class TokenBuilderTest {
         assertThat(token.getClaim(Token.Claim.TO_PAY), is(notNullValue()));
         assertThat(token.getTransactionInfo().getPaymentType(), is(PayClaim.PaymentType.AUTH_MEANS));
         assertThat(token.getTransactionInfo().getAuthenticatableMeans(), is(PayClaim.AuthenticatableMeans.CREDIT_CARD));
+    }
+
+    @Test
+    public void 자동결제_스팩추가_테스트() throws Exception {
+        // Given
+        // @formatter:off
+        String t = tokenBuilder.of("가맹점")
+                .login()
+                    .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
+                .and()
+                .mapToUser()
+                    .withMisc()
+                        .setAuthenticatedAt(DateTime.now())
+                        .setAuthenticatedBy(MapToUserClaim.AuthMethod.CELLPHONE)
+                        .setHasTransaction(false)
+                .and()
+                .generateTokenBy("가맹점에게 전달한 비밀키");
+        // @formatter:on
+        System.out.printf(t);
+        // When
+        token = TokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+
+        // Then
+        assertThat(token, is(notNullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_LOGIN), is(notNullValue()));
+        assertThat(token.getClaim(Token.Claim.TO_MAP_USER), is(notNullValue()));
+
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void 자동결제_스팩추가_테스트_사용자추가데이터_초기화하지않는경우() throws Exception {
+        // Given
+        // @formatter:off
+        String t = tokenBuilder.of("가맹점")
+                .login()
+                    .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
+                .and()
+                .mapToUser()
+                        .setAuthenticatedAt(DateTime.now())
+                        .setAuthenticatedBy(MapToUserClaim.AuthMethod.CELLPHONE)
+                        .setHasTransaction(false)
+                .and()
+                .generateTokenBy("가맹점에게 전달한 비밀키");
+        // @formatter:on
+        System.out.printf(t);
+        // When
+        token = TokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+
+        // Then
     }
 }

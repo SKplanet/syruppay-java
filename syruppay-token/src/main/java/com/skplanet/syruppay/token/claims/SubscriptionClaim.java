@@ -38,6 +38,7 @@ public class SubscriptionClaim<H extends Builder<H>> extends AbstractTokenClaim<
     private String mctSubscriptionRequestId;
     private String promotionCode;
 
+
     public SubscriptionClaim<H> withAutoPaymentId(final String autoPaymentId) {
         this.autoPaymentId = autoPaymentId;
         return this;
@@ -69,6 +70,7 @@ public class SubscriptionClaim<H extends Builder<H>> extends AbstractTokenClaim<
         this.promotionCode = promotionCode;
         return this;
     }
+
 
     public String getMctSubscriptionRequestId() {
         return mctSubscriptionRequestId;
@@ -140,7 +142,7 @@ public class SubscriptionClaim<H extends Builder<H>> extends AbstractTokenClaim<
         }
     }
 
-    public static enum Interval {
+    public enum Interval {
         ONDEMAND, MONTHLY, WEEKLY, BIWEEKLY
     }
 }

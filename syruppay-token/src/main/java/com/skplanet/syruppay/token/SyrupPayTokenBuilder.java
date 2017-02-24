@@ -26,7 +26,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.skplanet.jose.Jose;
 import com.skplanet.jose.JoseBuilders;
@@ -57,7 +56,7 @@ import java.text.SimpleDateFormat;
  * @author 임형태
  * @since 1.0
  */
-public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<Jwt, SyrupPayTokenBuilder> implements ClaimBuilder<Jwt>, TokenBuilder<SyrupPayTokenBuilder> {
+public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<Jwt, SyrupPayTokenBuilder> implements ClaimBuilder<Jwt>, Builder<SyrupPayTokenBuilder> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SyrupPayTokenBuilder.class.getName());
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static boolean checkHeaderOfToken = true;

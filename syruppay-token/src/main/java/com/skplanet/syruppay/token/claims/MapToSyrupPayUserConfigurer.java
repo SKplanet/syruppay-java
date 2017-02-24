@@ -26,7 +26,7 @@ import com.skplanet.jose.Jose;
 import com.skplanet.jose.JoseBuilders;
 import com.skplanet.jose.JoseHeader;
 import com.skplanet.jose.jwa.Jwa;
-import com.skplanet.syruppay.token.TokenBuilder;
+import com.skplanet.syruppay.token.Builder;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -38,12 +38,12 @@ import java.io.Serializable;
  * 시럽페이 사용자를 맵핑하는 방식은 {@code MappingType.CI_HASH}와 {@code MappingType.CI_MAPPED_KEY} 를 지원한다.
  * {@code MappingType.CI_HASH} 를 사용하는 경우 사용자 CI에 대한 SHA256 해쉬로 시럽페이 사용자를 검색하여 {@code MappingType.CI_MAPPED_KEY} 를 이용하는 경우 SK Planet 의 CI 인프라 자원을 활용하여 지정된 Key 값을 기준으로 시럽페이 사용자를 맵핑한다.
  *
- * @param <H> {@link com.skplanet.syruppay.token.TokenBuilder}
+ * @param <H> {@link Builder}
  * @author 임형태
  * @see com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer.MappingType
  * @since 1.0
  */
-public class MapToSyrupPayUserConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<MapToSyrupPayUserConfigurer<H>, H> {
+public class MapToSyrupPayUserConfigurer<H extends Builder<H>> extends AbstractTokenConfigurer<MapToSyrupPayUserConfigurer<H>, H> {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private MappingType mappingType;

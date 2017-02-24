@@ -25,11 +25,11 @@ package com.skplanet.syruppay.token;
  * {@link com.skplanet.syruppay.token.Jwt}를 빌드할 수 있는 토큰 빌더의 인터페이스를 정의한다.
  *
  * @param <H>
- *         {@link com.skplanet.syruppay.token.TokenBuilder}를 통해 구현하고자는 클래스
+ *         {@link Builder}를 통해 구현하고자는 클래스
  * @author 임형태
  * @since 1.0
  */
-public interface TokenBuilder<H extends TokenBuilder<H>> extends ClaimBuilder<Jwt> {
+public interface Builder<H extends Builder<H>> extends ClaimBuilder<Jwt> {
     /**
      * 클래스 네임을 기준으로 {@link com.skplanet.syruppay.token.ClaimConfigurer}를 반환하거나 존재하지 않을 경우 <code>null</code> 을 반환할 수 있다.
      * 주의할 점은 객체 간의 상하위 관계(상속, 포함) 관계는 고려되지 않았다.

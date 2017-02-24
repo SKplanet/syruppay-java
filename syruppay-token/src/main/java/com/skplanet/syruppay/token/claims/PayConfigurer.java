@@ -23,7 +23,7 @@ package com.skplanet.syruppay.token.claims;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.skplanet.syruppay.token.TokenBuilder;
+import com.skplanet.syruppay.token.Builder;
 
 import java.io.Serializable;
 import java.util.*;
@@ -34,7 +34,7 @@ import java.util.*;
  * @author 임형태
  * @since 1.0
  */
-public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<PayConfigurer<H>, H> {
+public final class PayConfigurer<H extends Builder<H>> extends AbstractTokenConfigurer<PayConfigurer<H>, H> {
     private static final Set<String> ISO_LANGUAGES = new HashSet<String>(Arrays.asList(Locale.getISOLanguages()));
     private static final Set<String> ISO_COUNTRIES = new HashSet<String>(Arrays.asList(Locale.getISOCountries()));
 

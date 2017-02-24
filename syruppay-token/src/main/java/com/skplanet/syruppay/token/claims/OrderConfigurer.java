@@ -22,7 +22,7 @@
 package com.skplanet.syruppay.token.claims;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.skplanet.syruppay.token.TokenBuilder;
+import com.skplanet.syruppay.token.Builder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import java.util.Map;
  * @author 임형태
  * @since 1.1
  */
-public final class OrderConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<OrderConfigurer<H>, H> {
+public final class OrderConfigurer<H extends Builder<H>> extends AbstractTokenConfigurer<OrderConfigurer<H>, H> {
     private int productPrice;
     private String submallName;
     private String privacyPolicyRequirements;

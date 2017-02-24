@@ -22,7 +22,7 @@
 package com.skplanet.syruppay.token.jwt;
 
 import com.skplanet.syruppay.token.ClaimConfigurer;
-import com.skplanet.syruppay.token.TokenBuilder;
+import com.skplanet.syruppay.token.Builder;
 import com.skplanet.syruppay.token.claims.MapToSktUserConfigurer;
 import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
 import com.skplanet.syruppay.token.claims.MerchantUserConfigurer;
@@ -45,21 +45,21 @@ public interface Token extends Serializable, JwtToken {
      *
      * @return {@link com.skplanet.syruppay.token.claims.MerchantUserConfigurer}
      */
-    public MerchantUserConfigurer<? extends TokenBuilder> getLoginInfo();
+    public MerchantUserConfigurer<? extends Builder> getLoginInfo();
 
     /**
      * 거래(주문)에 대하여 결제를 시도하기 위한 객체를 구성하여 반환한다.
      *
      * @return {@link com.skplanet.syruppay.token.claims.PayConfigurer}
      */
-    public PayConfigurer<? extends TokenBuilder> getTransactionInfo();
+    public PayConfigurer<? extends Builder> getTransactionInfo();
 
     /**
      * 시럽페이 사용자를 매칭하기 위한 객체를 구성하여 반환한다.
      *
      * @return {@link com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer}
      */
-    public MapToSyrupPayUserConfigurer<? extends TokenBuilder> getUserInfoMapper();
+    public MapToSyrupPayUserConfigurer<? extends Builder> getUserInfoMapper();
 
     /**
      * Expired Time 기준과 Not Before Time 을 기준하여 토큰이 유효한 시간 안에 있는지 여부를 검증하여 반환한다.
@@ -73,7 +73,7 @@ public interface Token extends Serializable, JwtToken {
      *
      * @return {@link com.skplanet.syruppay.token.claims.MapToSktUserConfigurer}
      */
-    public MapToSktUserConfigurer<? extends TokenBuilder> getLineInfo();
+    public MapToSktUserConfigurer<? extends Builder> getLineInfo();
 
     /**
      * 시럽페이 체크 아웃을 이용하기 위한 정보를 구성하여 반환한다.
@@ -82,7 +82,7 @@ public interface Token extends Serializable, JwtToken {
      * @since 1.1
      */
 
-    public OrderConfigurer<? extends TokenBuilder> getCheckoutInfo();
+    public OrderConfigurer<? extends Builder> getCheckoutInfo();
 
 
     /**
@@ -91,7 +91,7 @@ public interface Token extends Serializable, JwtToken {
      * @return the subscription
      * @since 1.3.4
      */
-    public SubscriptionConfigurer<? extends TokenBuilder> getSubscription();
+    public SubscriptionConfigurer<? extends Builder> getSubscription();
 
     /**
      * 시럽페이 토큰에 포함된 Claim 정보를 확인하여 반환한다.

@@ -22,7 +22,7 @@
 package com.skplanet.syruppay.token.claims;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.skplanet.syruppay.token.TokenBuilder;
+import com.skplanet.syruppay.token.Builder;
 
 /**
  * 가맹점 사용자에 대한 Claim 설정을 정의한다.
@@ -31,7 +31,7 @@ import com.skplanet.syruppay.token.TokenBuilder;
  * @author 임형태
  * @since 1.0
  */
-public final class MerchantUserConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<MerchantUserConfigurer<H>, H> {
+public final class MerchantUserConfigurer<H extends Builder<H>> extends AbstractTokenConfigurer<MerchantUserConfigurer<H>, H> {
     private String mctUserId;
     private String extraUserId;
     @Deprecated

@@ -21,7 +21,7 @@
 
 package com.skplanet.syruppay.token.claims;
 
-import com.skplanet.syruppay.token.TokenBuilder;
+import com.skplanet.syruppay.token.Builder;
 
 import java.io.Serializable;
 
@@ -31,7 +31,7 @@ import java.io.Serializable;
  * @author 임형태
  * @since 1.3
  */
-public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractTokenConfigurer<SubscriptionConfigurer<H>, H> {
+public class SubscriptionConfigurer<H extends Builder<H>> extends AbstractTokenConfigurer<SubscriptionConfigurer<H>, H> {
     private String autoPaymentId;
     private RegistrationRestrictions registrationRestrictions;
     private Plan plan;

@@ -29,6 +29,7 @@ import com.skplanet.jose.jwa.Jwa;
 import com.skplanet.syruppay.token.TokenBuilder;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * 시럽페이 사용자 정보 검색을 위한 Claim 을 정의한다.
@@ -155,7 +156,7 @@ public class MapToSyrupPayUserConfigurer<H extends TokenBuilder<H>> extends Abst
      *
      * @since 1.3.8
      */
-    public static class Personal {
+    public static class Personal implements Serializable  {
         private String username;
         private String lineNumber;
         private OperatorCode operatorCode;
@@ -255,7 +256,7 @@ public class MapToSyrupPayUserConfigurer<H extends TokenBuilder<H>> extends Abst
      *
      * @since 1.3.9
      */
-    public static class PayableCard {
+    public static class PayableCard implements Serializable {
         private String cardNo;
         private String expireDate;
         private String cardIssuer;

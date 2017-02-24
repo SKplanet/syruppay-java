@@ -26,13 +26,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skplanet.syruppay.token.TokenBuilder;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 결제를 위한 거래 인증 정보를 Claim 을 설정한다.
@@ -595,11 +589,11 @@ public final class PayConfigurer<H extends TokenBuilder<H>> extends AbstractToke
 
     }
 
-    public enum MatchedUser {
+    public enum MatchedUser implements Serializable {
         CI_MATCHED_ONLY
     }
 
-    public static class Bank {
+    public static class Bank implements Serializable {
         private String bankCode;
 
         public String getBankCode() {

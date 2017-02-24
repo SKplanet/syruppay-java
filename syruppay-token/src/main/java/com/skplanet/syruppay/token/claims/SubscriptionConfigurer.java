@@ -23,6 +23,8 @@ package com.skplanet.syruppay.token.claims;
 
 import com.skplanet.syruppay.token.TokenBuilder;
 
+import java.io.Serializable;
+
 /**
  * 정기/비정기 결제 정보에 대한 Claim 을 구성한다.
  *
@@ -42,7 +44,7 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
     }
 
     public SubscriptionConfigurer<H> withRestrictionOf(final PayConfigurer.MatchedUser matchedUser) {
-        if(registrationRestrictions == null) {
+        if (registrationRestrictions == null) {
             registrationRestrictions = new RegistrationRestrictions();
         }
         this.registrationRestrictions.matchedUser = matchedUser;
@@ -86,7 +88,7 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
     }
 
     public void setMatchedUser(final PayConfigurer.MatchedUser matchedUser) {
-        if(registrationRestrictions == null) {
+        if (registrationRestrictions == null) {
             registrationRestrictions = new RegistrationRestrictions();
         }
         registrationRestrictions.matchedUser = matchedUser;
@@ -97,12 +99,12 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
     }
 
     public void validRequired() throws Exception {
-        if(plan != null) {
+        if (plan != null) {
             plan.valid();
         }
     }
 
-    public static class RegistrationRestrictions {
+    public static class RegistrationRestrictions implements Serializable {
         private PayConfigurer.MatchedUser matchedUser;
 
         public PayConfigurer.MatchedUser getMatchedUser() {
@@ -110,7 +112,7 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
         }
     }
 
-    public static class Plan {
+    public static class Plan implements Serializable {
         private Interval interval;
         private String name;
 
@@ -120,7 +122,7 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
             this.name = name;
         }
 
-        public Plan(){
+        public Plan() {
         }
 
         public Interval getInterval() {
@@ -132,7 +134,7 @@ public class SubscriptionConfigurer<H extends TokenBuilder<H>> extends AbstractT
         }
 
         public void valid() {
-            if(interval == null || name == null || name.length() == 0) {
+            if (interval == null || name == null || name.length() == 0) {
                 throw new IllegalArgumentException("plan of subscription object couldn't be with null or empty fields interval : " + interval + ", name : " + name);
             }
         }

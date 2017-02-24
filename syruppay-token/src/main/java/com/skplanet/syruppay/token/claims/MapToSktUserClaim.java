@@ -30,7 +30,7 @@ import com.skplanet.syruppay.token.Builder;
  * @since 1.0
  */
 @Deprecated
-public class MapToSktUserConfigurer<H extends Builder<H>> extends AbstractTokenConfigurer<MapToSktUserConfigurer<H>, H> {
+public class MapToSktUserClaim<H extends Builder<H>> extends AbstractTokenClaim<MapToSktUserClaim<H>, H> {
     private String lineNumber;
     private String svcMgmtNumber;
 
@@ -52,12 +52,12 @@ public class MapToSktUserConfigurer<H extends Builder<H>> extends AbstractTokenC
         return svcMgmtNumber;
     }
 
-    public MapToSktUserConfigurer<H> withLineNumber(String lineNumber) {
+    public MapToSktUserClaim<H> withLineNumber(String lineNumber) {
         this.lineNumber = lineNumber;
         return this;
     }
 
-    public MapToSktUserConfigurer<H> withServiceManagementNumber(String serviceManagementNumber) {
+    public MapToSktUserClaim<H> withServiceManagementNumber(String serviceManagementNumber) {
         this.svcMgmtNumber = serviceManagementNumber;
         return this;
     }

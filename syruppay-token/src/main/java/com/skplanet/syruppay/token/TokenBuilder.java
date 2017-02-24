@@ -31,12 +31,8 @@ import com.skplanet.jose.Jose;
 import com.skplanet.jose.JoseBuilders;
 import com.skplanet.jose.JoseHeader;
 import com.skplanet.jose.jwa.Jwa;
-import com.skplanet.syruppay.token.claims.MapToSktUserConfigurer;
-import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
-import com.skplanet.syruppay.token.claims.MerchantUserConfigurer;
-import com.skplanet.syruppay.token.claims.OrderConfigurer;
-import com.skplanet.syruppay.token.claims.PayConfigurer;
-import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
+import com.skplanet.syruppay.token.claims.*;
+import com.skplanet.syruppay.token.claims.MerchantUserClaim;
 import com.skplanet.syruppay.token.jwt.SyrupPayToken;
 import com.skplanet.syruppay.token.jwt.Token;
 import org.slf4j.Logger;
@@ -200,71 +196,71 @@ public final class TokenBuilder extends AbstractConfiguredTokenBuilder<Jwt, Toke
     /**
      * 시럽페이 로그인을 위한 설정 객체를 확인하여 반환한다.
      *
-     * @return {@link com.skplanet.syruppay.token.claims.MerchantUserConfigurer}
+     * @return {@link MerchantUserClaim}
      * @throws Exception the exception
      */
-    public MerchantUserConfigurer<TokenBuilder> login() throws Exception {
-        return getOrApply(new MerchantUserConfigurer<TokenBuilder>());
+    public MerchantUserClaim<TokenBuilder> login() throws Exception {
+        return getOrApply(new MerchantUserClaim<TokenBuilder>());
     }
 
     /**
      * 시럽페이 회원가입을 위한 설정 객체를 확인하여 반환한다.
      *
-     * @return {@link com.skplanet.syruppay.token.claims.MerchantUserConfigurer}
+     * @return {@link MerchantUserClaim}
      * @throws Exception the exception
      */
-    public MerchantUserConfigurer<TokenBuilder> signUp() throws Exception {
-        return getOrApply(new MerchantUserConfigurer<TokenBuilder>());
+    public MerchantUserClaim<TokenBuilder> signUp() throws Exception {
+        return getOrApply(new MerchantUserClaim<TokenBuilder>());
     }
 
     /**
      * 시럽페이 결제를 위한 설정 객체를 확인하여 반환한다.
      *
-     * @return {@link com.skplanet.syruppay.token.claims.PayConfigurer}
+     * @return {@link PayClaim}
      * @throws Exception the exception
      */
-    public PayConfigurer<TokenBuilder> pay() throws Exception {
-        return getOrApply(new PayConfigurer<TokenBuilder>());
+    public PayClaim<TokenBuilder> pay() throws Exception {
+        return getOrApply(new PayClaim<TokenBuilder>());
     }
 
     /**
      * 시럽페이 체크아웃 기느을 위한 설정 객체를 확인하여 반환한다.
      *
-     * @return {@link com.skplanet.syruppay.token.claims.OrderConfigurer}
+     * @return {@link OrderClaim}
      * @throws Exception the exception
      */
-    public OrderConfigurer<TokenBuilder> checkout() throws Exception {
-        return getOrApply(new OrderConfigurer<TokenBuilder>());
+    public OrderClaim<TokenBuilder> checkout() throws Exception {
+        return getOrApply(new OrderClaim<TokenBuilder>());
     }
 
     /**
      * 시럽페이 사용자 맵핑을 위한 설정 객체를 확인하여 반환한다.
      *
-     * @return {@link com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer}
+     * @return {@link MapToUserClaim}
      * @throws Exception the exception
      */
-    public MapToSyrupPayUserConfigurer<TokenBuilder> mapToUser() throws Exception {
-        return getOrApply(new MapToSyrupPayUserConfigurer<TokenBuilder>());
+    public MapToUserClaim<TokenBuilder> mapToUser() throws Exception {
+        return getOrApply(new MapToUserClaim<TokenBuilder>());
     }
 
     /**
      * SKT 사용자인 시럽페이 사용자 맵핑을 위한 설정 객체를 확인하여 반환한다.
      *
-     * @return {@link com.skplanet.syruppay.token.claims.MapToSktUserConfigurer}
+     * @return {@link MapToSktUserClaim}
      * @throws Exception the exception
      */
-    public MapToSktUserConfigurer<TokenBuilder> mapToSktUser() throws Exception {
-        return getOrApply(new MapToSktUserConfigurer<TokenBuilder>());
+    public MapToSktUserClaim<TokenBuilder> mapToSktUser() throws Exception {
+        return getOrApply(new MapToSktUserClaim<TokenBuilder>());
     }
 
     /**
      * SKT 사용자인 시럽페이 사용자 맵핑을 위한 설정 객체를 확인하여 반환한다.
      *
-     * @return {@link com.skplanet.syruppay.token.claims.MapToSktUserConfigurer}
+     * @return {@link MapToSktUserClaim}
      * @throws Exception the exception
      */
-    public SubscriptionConfigurer<TokenBuilder> subscription() throws Exception {
-        return getOrApply(new SubscriptionConfigurer<TokenBuilder>());
+    public SubscriptionClaim<TokenBuilder> subscription() throws Exception {
+        return getOrApply(new SubscriptionClaim<TokenBuilder>());
     }
 
     @SuppressWarnings("unchecked")

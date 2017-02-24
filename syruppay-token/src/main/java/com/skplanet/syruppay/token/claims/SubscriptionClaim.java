@@ -31,19 +31,19 @@ import java.io.Serializable;
  * @author 임형태
  * @since 1.3
  */
-public class SubscriptionConfigurer<H extends Builder<H>> extends AbstractTokenConfigurer<SubscriptionConfigurer<H>, H> {
+public class SubscriptionClaim<H extends Builder<H>> extends AbstractTokenClaim<SubscriptionClaim<H>, H> {
     private String autoPaymentId;
     private RegistrationRestrictions registrationRestrictions;
     private Plan plan;
     private String mctSubscriptionRequestId;
     private String promotionCode;
 
-    public SubscriptionConfigurer<H> withAutoPaymentId(final String autoPaymentId) {
+    public SubscriptionClaim<H> withAutoPaymentId(final String autoPaymentId) {
         this.autoPaymentId = autoPaymentId;
         return this;
     }
 
-    public SubscriptionConfigurer<H> withRestrictionOf(final PayConfigurer.MatchedUser matchedUser) {
+    public SubscriptionClaim<H> withRestrictionOf(final PayClaim.MatchedUser matchedUser) {
         if (registrationRestrictions == null) {
             registrationRestrictions = new RegistrationRestrictions();
         }
@@ -51,12 +51,12 @@ public class SubscriptionConfigurer<H extends Builder<H>> extends AbstractTokenC
         return this;
     }
 
-    public SubscriptionConfigurer<H> with(final Plan plan) {
+    public SubscriptionClaim<H> with(final Plan plan) {
         this.plan = plan;
         return this;
     }
 
-    public SubscriptionConfigurer<H> withMerchantSubscriptionRequestId(String mctSubscriptionRequestId) {
+    public SubscriptionClaim<H> withMerchantSubscriptionRequestId(String mctSubscriptionRequestId) {
         this.mctSubscriptionRequestId = mctSubscriptionRequestId;
         return this;
     }
@@ -65,7 +65,7 @@ public class SubscriptionConfigurer<H extends Builder<H>> extends AbstractTokenC
         return promotionCode;
     }
 
-    public SubscriptionConfigurer<H> withPromotionCode(final String promotionCode) {
+    public SubscriptionClaim<H> withPromotionCode(final String promotionCode) {
         this.promotionCode = promotionCode;
         return this;
     }
@@ -87,7 +87,7 @@ public class SubscriptionConfigurer<H extends Builder<H>> extends AbstractTokenC
         return registrationRestrictions;
     }
 
-    public void setMatchedUser(final PayConfigurer.MatchedUser matchedUser) {
+    public void setMatchedUser(final PayClaim.MatchedUser matchedUser) {
         if (registrationRestrictions == null) {
             registrationRestrictions = new RegistrationRestrictions();
         }
@@ -105,9 +105,9 @@ public class SubscriptionConfigurer<H extends Builder<H>> extends AbstractTokenC
     }
 
     public static class RegistrationRestrictions implements Serializable {
-        private PayConfigurer.MatchedUser matchedUser;
+        private PayClaim.MatchedUser matchedUser;
 
-        public PayConfigurer.MatchedUser getMatchedUser() {
+        public PayClaim.MatchedUser getMatchedUser() {
             return matchedUser;
         }
     }

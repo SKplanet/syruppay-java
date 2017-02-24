@@ -25,12 +25,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skplanet.syruppay.token.ClaimConfigurer;
 import com.skplanet.syruppay.token.ClaimConfigurerAdapter;
-import com.skplanet.syruppay.token.claims.MapToSktUserConfigurer;
-import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
-import com.skplanet.syruppay.token.claims.MerchantUserConfigurer;
-import com.skplanet.syruppay.token.claims.OrderConfigurer;
-import com.skplanet.syruppay.token.claims.PayConfigurer;
-import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
+import com.skplanet.syruppay.token.claims.*;
+import com.skplanet.syruppay.token.claims.MerchantUserClaim;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,17 +56,17 @@ public class SyrupPayToken implements Token {
     private Long nbf;
     private String sub;
 
-    private MerchantUserConfigurer loginInfo;
-    private PayConfigurer transactionInfo;
-    private MapToSyrupPayUserConfigurer userInfoMapper;
-    private MapToSktUserConfigurer lineInfo;
-    private OrderConfigurer checkoutInfo;
-    private SubscriptionConfigurer subscription;
+    private MerchantUserClaim loginInfo;
+    private PayClaim transactionInfo;
+    private MapToUserClaim userInfoMapper;
+    private MapToSktUserClaim lineInfo;
+    private OrderClaim checkoutInfo;
+    private SubscriptionClaim subscription;
 
     /**
      * {@inheritDoc}
      */
-    public OrderConfigurer getCheckoutInfo() {
+    public OrderClaim getCheckoutInfo() {
         return checkoutInfo;
     }
 
@@ -141,20 +137,20 @@ public class SyrupPayToken implements Token {
     /**
      * {@inheritDoc}
      */
-    public MerchantUserConfigurer getLoginInfo() {
+    public MerchantUserClaim getLoginInfo() {
         return loginInfo;
     }
 
     /**
      * {@inheritDoc}
      */
-    public PayConfigurer getTransactionInfo() {
+    public PayClaim getTransactionInfo() {
         return transactionInfo;
     }
 
     @Deprecated
     @JsonProperty("transactionInfo")
-    public void setTransactionInfo(PayConfigurer transactionInfo) {
+    public void setTransactionInfo(PayClaim transactionInfo) {
         if (this.transactionInfo != null && this.transactionInfo.getMctTransAuthId() == null && transactionInfo.getPaymentInfo().getProductTitle() == null) {
             LOGGER.warn("set only mctTransAuthId of transactionInfo element by deprecated method");
             this.transactionInfo.withOrderIdOfMerchant(transactionInfo.getMctTransAuthId());
@@ -166,31 +162,31 @@ public class SyrupPayToken implements Token {
     /**
      * {@inheritDoc}
      */
-    public MapToSyrupPayUserConfigurer getUserInfoMapper() {
+    public MapToUserClaim getUserInfoMapper() {
         return userInfoMapper;
     }
 
     /**
      * {@inheritDoc}
      */
-    public MapToSktUserConfigurer getLineInfo() {
+    public MapToSktUserClaim getLineInfo() {
         return lineInfo;
     }
 
     @Deprecated
     @JsonProperty("paymentInfo")
-    public void setPaymentInfo(PayConfigurer.PaymentInformationBySeller paymentInfo) {
+    public void setPaymentInfo(PayClaim.PaymentInformationBySeller paymentInfo) {
         if(transactionInfo == null) {
             LOGGER.warn("create transactionInfo to set payment information");
-            transactionInfo = new PayConfigurer();
+            transactionInfo = new PayClaim();
         }
         LOGGER.warn("set paymentInfo element by deprecated method");
         transactionInfo.withAmount(paymentInfo.getPaymentAmt());
-        transactionInfo.withLanguageForDisplay(PayConfigurer.Language.valueOf(paymentInfo.getLang().toUpperCase()));
+        transactionInfo.withLanguageForDisplay(PayClaim.Language.valueOf(paymentInfo.getLang().toUpperCase()));
         transactionInfo.withShippingAddress(paymentInfo.getShippingAddress());
         transactionInfo.withProductTitle(paymentInfo.getProductTitle());
         transactionInfo.withProductUrls(paymentInfo.getProductUrls());
-        transactionInfo.withCurrency(PayConfigurer.Currency.valueOf(paymentInfo.getCurrencyCode().toUpperCase()));
+        transactionInfo.withCurrency(PayClaim.Currency.valueOf(paymentInfo.getCurrencyCode().toUpperCase()));
         transactionInfo.withDeliveryName(paymentInfo.getDeliveryName());
         transactionInfo.withDeliveryPhoneNumber(paymentInfo.getDeliveryPhoneNumber());
         transactionInfo.withInstallmentPerCardInformation(paymentInfo.getCardInfoList());
@@ -198,20 +194,20 @@ public class SyrupPayToken implements Token {
 
     @Deprecated
     @JsonProperty("paymentRestrictions")
-    public void setPaymentRestrictions(PayConfigurer.PaymentRestriction paymentRestriction) {
+    public void setPaymentRestrictions(PayClaim.PaymentRestriction paymentRestriction) {
         if(transactionInfo == null) {
             LOGGER.warn("create transactionInfo to set payment restrictions");
-            transactionInfo = new PayConfigurer();
+            transactionInfo = new PayClaim();
         }
         LOGGER.warn("set paymentRestrictions element by deprecated method");
-        for (PayConfigurer.PayableLocaleRule r : PayConfigurer.PayableLocaleRule.values()) {
+        for (PayClaim.PayableLocaleRule r : PayClaim.PayableLocaleRule.values()) {
             if (r.toCode().equals(paymentRestriction.getCardIssuerRegion())) {
                 transactionInfo.withPayableRuleWithCard(r);
             }
         }
     }
 
-    public SubscriptionConfigurer getSubscription() {
+    public SubscriptionClaim getSubscription() {
         return subscription;
     }
 
@@ -257,7 +253,7 @@ public class SyrupPayToken implements Token {
     }
 
     public static enum Claim {
-        TO_SIGNUP(MerchantUserConfigurer.class), TO_LOGIN(MerchantUserConfigurer.class), TO_PAY(PayConfigurer.class), TO_CHECKOUT(OrderConfigurer.class), TO_MAP_USER(MapToSyrupPayUserConfigurer.class), TO_SUBSCRIPTION(SubscriptionConfigurer.class);
+        TO_SIGNUP(MerchantUserClaim.class), TO_LOGIN(MerchantUserClaim.class), TO_PAY(PayClaim.class), TO_CHECKOUT(OrderClaim.class), TO_MAP_USER(MapToUserClaim.class), TO_SUBSCRIPTION(SubscriptionClaim.class);
 
         <C extends ClaimConfigurerAdapter> Claim(Class<C> configurer) {
             this.configurer = configurer;

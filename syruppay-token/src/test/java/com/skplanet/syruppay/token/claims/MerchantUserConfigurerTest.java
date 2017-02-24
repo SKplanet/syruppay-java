@@ -24,7 +24,7 @@ public class MerchantUserConfigurerTest {
 
     @Test
     public void testSsoPolicy_equasl_with_null() {
-        assertThat(MerchantUserConfigurer.SsoPolicy.NOT_APPLICABLE.equals(null), is(false));
+        assertThat(MerchantUserClaim.SsoPolicy.NOT_APPLICABLE.equals(null), is(false));
     }
 
 }

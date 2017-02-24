@@ -35,10 +35,10 @@ import com.skplanet.syruppay.token.Builder;
  * @author 임형태
  * @since 1.0
  */
-abstract class AbstractTokenConfigurer<T extends AbstractTokenConfigurer<T, B>, B extends Builder<B>> extends ClaimConfigurerAdapter<Jwt, B> {
+abstract class AbstractTokenClaim<T extends AbstractTokenClaim<T, B>, B extends Builder<B>> extends ClaimConfigurerAdapter<Jwt, B> {
 
     /**
-     * {@link com.skplanet.syruppay.token.claims.AbstractTokenConfigurer} 을 토큰 Claim 빌드 목록에서 제거한다.
+     * {@link AbstractTokenClaim} 을 토큰 Claim 빌드 목록에서 제거한다.
      *
      * @return 수정된 {@link com.skplanet.syruppay.token.ClaimBuilder}를 반환한다.
      */

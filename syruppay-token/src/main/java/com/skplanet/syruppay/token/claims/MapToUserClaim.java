@@ -40,10 +40,10 @@ import java.io.Serializable;
  *
  * @param <H> {@link Builder}
  * @author 임형태
- * @see com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer.MappingType
+ * @see MapToUserClaim.MappingType
  * @since 1.0
  */
-public class MapToSyrupPayUserConfigurer<H extends Builder<H>> extends AbstractTokenConfigurer<MapToSyrupPayUserConfigurer<H>, H> {
+public class MapToUserClaim<H extends Builder<H>> extends AbstractTokenClaim<MapToUserClaim<H>, H> {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private MappingType mappingType;
@@ -54,7 +54,7 @@ public class MapToSyrupPayUserConfigurer<H extends Builder<H>> extends AbstractT
         return identityAuthenticationId;
     }
 
-    public MapToSyrupPayUserConfigurer<H> withIdentityAuthenticationId(String identityAuthenticationId) {
+    public MapToUserClaim<H> withIdentityAuthenticationId(String identityAuthenticationId) {
         this.identityAuthenticationId = identityAuthenticationId;
         return this;
     }
@@ -62,8 +62,8 @@ public class MapToSyrupPayUserConfigurer<H extends Builder<H>> extends AbstractT
     /**
      * 시럽페이 사용자 정보를 맵핑하는 방식을 반환한다.
      *
-     * @return {@link com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer.MappingType}
-     * @see com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer.MappingType
+     * @return {@link MapToUserClaim.MappingType}
+     * @see MapToUserClaim.MappingType
      */
     public MappingType getMappingType() {
         return mappingType;
@@ -89,10 +89,10 @@ public class MapToSyrupPayUserConfigurer<H extends Builder<H>> extends AbstractT
     /**
      * 시럽페이 사용자 정보를 맵핑하기 위한 방식을 지정한다.
      *
-     * @param type {@link com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer.MappingType}
+     * @param type {@link MapToUserClaim.MappingType}
      * @return <code>this</code>
      */
-    public MapToSyrupPayUserConfigurer<H> withType(final MappingType type) {
+    public MapToUserClaim<H> withType(final MappingType type) {
         this.mappingType = type;
         return this;
     }
@@ -100,10 +100,10 @@ public class MapToSyrupPayUserConfigurer<H extends Builder<H>> extends AbstractT
     /**
      * 시럽페이 사용자 정보를 매핑하기 위한 값을 지정한다.
      *
-     * @param value {@link com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer.MappingType}의 값
+     * @param value {@link MapToUserClaim.MappingType}의 값
      * @return <code>this</code>
      */
-    public MapToSyrupPayUserConfigurer<H> withValue(final String value) {
+    public MapToUserClaim<H> withValue(final String value) {
         this.mappingValue = value;
         return this;
     }
@@ -118,7 +118,7 @@ public class MapToSyrupPayUserConfigurer<H extends Builder<H>> extends AbstractT
      * @throws IOException
      * @since 1.3.8
      */
-    public MapToSyrupPayUserConfigurer<H> withValue(final Personal p, final String kid, final String key) throws IOException {
+    public MapToUserClaim<H> withValue(final Personal p, final String kid, final String key) throws IOException {
         this.mappingValue = new Jose().configuration(
                 JoseBuilders.JsonEncryptionCompactSerializationBuilder()
                         .header(new JoseHeader(Jwa.A128KW, Jwa.A128CBC_HS256, kid))

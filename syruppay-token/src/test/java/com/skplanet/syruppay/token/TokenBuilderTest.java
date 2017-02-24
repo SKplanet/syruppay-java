@@ -64,9 +64,9 @@
 package com.skplanet.syruppay.token;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
-import com.skplanet.syruppay.token.claims.PayConfigurer;
-import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
+import com.skplanet.syruppay.token.claims.MapToUserClaim;
+import com.skplanet.syruppay.token.claims.PayClaim;
+import com.skplanet.syruppay.token.claims.SubscriptionClaim;
 import com.skplanet.syruppay.token.domain.Mocks;
 import com.skplanet.syruppay.token.domain.TokenHistories;
 import com.skplanet.syruppay.token.jwt.SyrupPayToken;
@@ -215,7 +215,7 @@ public class TokenBuilderTest {
                     .withSsoCredential("SSO 를 발급 받았을 경우 입력")
                 .and()
                 .mapToUser()
-                    .withType(MapToSyrupPayUserConfigurer.MappingType.CI_MAPPED_KEY)
+                    .withType(MapToUserClaim.MappingType.CI_MAPPED_KEY)
                     .withValue("4987234")
                     .withIdentityAuthenticationId("bddb74b0-981f-4070-8c02-0cdf324f46f6"); // Optional
         // @formatter:on
@@ -247,15 +247,15 @@ public class TokenBuilderTest {
                             .pay()
                                 .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
                                 .withProductTitle("제품명")
-                                .withLanguageForDisplay(PayConfigurer.Language.KO)
+                                .withLanguageForDisplay(PayClaim.Language.KO)
                                 .withAmount(50000)
-                                .withCurrency(PayConfigurer.Currency.KRW)
-                                .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
+                                .withCurrency(PayClaim.Currency.KRW)
+                                .withShippingAddress(new PayClaim.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
                                 .withDeliveryPhoneNumber("01011112222")
                                 .withDeliveryName("배송 수신자")
-                                .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
+                                .withInstallmentPerCardInformation(new PayClaim.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
                                 .withBeAbleToExchangeToCash(false)
-                                .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
+                                .withPayableRuleWithCard(PayClaim.PayableLocaleRule.ONLY_ALLOWED_KOR)
                 ;
         // @formatter:on
         // When
@@ -308,15 +308,15 @@ public class TokenBuilderTest {
                             .pay()
                                 .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
                                 //.withProductTitle("제품명")
-                                .withLanguageForDisplay(PayConfigurer.Language.KO)
+                                .withLanguageForDisplay(PayClaim.Language.KO)
                                 .withAmount(50000)
-                                .withCurrency(PayConfigurer.Currency.KRW)
-                                .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
+                                .withCurrency(PayClaim.Currency.KRW)
+                                .withShippingAddress(new PayClaim.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
                                 .withDeliveryPhoneNumber("01011112222")
                                 .withDeliveryName("배송 수신자")
-                                .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
+                                .withInstallmentPerCardInformation(new PayClaim.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
                                 .withBeAbleToExchangeToCash(false)
-                                .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
+                                .withPayableRuleWithCard(PayClaim.PayableLocaleRule.ONLY_ALLOWED_KOR)
                 ;
         // @formatter:on
         // When
@@ -333,15 +333,15 @@ public class TokenBuilderTest {
                             .pay()
                                 .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
                                 .withProductTitle("제품명")
-                                .withLanguageForDisplay(PayConfigurer.Language.KO)
+                                .withLanguageForDisplay(PayClaim.Language.KO)
                                 //.withAmount(50000)
-                                .withCurrency(PayConfigurer.Currency.KRW)
-                                .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
+                                .withCurrency(PayClaim.Currency.KRW)
+                                .withShippingAddress(new PayClaim.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
                                 .withDeliveryPhoneNumber("01011112222")
                                 .withDeliveryName("배송 수신자")
-                                .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
+                                .withInstallmentPerCardInformation(new PayClaim.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
                                 .withBeAbleToExchangeToCash(false)
-                                .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
+                                .withPayableRuleWithCard(PayClaim.PayableLocaleRule.ONLY_ALLOWED_KOR)
                 ;
         // @formatter:on
         // When
@@ -358,15 +358,15 @@ public class TokenBuilderTest {
                             .pay()
                                 .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
                                 .withProductTitle("제품명")
-                                .withLanguageForDisplay(PayConfigurer.Language.KO)
+                                .withLanguageForDisplay(PayClaim.Language.KO)
                                 .withAmount(-1)
-                                .withCurrency(PayConfigurer.Currency.KRW)
-                                .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
+                                .withCurrency(PayClaim.Currency.KRW)
+                                .withShippingAddress(new PayClaim.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
                                 .withDeliveryPhoneNumber("01011112222")
                                 .withDeliveryName("배송 수신자")
-                                .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
+                                .withInstallmentPerCardInformation(new PayClaim.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
                                 .withBeAbleToExchangeToCash(false)
-                                .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
+                                .withPayableRuleWithCard(PayClaim.PayableLocaleRule.ONLY_ALLOWED_KOR)
                 ;
         // @formatter:on
         // When
@@ -383,15 +383,15 @@ public class TokenBuilderTest {
                             .pay()
                                 .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
                                 .withProductTitle("제품명")
-                                .withLanguageForDisplay(PayConfigurer.Language.KO)
+                                .withLanguageForDisplay(PayClaim.Language.KO)
                                 .withAmount(0)
-                                .withCurrency(PayConfigurer.Currency.KRW)
-                                .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
+                                .withCurrency(PayClaim.Currency.KRW)
+                                .withShippingAddress(new PayClaim.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
                                 .withDeliveryPhoneNumber("01011112222")
                                 .withDeliveryName("배송 수신자")
-                                .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
+                                .withInstallmentPerCardInformation(new PayClaim.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
                                 .withBeAbleToExchangeToCash(false)
-                                .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
+                                .withPayableRuleWithCard(PayClaim.PayableLocaleRule.ONLY_ALLOWED_KOR)
                 ;
         // @formatter:on
         // When
@@ -408,15 +408,15 @@ public class TokenBuilderTest {
                             .pay()
                                 .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
                                 .withProductTitle("제품명")
-                                .withLanguageForDisplay(PayConfigurer.Language.KO)
+                                .withLanguageForDisplay(PayClaim.Language.KO)
                                 .withAmount(500000)
-                                //.withCurrency(PayConfigurer.Currency.KRW)
-                                .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
+                                //.withCurrency(PayClaim.Currency.KRW)
+                                .withShippingAddress(new PayClaim.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
                                 .withDeliveryPhoneNumber("01011112222")
                                 .withDeliveryName("배송 수신자")
-                                .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
+                                .withInstallmentPerCardInformation(new PayClaim.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
                                 .withBeAbleToExchangeToCash(false)
-                                .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
+                                .withPayableRuleWithCard(PayClaim.PayableLocaleRule.ONLY_ALLOWED_KOR)
                 ;
         // @formatter:on
         // When
@@ -433,15 +433,15 @@ public class TokenBuilderTest {
                             .pay()
                                 .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
                                 .withProductTitle("제품명")
-                                //.withLanguageForDisplay(PayConfigurer.Language.KO)
+                                //.withLanguageForDisplay(PayClaim.Language.KO)
                                 .withAmount(5550)
-                                .withCurrency(PayConfigurer.Currency.KRW)
-                                .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
+                                .withCurrency(PayClaim.Currency.KRW)
+                                .withShippingAddress(new PayClaim.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
                                 .withDeliveryPhoneNumber("01011112222")
                                 .withDeliveryName("배송 수신자")
-                                .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
+                                .withInstallmentPerCardInformation(new PayClaim.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
                                 .withBeAbleToExchangeToCash(false)
-                                .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
+                                .withPayableRuleWithCard(PayClaim.PayableLocaleRule.ONLY_ALLOWED_KOR)
                 ;
         // @formatter:on
         // When
@@ -458,15 +458,15 @@ public class TokenBuilderTest {
                             .pay()
                                 .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
                                 .withProductTitle("제품명")
-                                .withLanguageForDisplay(PayConfigurer.Language.KO)
+                                .withLanguageForDisplay(PayClaim.Language.KO)
                                 .withAmount(0)
-                                .withCurrency(PayConfigurer.Currency.KRW)
-                                //.withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
+                                .withCurrency(PayClaim.Currency.KRW)
+                                //.withShippingAddress(new PayClaim.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
                                 .withDeliveryPhoneNumber("01011112222")
                                 .withDeliveryName("배송 수신자")
-                                .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
+                                .withInstallmentPerCardInformation(new PayClaim.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
                                 .withBeAbleToExchangeToCash(false)
-                                .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
+                                .withPayableRuleWithCard(PayClaim.PayableLocaleRule.ONLY_ALLOWED_KOR)
                 ;
         // @formatter:on
         // When
@@ -483,15 +483,15 @@ public class TokenBuilderTest {
                             .pay()
                                 .withOrderIdOfMerchant("1234567890123456789012345678901234567890")
                                 .withProductTitle("제품명")
-                                .withLanguageForDisplay(PayConfigurer.Language.KO)
+                                .withLanguageForDisplay(PayClaim.Language.KO)
                                 .withAmount(50000)
-                                .withCurrency(PayConfigurer.Currency.KRW)
-                                .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
+                                .withCurrency(PayClaim.Currency.KRW)
+                                .withShippingAddress(new PayClaim.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
                                 .withDeliveryPhoneNumber("01011112222")
                                 .withDeliveryName("배송 수신자")
-                                .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
+                                .withInstallmentPerCardInformation(new PayClaim.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
                                 .withBeAbleToExchangeToCash(false)
-                                .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
+                                .withPayableRuleWithCard(PayClaim.PayableLocaleRule.ONLY_ALLOWED_KOR)
                 ;
         // @formatter:on
         // When
@@ -508,15 +508,15 @@ public class TokenBuilderTest {
                             .pay()
                                 .withOrderIdOfMerchant("12345678901234567890123456789012345678901")
                                 .withProductTitle("제품명")
-                                .withLanguageForDisplay(PayConfigurer.Language.KO)
+                                .withLanguageForDisplay(PayClaim.Language.KO)
                                 .withAmount(50000)
-                                .withCurrency(PayConfigurer.Currency.KRW)
-                                .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
+                                .withCurrency(PayClaim.Currency.KRW)
+                                .withShippingAddress(new PayClaim.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
                                 .withDeliveryPhoneNumber("01011112222")
                                 .withDeliveryName("배송 수신자")
-                                .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
+                                .withInstallmentPerCardInformation(new PayClaim.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
                                 .withBeAbleToExchangeToCash(false)
-                                .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
+                                .withPayableRuleWithCard(PayClaim.PayableLocaleRule.ONLY_ALLOWED_KOR)
                 ;
         // @formatter:on
         // When
@@ -538,15 +538,15 @@ public class TokenBuilderTest {
                                                             "\"id_1\": \"value\",\n" +
                                                             "\"id_2\": 2\n" +
                                                             "}")
-                                .withLanguageForDisplay(PayConfigurer.Language.KO)
+                                .withLanguageForDisplay(PayClaim.Language.KO)
                                 .withAmount(50000)
-                                .withCurrency(PayConfigurer.Currency.KRW)
-                                .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
+                                .withCurrency(PayClaim.Currency.KRW)
+                                .withShippingAddress(new PayClaim.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
                                 .withDeliveryPhoneNumber("01011112222")
                                 .withDeliveryName("배송 수신자")
-                                .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
+                                .withInstallmentPerCardInformation(new PayClaim.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
                                 .withBeAbleToExchangeToCash(false)
-                                .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
+                                .withPayableRuleWithCard(PayClaim.PayableLocaleRule.ONLY_ALLOWED_KOR)
                 ;
         // @formatter:on
         // When
@@ -564,15 +564,15 @@ public class TokenBuilderTest {
                                 .withOrderIdOfMerchant("1234567890123456789012345678901234567890")
                                 .withProductTitle("제품명")
                                 .withProductUrls("h://www.11st.co.kr/product/SellerProductDetail.tmall?method=getSellerProductDetail&prdNo=1354119088&trTypeCd=22&trCtgrNo=895019")
-                                .withLanguageForDisplay(PayConfigurer.Language.KO)
+                                .withLanguageForDisplay(PayClaim.Language.KO)
                                 .withAmount(50000)
-                                .withCurrency(PayConfigurer.Currency.KRW)
-                                .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
+                                .withCurrency(PayClaim.Currency.KRW)
+                                .withShippingAddress(new PayClaim.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "KR"))
                                 .withDeliveryPhoneNumber("01011112222")
                                 .withDeliveryName("배송 수신자")
-                                .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
+                                .withInstallmentPerCardInformation(new PayClaim.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6"))
                                 .withBeAbleToExchangeToCash(false)
-                                .withPayableRuleWithCard(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR)
+                                .withPayableRuleWithCard(PayClaim.PayableLocaleRule.ONLY_ALLOWED_KOR)
                 ;
         // @formatter:on
         // When
@@ -592,7 +592,7 @@ public class TokenBuilderTest {
                     .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
                     .withSsoCredential("SSO 를 발급 받았을 경우 입력")
                 .and()
-                .mapToUser().withType(MapToSyrupPayUserConfigurer.MappingType.CI_HASH).withValue("asdkfjhsakdfj")
+                .mapToUser().withType(MapToUserClaim.MappingType.CI_HASH).withValue("asdkfjhsakdfj")
                 .and()
                 .generateTokenBy("가맹점에게 전달한 비밀키");
         // @formatter:on
@@ -685,9 +685,9 @@ public class TokenBuilderTest {
                 .and()
                 .subscription()
                     .withAutoPaymentId("시럽페이로부터 발급받은 자동결제 ID") // Optional
-                    .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional
+                    .withRestrictionOf(PayClaim.MatchedUser.CI_MATCHED_ONLY) // Optional
                     .withMerchantSubscriptionRequestId("가맹점에서 다시 전달받을 ID 문자열") // Optional
-                    .with(new SubscriptionConfigurer.Plan(SubscriptionConfigurer.Interval.WEEKLY, "결제명"))
+                    .with(new SubscriptionClaim.Plan(SubscriptionClaim.Interval.WEEKLY, "결제명"))
                     .withPromotionCode("PROMOTION_CODE_001")
                 .and()
                 .generateTokenBy("가맹점에게 전달한 비밀키");
@@ -731,7 +731,7 @@ public class TokenBuilderTest {
                 .and()
                 .subscription()
                     .withAutoPaymentId("시럽페이로부터 발급받은 자동결제 ID") // Optional
-                    .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional
+                    .withRestrictionOf(PayClaim.MatchedUser.CI_MATCHED_ONLY) // Optional
                 .and()
                 .generateTokenBy("가맹점에게 전달한 비밀키");
         // @formatter:on
@@ -758,7 +758,7 @@ public class TokenBuilderTest {
                 .and()
                 .subscription()
                     .withAutoPaymentId("시럽페이로부터 발급받은 자동결제 ID") // Optional
-                    .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional
+                    .withRestrictionOf(PayClaim.MatchedUser.CI_MATCHED_ONLY) // Optional
                 .and()
                 .generateTokenBy("가맹점에게 전달한 비밀키");
         // @formatter:on
@@ -784,8 +784,8 @@ public class TokenBuilderTest {
                     .withSsoCredential("SSO 를 발급 받았을 경우 입력")
                 .and()
                 .mapToUser()
-                    .withType(MapToSyrupPayUserConfigurer.MappingType.ENCRYPTED_PERSONAL_INFO)
-                    .withValue(new MapToSyrupPayUserConfigurer.Personal("사용자", "1234567", "휴대폰번호"), "가맹점 ID", "가맹점에게 전달한 비밀")
+                    .withType(MapToUserClaim.MappingType.ENCRYPTED_PERSONAL_INFO)
+                    .withValue(new MapToUserClaim.Personal("사용자", "1234567", "휴대폰번호"), "가맹점 ID", "가맹점에게 전달한 비밀")
                 .and()
                 .generateTokenBy("가맹점에게 전달한 비밀키");
         // @formatter:on
@@ -831,23 +831,23 @@ public class TokenBuilderTest {
                 .withSsoCredential("발급 받은 SSO")
             .and()
             .mapToUser() // Optional 사용자 개인정보를 이용하여 시럽페이 사용자와 동일 여부 검증 시 사용
-                .withType(MapToSyrupPayUserConfigurer.MappingType.ENCRYPTED_PERSONAL_INFO)
-                .withValue(new MapToSyrupPayUserConfigurer.Personal()
+                .withType(MapToUserClaim.MappingType.ENCRYPTED_PERSONAL_INFO)
+                .withValue(new MapToUserClaim.Personal()
                         .setUsername("홍길동")
                         .setSsnFirst7Digit("8011221")
                         .setLineNumber("01022223333")
-                        .setOperatorCode(MapToSyrupPayUserConfigurer.OperatorCode.SKT)
+                        .setOperatorCode(MapToUserClaim.OperatorCode.SKT)
                         .setCiHash("HHHHHHAAAAAAAAAAAASSSSSSSSSSSSSSHHHHHHHHHHH")
                         .setEmail("test@mail.com")
                         .setPayableCard(
-                                new MapToSyrupPayUserConfigurer.PayableCard()
+                                new MapToUserClaim.PayableCard()
                                         .setCardNo("카드번호")
                                         .setExpireDate("202012")
                                         .setCardName("카드이름")
                                         .setCardIssuerName("발급사명")
                                         .setCardIssuer("발급사코드")
                                         .setCardAcquirer("매입사코드")
-                                        .setCardType(MapToSyrupPayUserConfigurer.CardType.CREDIT))
+                                        .setCardType(MapToUserClaim.CardType.CREDIT))
                         , "가맹점 ID", "가맹점에 전달한 비밀키")
             .and()
             .pay()
@@ -857,21 +857,21 @@ public class TokenBuilderTest {
                         "http://deal.11st.co.kr/product/SellerProductDetail.tmall?method=getSellerProductDetail&prdNo=1122841340",
                         "http://deal.11st.co.kr/product/SellerProductDetail.tmall?method=getSellerProductDetail&prdNo=1265508741"
                 ) // Optional
-                .withLanguageForDisplay(PayConfigurer.Language.KO)
+                .withLanguageForDisplay(PayClaim.Language.KO)
                 .withAmount(50000)
-                .withCurrency(PayConfigurer.Currency.KRW)
-                .withShippingAddress(new PayConfigurer.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "kr")) // Optional
+                .withCurrency(PayClaim.Currency.KRW)
+                .withShippingAddress(new PayClaim.ShippingAddress("137-332", "서초구 잠원동 하나아파트", "1동 1호", "서울", "", "kr")) // Optional
                 .withDeliveryPhoneNumber("01011112222") // Optional
                 .withDeliveryName("배송 수신자") // Optional
-                .withInstallmentPerCardInformation(new PayConfigurer.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6")) // Optional
+                .withInstallmentPerCardInformation(new PayClaim.CardInstallmentInformation("카드구분 코드", "할부정보. ex. NN1;NN2;YY3;YY4;YY5;NH6")) // Optional
                 .withBeAbleToExchangeToCash(false) // Optional
-                .withRestrictionOf(PayConfigurer.PayableLocaleRule.ONLY_ALLOWED_KOR) // Optional
+                .withRestrictionOf(PayClaim.PayableLocaleRule.ONLY_ALLOWED_KOR) // Optional
                 .withRestrictionPaymentTypeOf("CARD;MOBILE;BANK") // Optional
                 .withMerchantDefinedValue("{" +
                         "\"id_1\": \"value\"," +
                         "\"id_2\": 2" +
                         "}") // Optional, JSON 포맷 이용 시 Escape(\) 입력에 주의 필요, 1k 제한
-                .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY) // Optional. 가맹점과 시럽페이 사용자 동일 여부 확인 시에만 필요
+                .withRestrictionOf(PayClaim.MatchedUser.CI_MATCHED_ONLY) // Optional. 가맹점과 시럽페이 사용자 동일 여부 확인 시에만 필요
             .and()
             .generateTokenBy("가맹점의 전달한 비밀키");
         // @formatter:on
@@ -892,8 +892,8 @@ public class TokenBuilderTest {
         // @formatter:off
         String t = tokenBuilder.of("가맹점")
                 .mapToUser()
-                .withType(MapToSyrupPayUserConfigurer.MappingType.ENCRYPTED_PERSONAL_INFO)
-                .withValue(new MapToSyrupPayUserConfigurer.Personal("사용자", "123456", "휴대폰번호"), "가맹점 ID", "가맹점에게 전달한 비밀")
+                .withType(MapToUserClaim.MappingType.ENCRYPTED_PERSONAL_INFO)
+                .withValue(new MapToUserClaim.Personal("사용자", "123456", "휴대폰번호"), "가맹점 ID", "가맹점에게 전달한 비밀")
                 .and()
                 .generateTokenBy("가맹점에게 전달한 비밀키");
         // @formatter:on
@@ -948,19 +948,19 @@ public class TokenBuilderTest {
 
     @Test(expected = AssertionError.class)
     public void 사용자_정보_Assert_테스트_SET_NULL_TO_사용자명() {
-        MapToSyrupPayUserConfigurer.Personal personal = new MapToSyrupPayUserConfigurer.Personal();
+        MapToUserClaim.Personal personal = new MapToUserClaim.Personal();
         personal.setUsername(null);
     }
 
     @Test(expected = AssertionError.class)
     public void 사용자_정보_Assert_테스트_SET_BLANK_TO_사용자명() {
-        MapToSyrupPayUserConfigurer.Personal personal = new MapToSyrupPayUserConfigurer.Personal();
+        MapToUserClaim.Personal personal = new MapToUserClaim.Personal();
         personal.setUsername("");
     }
 
     @Test
     public void 사용자_정보_Assert_테스트_SET_HASH_TO_사용자명() {
-        MapToSyrupPayUserConfigurer.Personal personal = new MapToSyrupPayUserConfigurer.Personal();
+        MapToUserClaim.Personal personal = new MapToUserClaim.Personal();
         personal.setUsername("홍길동");
     }
 
@@ -993,7 +993,7 @@ public class TokenBuilderTest {
         // @formatter:off
         tokenBuilder.of("가맹점")
                 .subscription()
-                .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY)
+                .withRestrictionOf(PayClaim.MatchedUser.CI_MATCHED_ONLY)
                 .and()
                 .login()
                     .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
@@ -1002,7 +1002,7 @@ public class TokenBuilderTest {
                     .isNotApplicableSso()
         .and()
         .mapToUser()
-        .withType(MapToSyrupPayUserConfigurer.MappingType.CI_MAPPED_KEY)
+        .withType(MapToUserClaim.MappingType.CI_MAPPED_KEY)
         .withValue("21o39812093")
         ;
 

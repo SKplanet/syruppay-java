@@ -31,7 +31,7 @@ import com.skplanet.syruppay.token.Builder;
  * @author 임형태
  * @since 1.0
  */
-public final class MerchantUserConfigurer<H extends Builder<H>> extends AbstractTokenConfigurer<MerchantUserConfigurer<H>, H> {
+public final class MerchantUserClaim<H extends Builder<H>> extends AbstractTokenClaim<MerchantUserClaim<H>, H> {
     private String mctUserId;
     private String extraUserId;
     @Deprecated
@@ -42,7 +42,7 @@ public final class MerchantUserConfigurer<H extends Builder<H>> extends Abstract
     @JsonProperty("SSOPolicy")
     private SsoPolicy ssoPolicy;
 
-    public MerchantUserConfigurer() {
+    public MerchantUserClaim() {
     }
 
     /**
@@ -97,7 +97,7 @@ public final class MerchantUserConfigurer<H extends Builder<H>> extends Abstract
      * @param ssoCredential sso credential
      * @return <code>this</code>
      */
-    public MerchantUserConfigurer<H> withSsoCredential(String ssoCredential) {
+    public MerchantUserClaim<H> withSsoCredential(String ssoCredential) {
         this.ssoCredential = ssoCredential;
         return this;
     }
@@ -109,7 +109,7 @@ public final class MerchantUserConfigurer<H extends Builder<H>> extends Abstract
      * @param merchantUserId 회원 ID
      * @return <code>this</code>
      */
-    public MerchantUserConfigurer<H> withMerchantUserId(String merchantUserId) {
+    public MerchantUserClaim<H> withMerchantUserId(String merchantUserId) {
         this.mctUserId = merchantUserId;
         return this;
     }
@@ -120,7 +120,7 @@ public final class MerchantUserConfigurer<H extends Builder<H>> extends Abstract
      * @param extraMerchantUserId 추가 가맹점 회원 ID
      * @return <code>this</code>
      */
-    public MerchantUserConfigurer<H> withExtraMerchantUserId(String extraMerchantUserId) {
+    public MerchantUserClaim<H> withExtraMerchantUserId(String extraMerchantUserId) {
         this.extraUserId = extraMerchantUserId;
         return this;
     }
@@ -131,7 +131,7 @@ public final class MerchantUserConfigurer<H extends Builder<H>> extends Abstract
      * @param implicitSSOSeed Seed 값
      * @return <code>this</code>
      */
-    public MerchantUserConfigurer<H> withImplicitSSOSeed(String implicitSSOSeed) {
+    public MerchantUserClaim<H> withImplicitSSOSeed(String implicitSSOSeed) {
         this.implicitSSOSeed = implicitSSOSeed;
         return this;
     }
@@ -141,12 +141,12 @@ public final class MerchantUserConfigurer<H extends Builder<H>> extends Abstract
      *
      * @param deviceIdentifier device 를 식별할 수 있는 ID 값
      */
-    public MerchantUserConfigurer<H> withDeviceIdentifier(String deviceIdentifier) {
+    public MerchantUserClaim<H> withDeviceIdentifier(String deviceIdentifier) {
         this.deviceIdentifier = deviceIdentifier;
         return this;
     }
 
-    public MerchantUserConfigurer<H> isNotApplicableSso() {
+    public MerchantUserClaim<H> isNotApplicableSso() {
         this.ssoPolicy = SsoPolicy.NOT_APPLICABLE;
         return this;
     }

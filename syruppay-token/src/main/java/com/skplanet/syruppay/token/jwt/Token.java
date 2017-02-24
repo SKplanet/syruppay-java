@@ -23,12 +23,8 @@ package com.skplanet.syruppay.token.jwt;
 
 import com.skplanet.syruppay.token.ClaimConfigurer;
 import com.skplanet.syruppay.token.Builder;
-import com.skplanet.syruppay.token.claims.MapToSktUserConfigurer;
-import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
-import com.skplanet.syruppay.token.claims.MerchantUserConfigurer;
-import com.skplanet.syruppay.token.claims.OrderConfigurer;
-import com.skplanet.syruppay.token.claims.PayConfigurer;
-import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
+import com.skplanet.syruppay.token.claims.*;
+import com.skplanet.syruppay.token.claims.OrderClaim;
 
 import java.io.Serializable;
 import java.util.List;
@@ -43,23 +39,23 @@ public interface Token extends Serializable, JwtToken {
     /**
      * 가맹점의 사용자 정보를 인증(Authentication) 하기 위한 객체를 구성하여 반환한다.
      *
-     * @return {@link com.skplanet.syruppay.token.claims.MerchantUserConfigurer}
+     * @return {@link MerchantUserClaim}
      */
-    public MerchantUserConfigurer<? extends Builder> getLoginInfo();
+    public MerchantUserClaim<? extends Builder> getLoginInfo();
 
     /**
      * 거래(주문)에 대하여 결제를 시도하기 위한 객체를 구성하여 반환한다.
      *
-     * @return {@link com.skplanet.syruppay.token.claims.PayConfigurer}
+     * @return {@link PayClaim}
      */
-    public PayConfigurer<? extends Builder> getTransactionInfo();
+    public PayClaim<? extends Builder> getTransactionInfo();
 
     /**
      * 시럽페이 사용자를 매칭하기 위한 객체를 구성하여 반환한다.
      *
-     * @return {@link com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer}
+     * @return {@link MapToUserClaim}
      */
-    public MapToSyrupPayUserConfigurer<? extends Builder> getUserInfoMapper();
+    public MapToUserClaim<? extends Builder> getUserInfoMapper();
 
     /**
      * Expired Time 기준과 Not Before Time 을 기준하여 토큰이 유효한 시간 안에 있는지 여부를 검증하여 반환한다.
@@ -71,18 +67,18 @@ public interface Token extends Serializable, JwtToken {
     /**
      * 가맹점 사용자가 가입된 SKT 통신회선의 가입 정보를 확인하기 위한 객체를 구성하여 반환한다.
      *
-     * @return {@link com.skplanet.syruppay.token.claims.MapToSktUserConfigurer}
+     * @return {@link MapToSktUserClaim}
      */
-    public MapToSktUserConfigurer<? extends Builder> getLineInfo();
+    public MapToSktUserClaim<? extends Builder> getLineInfo();
 
     /**
      * 시럽페이 체크 아웃을 이용하기 위한 정보를 구성하여 반환한다.
      *
-     * @return {@link com.skplanet.syruppay.token.claims.OrderConfigurer}
+     * @return {@link OrderClaim}
      * @since 1.1
      */
 
-    public OrderConfigurer<? extends Builder> getCheckoutInfo();
+    public OrderClaim<? extends Builder> getCheckoutInfo();
 
 
     /**
@@ -91,7 +87,7 @@ public interface Token extends Serializable, JwtToken {
      * @return the subscription
      * @since 1.3.4
      */
-    public SubscriptionConfigurer<? extends Builder> getSubscription();
+    public SubscriptionClaim<? extends Builder> getSubscription();
 
     /**
      * 시럽페이 토큰에 포함된 Claim 정보를 확인하여 반환한다.

@@ -51,13 +51,13 @@ import java.text.SimpleDateFormat;
  * Syrup Pay 에서 사용하는 토큰을 생성 및 암/복호화에 대한 기능을 수행한다.
  * <p>
  * 토큰은 JWT 규격을 준수하며 Claim 에 대한 확장은 {@link com.skplanet.syruppay.token.ClaimConfigurer}를 이용하여 확장할 수 있으며
- * 이에 대한 인터페이스는 {@link com.skplanet.syruppay.token.SyrupPayTokenBuilder}를 통해 {@link #pay()}와 {@link #login()}와 같이 노출해야 한다.
+ * 이에 대한 인터페이스는 {@link TokenBuilder}를 통해 {@link #pay()}와 {@link #login()}와 같이 노출해야 한다.
  *
  * @author 임형태
  * @since 1.0
  */
-public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<Jwt, SyrupPayTokenBuilder> implements ClaimBuilder<Jwt>, Builder<SyrupPayTokenBuilder> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SyrupPayTokenBuilder.class.getName());
+public final class TokenBuilder extends AbstractConfiguredTokenBuilder<Jwt, TokenBuilder> implements ClaimBuilder<Jwt>, Builder<TokenBuilder> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TokenBuilder.class.getName());
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static boolean checkHeaderOfToken = true;
     private static boolean checkValidationOfToken = true;
@@ -146,7 +146,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * @param merchantId 가맹점 ID
      * @return <code>this</code>
      */
-    public SyrupPayTokenBuilder of(String merchantId) {
+    public TokenBuilder of(String merchantId) {
         this.iss = merchantId;
         return this;
     }
@@ -157,7 +157,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * @param subject the subject
      * @return <code>this</code>
      */
-    public SyrupPayTokenBuilder additionalSubject(String subject) {
+    public TokenBuilder additionalSubject(String subject) {
         this.sub = subject;
         return this;
     }
@@ -168,7 +168,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * @param milliseconds 밀리세컨드
      * @return <code>this</code>
      */
-    public SyrupPayTokenBuilder isNotValidBefore(long milliseconds) {
+    public TokenBuilder isNotValidBefore(long milliseconds) {
         this.nbf = milliseconds / 1000;
         return this;
     }
@@ -181,7 +181,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * @return <code>this</code>
      * @throws java.text.ParseException 문자형식의 일자 오류
      */
-    public SyrupPayTokenBuilder isNotValidBefore(String datetime, SimpleDateFormat f) throws ParseException {
+    public TokenBuilder isNotValidBefore(String datetime, SimpleDateFormat f) throws ParseException {
         this.nbf = f.parse(datetime).getTime() / 1000;
         return this;
     }
@@ -192,7 +192,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * @param expiredMinutes 만료되는 분
      * @return <code>this</code>
      */
-    public SyrupPayTokenBuilder expiredMinutes(int expiredMinutes) {
+    public TokenBuilder expiredMinutes(int expiredMinutes) {
         this.expiredMinutes = expiredMinutes;
         return this;
     }
@@ -203,8 +203,8 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * @return {@link com.skplanet.syruppay.token.claims.MerchantUserConfigurer}
      * @throws Exception the exception
      */
-    public MerchantUserConfigurer<SyrupPayTokenBuilder> login() throws Exception {
-        return getOrApply(new MerchantUserConfigurer<SyrupPayTokenBuilder>());
+    public MerchantUserConfigurer<TokenBuilder> login() throws Exception {
+        return getOrApply(new MerchantUserConfigurer<TokenBuilder>());
     }
 
     /**
@@ -213,8 +213,8 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * @return {@link com.skplanet.syruppay.token.claims.MerchantUserConfigurer}
      * @throws Exception the exception
      */
-    public MerchantUserConfigurer<SyrupPayTokenBuilder> signUp() throws Exception {
-        return getOrApply(new MerchantUserConfigurer<SyrupPayTokenBuilder>());
+    public MerchantUserConfigurer<TokenBuilder> signUp() throws Exception {
+        return getOrApply(new MerchantUserConfigurer<TokenBuilder>());
     }
 
     /**
@@ -223,8 +223,8 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * @return {@link com.skplanet.syruppay.token.claims.PayConfigurer}
      * @throws Exception the exception
      */
-    public PayConfigurer<SyrupPayTokenBuilder> pay() throws Exception {
-        return getOrApply(new PayConfigurer<SyrupPayTokenBuilder>());
+    public PayConfigurer<TokenBuilder> pay() throws Exception {
+        return getOrApply(new PayConfigurer<TokenBuilder>());
     }
 
     /**
@@ -233,8 +233,8 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * @return {@link com.skplanet.syruppay.token.claims.OrderConfigurer}
      * @throws Exception the exception
      */
-    public OrderConfigurer<SyrupPayTokenBuilder> checkout() throws Exception {
-        return getOrApply(new OrderConfigurer<SyrupPayTokenBuilder>());
+    public OrderConfigurer<TokenBuilder> checkout() throws Exception {
+        return getOrApply(new OrderConfigurer<TokenBuilder>());
     }
 
     /**
@@ -243,8 +243,8 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * @return {@link com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer}
      * @throws Exception the exception
      */
-    public MapToSyrupPayUserConfigurer<SyrupPayTokenBuilder> mapToSyrupPayUser() throws Exception {
-        return getOrApply(new MapToSyrupPayUserConfigurer<SyrupPayTokenBuilder>());
+    public MapToSyrupPayUserConfigurer<TokenBuilder> mapToUser() throws Exception {
+        return getOrApply(new MapToSyrupPayUserConfigurer<TokenBuilder>());
     }
 
     /**
@@ -253,8 +253,8 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * @return {@link com.skplanet.syruppay.token.claims.MapToSktUserConfigurer}
      * @throws Exception the exception
      */
-    public MapToSktUserConfigurer<SyrupPayTokenBuilder> mapToSktUser() throws Exception {
-        return getOrApply(new MapToSktUserConfigurer<SyrupPayTokenBuilder>());
+    public MapToSktUserConfigurer<TokenBuilder> mapToSktUser() throws Exception {
+        return getOrApply(new MapToSktUserConfigurer<TokenBuilder>());
     }
 
     /**
@@ -263,12 +263,12 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
      * @return {@link com.skplanet.syruppay.token.claims.MapToSktUserConfigurer}
      * @throws Exception the exception
      */
-    public SubscriptionConfigurer<SyrupPayTokenBuilder> subscription() throws Exception {
-        return getOrApply(new SubscriptionConfigurer<SyrupPayTokenBuilder>());
+    public SubscriptionConfigurer<TokenBuilder> subscription() throws Exception {
+        return getOrApply(new SubscriptionConfigurer<TokenBuilder>());
     }
 
     @SuppressWarnings("unchecked")
-    private <C extends ClaimConfigurerAdapter<Jwt, SyrupPayTokenBuilder>> C getOrApply(C configurer)
+    private <C extends ClaimConfigurerAdapter<Jwt, TokenBuilder>> C getOrApply(C configurer)
             throws Exception {
         C existingConfig = (C) getConfigurer(configurer.getClass());
         if (existingConfig != null) {
@@ -279,7 +279,7 @@ public final class SyrupPayTokenBuilder extends AbstractConfiguredTokenBuilder<J
 
     protected Jwt doBuild() throws Exception {
         if (iss == null || iss.length() == 0) {
-            throw new IllegalArgumentException("issuer couldn't be null. you should set of by SyrupPayTokenBuilder#of(String of)");
+            throw new IllegalArgumentException("issuer couldn't be null. you should set of by TokenBuilder#of(String of)");
         }
         Jwt c = new Jwt();
         c.setIss(iss);

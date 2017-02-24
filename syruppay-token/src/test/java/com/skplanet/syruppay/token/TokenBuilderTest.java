@@ -64,8 +64,6 @@
 package com.skplanet.syruppay.token;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.skplanet.jose.Jose;
-import com.skplanet.jose.JoseBuilders;
 import com.skplanet.syruppay.token.claims.MapToSyrupPayUserConfigurer;
 import com.skplanet.syruppay.token.claims.PayConfigurer;
 import com.skplanet.syruppay.token.claims.SubscriptionConfigurer;
@@ -93,34 +91,34 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 
-public class SyrupPayTokenBuilderTest {
+public class TokenBuilderTest {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    SyrupPayTokenBuilder syrupPayTokenBuilder;
+    TokenBuilder tokenBuilder;
 
     @Before
     public void setUp() throws Exception {
-        syrupPayTokenBuilder = new SyrupPayTokenBuilder();
+        tokenBuilder = new TokenBuilder();
     }
 
     @Test
     public void 기본생성자_테스트() throws Exception {
         // Give
-        SyrupPayTokenBuilder t = new SyrupPayTokenBuilder();
+        TokenBuilder t = new TokenBuilder();
 
         // When
 
         // Then
         assertThat(t, is(notNullValue()));
-        assertThat(t.getClass().getName(), is(SyrupPayTokenBuilder.class.getName()));
+        assertThat(t.getClass().getName(), is(TokenBuilder.class.getName()));
     }
 
     @Test
     public void MctAccToken_형식으로_회원정보_없이_생성() throws Exception {
         // Give
-        syrupPayTokenBuilder.of("가맹점");
+        tokenBuilder.of("가맹점");
 
         // When
-        String s = syrupPayTokenBuilder.generateTokenBy("keys");
+        String s = tokenBuilder.generateTokenBy("keys");
 
         // Then
         assertThat(s, is(notNullValue()));
@@ -130,10 +128,10 @@ public class SyrupPayTokenBuilderTest {
     @Test
     public void MctAccToken_형식으로_회원정보_포함하여_생성() throws Exception {
         // Give
-        syrupPayTokenBuilder.of("가맹점").login().withMerchantUserId("가맹점의 회원 ID 또는 식별자").withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력").withSsoCredential("SSO 를 발급 받았을 경우 입력");
+        tokenBuilder.of("가맹점").login().withMerchantUserId("가맹점의 회원 ID 또는 식별자").withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력").withSsoCredential("SSO 를 발급 받았을 경우 입력");
 
         // When
-        String s = syrupPayTokenBuilder.generateTokenBy("keys");
+        String s = tokenBuilder.generateTokenBy("keys");
 
         // Then
         assertThat(s, is(notNullValue()));
@@ -143,7 +141,7 @@ public class SyrupPayTokenBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void iss_미입력_후_빌드() throws Exception {
         // Give
-        SyrupPayTokenBuilder t = new SyrupPayTokenBuilder();
+        TokenBuilder t = new TokenBuilder();
 
         // When
         t.build();
@@ -154,12 +152,12 @@ public class SyrupPayTokenBuilderTest {
     @Test
     public void 유효시간_기본값으로_입력_후_10분_여부_검증() throws Exception {
         // Give
-        syrupPayTokenBuilder.of("test");
+        tokenBuilder.of("test");
 
         // When
 
         // Then
-        Token t = OBJECT_MAPPER.readValue(syrupPayTokenBuilder.toJson(), SyrupPayToken.class);
+        Token t = OBJECT_MAPPER.readValue(tokenBuilder.toJson(), SyrupPayToken.class);
         assertThat(t, is(notNullValue()));
         assertThat(t.getExp() - t.getIat(), is((long) (10 * 60)));
     }
@@ -167,13 +165,13 @@ public class SyrupPayTokenBuilderTest {
     @Test
     public void 유효시간_60분으로_입력_후_검증() throws Exception {
         // Give
-        syrupPayTokenBuilder.of("test");
+        tokenBuilder.of("test");
 
         // When
-        syrupPayTokenBuilder.expiredMinutes(60);
+        tokenBuilder.expiredMinutes(60);
 
         // Then
-        Token t = OBJECT_MAPPER.readValue(syrupPayTokenBuilder.toJson(), SyrupPayToken.class);
+        Token t = OBJECT_MAPPER.readValue(tokenBuilder.toJson(), SyrupPayToken.class);
         assertThat(t, is(notNullValue()));
         assertThat(t.getExp() - t.getIat(), is((long) (60 * 60)));
     }
@@ -181,13 +179,13 @@ public class SyrupPayTokenBuilderTest {
     @Test
     public void 유효시간_0분으로_입력_후_검증() throws Exception {
         // Give
-        syrupPayTokenBuilder.of("test");
+        tokenBuilder.of("test");
 
         // When
-        syrupPayTokenBuilder.expiredMinutes(0);
+        tokenBuilder.expiredMinutes(0);
 
         // Then
-        Token t = OBJECT_MAPPER.readValue(syrupPayTokenBuilder.toJson(), SyrupPayToken.class);
+        Token t = OBJECT_MAPPER.readValue(tokenBuilder.toJson(), SyrupPayToken.class);
         assertThat(t, is(notNullValue()));
         assertThat(t.getExp(), is(t.getIat()));
     }
@@ -195,13 +193,13 @@ public class SyrupPayTokenBuilderTest {
     @Test
     public void 유효시간_마이너스_1분으로_입력_후_만료여부_검증() throws Exception {
         // Give
-        syrupPayTokenBuilder.of("test");
+        tokenBuilder.of("test");
 
         // When
-        syrupPayTokenBuilder.expiredMinutes(-1);
+        tokenBuilder.expiredMinutes(-1);
 
         // Then
-        Token t = OBJECT_MAPPER.readValue(syrupPayTokenBuilder.toJson(), SyrupPayToken.class);
+        Token t = OBJECT_MAPPER.readValue(tokenBuilder.toJson(), SyrupPayToken.class);
         assertThat(t, is(notNullValue()));
         assertThat(t.isValidInTime(), is(false));
     }
@@ -210,19 +208,19 @@ public class SyrupPayTokenBuilderTest {
     public void 시럽페이_사용자_매칭_정보_입력() throws Exception {
         // Give
         // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
+        tokenBuilder.of("가맹점")
                 .login()
                     .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
                     .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
                     .withSsoCredential("SSO 를 발급 받았을 경우 입력")
                 .and()
-                .mapToSyrupPayUser()
+                .mapToUser()
                     .withType(MapToSyrupPayUserConfigurer.MappingType.CI_MAPPED_KEY)
                     .withValue("4987234")
                     .withIdentityAuthenticationId("bddb74b0-981f-4070-8c02-0cdf324f46f6"); // Optional
         // @formatter:on
         // When
-        String t = syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
+        String t = tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
         System.out.println(t);
         // Then
         assertThat(t, is(notNullValue()));
@@ -232,10 +230,10 @@ public class SyrupPayTokenBuilderTest {
     @Test(expected = AlreadyBuiltException.class)
     public void 이미_생성한_토큰빌드를_재활용() throws Exception {
         // Give
-        syrupPayTokenBuilder.of("가맹점").generateTokenBy("가맹점에게 전달한 비밀키");
+        tokenBuilder.of("가맹점").generateTokenBy("가맹점에게 전달한 비밀키");
 
         // When
-        syrupPayTokenBuilder.generateTokenBy("가망점에게 전달한 비밀키");
+        tokenBuilder.generateTokenBy("가망점에게 전달한 비밀키");
 
         // Then
         // throw exception
@@ -245,7 +243,7 @@ public class SyrupPayTokenBuilderTest {
     public void 구매를_위한_토큰_생성() throws Exception {
         // Give
         // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
+        tokenBuilder.of("가맹점")
                             .pay()
                                 .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
                                 .withProductTitle("제품명")
@@ -261,7 +259,7 @@ public class SyrupPayTokenBuilderTest {
                 ;
         // @formatter:on
         // When
-        String t = syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
+        String t = tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
 
         // Then
         assertThat(t, is(notNullValue()));
@@ -272,7 +270,7 @@ public class SyrupPayTokenBuilderTest {
     public void 토큰_복호화() throws Exception {
         // Given
         // @formatter:off
-        String t = syrupPayTokenBuilder.of("가맹점")
+        String t = tokenBuilder.of("가맹점")
                 .login()
                     .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
                     .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
@@ -282,7 +280,7 @@ public class SyrupPayTokenBuilderTest {
         // @formatter:on
 
         // When
-        Token token = SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+        Token token = TokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
 
         // Then
         assertThat(token, is(notNullValue()));
@@ -294,10 +292,10 @@ public class SyrupPayTokenBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void 가맹점_회원ID_미입력_후_토큰_생성() throws Exception {
         // Given
-        syrupPayTokenBuilder.of("가맹점").login().withSsoCredential("SSO 를 발급 받았을 경우 입력");
+        tokenBuilder.of("가맹점").login().withSsoCredential("SSO 를 발급 받았을 경우 입력");
 
         // When
-        String token = syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
+        String token = tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
 
         // Then
         // throw Exception
@@ -306,7 +304,7 @@ public class SyrupPayTokenBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void 구매_시_구매_상품명_미입력_후_토큰_생성() throws Exception {
         // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
+        tokenBuilder.of("가맹점")
                             .pay()
                                 .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
                                 //.withProductTitle("제품명")
@@ -322,7 +320,7 @@ public class SyrupPayTokenBuilderTest {
                 ;
         // @formatter:on
         // When
-        String t = syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
+        String t = tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
 
         // Then
         // throw Exception
@@ -331,7 +329,7 @@ public class SyrupPayTokenBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void 구매_시_구매금액_미입력_후_토큰_생성() throws Exception {
         // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
+        tokenBuilder.of("가맹점")
                             .pay()
                                 .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
                                 .withProductTitle("제품명")
@@ -347,7 +345,7 @@ public class SyrupPayTokenBuilderTest {
                 ;
         // @formatter:on
         // When
-        String t = syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
+        String t = tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
 
         // Then
         // throw Exception
@@ -356,7 +354,7 @@ public class SyrupPayTokenBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void 구매_시_구매금액_마이너스_입력_후_토큰_생성() throws Exception {
         // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
+        tokenBuilder.of("가맹점")
                             .pay()
                                 .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
                                 .withProductTitle("제품명")
@@ -372,7 +370,7 @@ public class SyrupPayTokenBuilderTest {
                 ;
         // @formatter:on
         // When
-        String t = syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
+        String t = tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
 
         // Then
         // throw Exception
@@ -381,7 +379,7 @@ public class SyrupPayTokenBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void 구매_시_구매금액_0_입력_후_토큰_생성() throws Exception {
         // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
+        tokenBuilder.of("가맹점")
                             .pay()
                                 .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
                                 .withProductTitle("제품명")
@@ -397,7 +395,7 @@ public class SyrupPayTokenBuilderTest {
                 ;
         // @formatter:on
         // When
-        String t = syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
+        String t = tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
 
         // Then
         // throw Exception
@@ -406,7 +404,7 @@ public class SyrupPayTokenBuilderTest {
     @Test
     public void 구매_시_구매금액_통화단위_미입력_후_토큰_생성() throws Exception {
         // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
+        tokenBuilder.of("가맹점")
                             .pay()
                                 .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
                                 .withProductTitle("제품명")
@@ -422,7 +420,7 @@ public class SyrupPayTokenBuilderTest {
                 ;
         // @formatter:on
         // When
-        Token token = SyrupPayTokenBuilder.verify(syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
+        Token token = TokenBuilder.verify(tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
 
         // Then
         assertThat(token.getTransactionInfo().getPaymentInfo().getCurrencyCode(), is("KRW"));
@@ -431,7 +429,7 @@ public class SyrupPayTokenBuilderTest {
     @Test
     public void 구매_시_언어_미입력_후_토큰_생성() throws Exception {
         // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
+        tokenBuilder.of("가맹점")
                             .pay()
                                 .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
                                 .withProductTitle("제품명")
@@ -447,7 +445,7 @@ public class SyrupPayTokenBuilderTest {
                 ;
         // @formatter:on
         // When
-        Token token = SyrupPayTokenBuilder.verify(syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
+        Token token = TokenBuilder.verify(tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
 
         // Then
         assertThat(token.getTransactionInfo().getPaymentInfo().getLang(), is("KO"));
@@ -456,7 +454,7 @@ public class SyrupPayTokenBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void 구매_시_구매금액_배송지_입력_후_토큰_생성() throws Exception {
         // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
+        tokenBuilder.of("가맹점")
                             .pay()
                                 .withOrderIdOfMerchant("가맹점에서 관리하는 주문 ID")
                                 .withProductTitle("제품명")
@@ -472,7 +470,7 @@ public class SyrupPayTokenBuilderTest {
                 ;
         // @formatter:on
         // When
-        String t = syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
+        String t = tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
 
         // Then
         // throw Exception
@@ -481,7 +479,7 @@ public class SyrupPayTokenBuilderTest {
     @Test
     public void 구매_시_가맹점_주문ID_40자_입력_후_토큰_생성() throws Exception {
         // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
+        tokenBuilder.of("가맹점")
                             .pay()
                                 .withOrderIdOfMerchant("1234567890123456789012345678901234567890")
                                 .withProductTitle("제품명")
@@ -497,7 +495,7 @@ public class SyrupPayTokenBuilderTest {
                 ;
         // @formatter:on
         // When
-        Token token = SyrupPayTokenBuilder.verify(syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
+        Token token = TokenBuilder.verify(tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
 
         // Then
         assertThat(token.getTransactionInfo().getMctTransAuthId().length(), is(40));
@@ -506,7 +504,7 @@ public class SyrupPayTokenBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void 구매_시_가맹점_주문ID_41자_입력_후_토큰_생성() throws Exception {
         // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
+        tokenBuilder.of("가맹점")
                             .pay()
                                 .withOrderIdOfMerchant("12345678901234567890123456789012345678901")
                                 .withProductTitle("제품명")
@@ -522,7 +520,7 @@ public class SyrupPayTokenBuilderTest {
                 ;
         // @formatter:on
         // When
-        String t = syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
+        String t = tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
 
         // Then
         // throw Exception
@@ -531,7 +529,7 @@ public class SyrupPayTokenBuilderTest {
     @Test
     public void 구매_시_제품_상세_URL_추가_토큰_생성() throws Exception {
         // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
+        tokenBuilder.of("가맹점")
                             .pay()
                                 .withOrderIdOfMerchant("1234567890123456789012345678901234567890")
                                 .withProductTitle("제품명")
@@ -552,7 +550,7 @@ public class SyrupPayTokenBuilderTest {
                 ;
         // @formatter:on
         // When
-        Token token = SyrupPayTokenBuilder.verify(syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
+        Token token = TokenBuilder.verify(tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
 
         // Then
         assertThat(token.getTransactionInfo().getPaymentInfo().getProductUrls().size(), is(1));
@@ -561,7 +559,7 @@ public class SyrupPayTokenBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void 구매_시_제품_상세_URL에_HTTP가_아닌_값_입력_후_토큰_생성() throws Exception {
         // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
+        tokenBuilder.of("가맹점")
                             .pay()
                                 .withOrderIdOfMerchant("1234567890123456789012345678901234567890")
                                 .withProductTitle("제품명")
@@ -578,7 +576,7 @@ public class SyrupPayTokenBuilderTest {
                 ;
         // @formatter:on
         // When
-        Token token = SyrupPayTokenBuilder.verify(syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
+        Token token = TokenBuilder.verify(tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
 
         // Then
         // throw exception
@@ -588,19 +586,19 @@ public class SyrupPayTokenBuilderTest {
     public void 토큰_시럽페이사용자연동_추가_후_복호화() throws Exception {
         // Given
         // @formatter:off
-        String t = syrupPayTokenBuilder.of("가맹점")
+        String t = tokenBuilder.of("가맹점")
                 .login()
                     .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
                     .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
                     .withSsoCredential("SSO 를 발급 받았을 경우 입력")
                 .and()
-                .mapToSyrupPayUser().withType(MapToSyrupPayUserConfigurer.MappingType.CI_HASH).withValue("asdkfjhsakdfj")
+                .mapToUser().withType(MapToSyrupPayUserConfigurer.MappingType.CI_HASH).withValue("asdkfjhsakdfj")
                 .and()
                 .generateTokenBy("가맹점에게 전달한 비밀키");
         // @formatter:on
 
         // When
-        Token token = SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+        Token token = TokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
 
         // Then
         assertThat(token, is(notNullValue()));
@@ -613,7 +611,7 @@ public class SyrupPayTokenBuilderTest {
     @Test
     public void 체크아웃을_이용한_인증_토큰_생성() throws Exception {
         // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
+        tokenBuilder.of("가맹점")
                             .checkout()
                                 .withProductPrice(5000)
                                 .withOffers(Mocks.offerList)
@@ -624,7 +622,7 @@ public class SyrupPayTokenBuilderTest {
                 ;
         // @formatter:on
         // When
-        Token token = SyrupPayTokenBuilder.verify(syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
+        Token token = TokenBuilder.verify(tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키"), "가맹점에게 전달한 비밀키");
 
         // Then
         assertThat(token.getCheckoutInfo(), is(notNullValue()));
@@ -633,45 +631,45 @@ public class SyrupPayTokenBuilderTest {
 
     @Test
     public void 하위버전_1_2_30_호환_테스트() throws IOException, InvalidTokenException {
-        SyrupPayTokenBuilder.uncheckHeaderOfToken();
-        Token t = SyrupPayTokenBuilder.verify(TokenHistories.VERSION_1_2_30.token, TokenHistories.VERSION_1_2_30.key);
+        TokenBuilder.uncheckHeaderOfToken();
+        Token t = TokenBuilder.verify(TokenHistories.VERSION_1_2_30.token, TokenHistories.VERSION_1_2_30.key);
         System.out.println(new ObjectMapper().writeValueAsString(t));
     }
 
     @Test
     public void C_샵버전_0_0_1_호환_테스트() throws IOException, InvalidTokenException {
-        SyrupPayTokenBuilder.uncheckHeaderOfToken();
-        Token t = SyrupPayTokenBuilder.verify(TokenHistories.C_SHARP_0_0_1.token, TokenHistories.C_SHARP_0_0_1.key);
+        TokenBuilder.uncheckHeaderOfToken();
+        Token t = TokenBuilder.verify(TokenHistories.C_SHARP_0_0_1.token, TokenHistories.C_SHARP_0_0_1.key);
         System.out.println(new ObjectMapper().writeValueAsString(t));
     }
 
     @Test
     public void 하위버전_1_3_4_버전_CJOSHOPPING_테스트() throws Exception {
-        SyrupPayTokenBuilder.uncheckHeaderOfToken();
-        Token t = SyrupPayTokenBuilder.verify(TokenHistories.VERSION_1_3_4_BY_CJOSHOPPING.token, TokenHistories.VERSION_1_3_4_BY_CJOSHOPPING.key);
+        TokenBuilder.uncheckHeaderOfToken();
+        Token t = TokenBuilder.verify(TokenHistories.VERSION_1_3_4_BY_CJOSHOPPING.token, TokenHistories.VERSION_1_3_4_BY_CJOSHOPPING.key);
         assertThat(t.getTransactionInfo().getMctTransAuthId(), is(notNullValue()));
         assertThat(t.getTransactionInfo().getPaymentRestrictions().getCardIssuerRegion(), is(notNullValue()));
     }
 
     @Test(expected = Exception.class)
     public void 체크아웃_잘못된_규격_테스트() throws IOException, InvalidTokenException {
-        SyrupPayTokenBuilder.uncheckHeaderOfToken();
-        Token t = SyrupPayTokenBuilder.verify(TokenHistories.VERSION_1_3_5_INVALID.token, TokenHistories.VERSION_1_3_5_INVALID.key);
+        TokenBuilder.uncheckHeaderOfToken();
+        Token t = TokenBuilder.verify(TokenHistories.VERSION_1_3_5_INVALID.token, TokenHistories.VERSION_1_3_5_INVALID.key);
         assertThat(t.getTransactionInfo().getMctTransAuthId(), is(notNullValue()));
         assertThat(t.getTransactionInfo().getPaymentRestrictions().getCardIssuerRegion(), is(notNullValue()));
     }
 
     @Test
     public void PHP_버전_사용자로그인_토큰_호환성_테스트() throws IOException, InvalidTokenException {
-        SyrupPayTokenBuilder.uncheckHeaderOfToken();
-        Token t = SyrupPayTokenBuilder.verify(TokenHistories.PHP_TO_LOGIN_VERSION_1_0_0.token, TokenHistories.PHP_TO_LOGIN_VERSION_1_0_0.key);
+        TokenBuilder.uncheckHeaderOfToken();
+        Token t = TokenBuilder.verify(TokenHistories.PHP_TO_LOGIN_VERSION_1_0_0.token, TokenHistories.PHP_TO_LOGIN_VERSION_1_0_0.key);
         System.out.println(new ObjectMapper().writeValueAsString(t));
     }
 
     @Test
     public void PHP_버전_결제_토큰_호환성_테스트() throws IOException, InvalidTokenException {
-        SyrupPayTokenBuilder.uncheckHeaderOfToken();
-        Token t = SyrupPayTokenBuilder.verify(TokenHistories.PHP_TO_PAY_VERSION_1_0_0.token, TokenHistories.PHP_TO_PAY_VERSION_1_0_0.key);
+        TokenBuilder.uncheckHeaderOfToken();
+        Token t = TokenBuilder.verify(TokenHistories.PHP_TO_PAY_VERSION_1_0_0.token, TokenHistories.PHP_TO_PAY_VERSION_1_0_0.key);
         System.out.println(new ObjectMapper().writeValueAsString(t));
     }
 
@@ -679,7 +677,7 @@ public class SyrupPayTokenBuilderTest {
     public void 자동결제를_위한_인증_토큰_생성() throws Exception {
         // Given
         // @formatter:off
-        String t = syrupPayTokenBuilder.of("가맹점")
+        String t = tokenBuilder.of("가맹점")
                 .login()
                     .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
                     .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
@@ -696,7 +694,7 @@ public class SyrupPayTokenBuilderTest {
         // @formatter:on
         System.out.printf(t);
         // When
-        Token token = SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+        Token token = TokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
 
         // Then
         assertThat(token, is(notNullValue()));
@@ -725,7 +723,7 @@ public class SyrupPayTokenBuilderTest {
     public void 자동결제를_위한_인증_토큰_생성_후_클래임_확인_테스트() throws Exception {
         // Given
         // @formatter:off
-        String t = syrupPayTokenBuilder.of("가맹점")
+        String t = tokenBuilder.of("가맹점")
                 .login()
                     .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
                     .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
@@ -739,7 +737,7 @@ public class SyrupPayTokenBuilderTest {
         // @formatter:on
         System.out.printf(t);
         // When
-        Token token = SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+        Token token = TokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
 
         // Then
         assertThat(token, is(notNullValue()));
@@ -752,7 +750,7 @@ public class SyrupPayTokenBuilderTest {
     public void 자동결제를_위한_인증_토큰_생성_후_개별_클래임_확인_테스트() throws Exception {
         // Given
         // @formatter:off
-        String t = syrupPayTokenBuilder.of("가맹점")
+        String t = tokenBuilder.of("가맹점")
                 .login()
                     .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
                     .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
@@ -766,7 +764,7 @@ public class SyrupPayTokenBuilderTest {
         // @formatter:on
         System.out.printf(t);
         // When
-        Token token = SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+        Token token = TokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
 
         // Then
         assertThat(token, is(notNullValue()));
@@ -779,13 +777,13 @@ public class SyrupPayTokenBuilderTest {
     public void 개인정보_전달을위한_토큰규격_테스트() throws Exception {
         // Given
         // @formatter:off
-        String t = syrupPayTokenBuilder.of("가맹점")
+        String t = tokenBuilder.of("가맹점")
                 .login()
                     .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
                     .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
                     .withSsoCredential("SSO 를 발급 받았을 경우 입력")
                 .and()
-                .mapToSyrupPayUser()
+                .mapToUser()
                     .withType(MapToSyrupPayUserConfigurer.MappingType.ENCRYPTED_PERSONAL_INFO)
                     .withValue(new MapToSyrupPayUserConfigurer.Personal("사용자", "1234567", "휴대폰번호"), "가맹점 ID", "가맹점에게 전달한 비밀")
                 .and()
@@ -793,7 +791,7 @@ public class SyrupPayTokenBuilderTest {
         // @formatter:on
         System.out.printf(t);
         // When
-        Token token = SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+        Token token = TokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
 
         // Then
         assertThat(token, is(notNullValue()));
@@ -809,10 +807,10 @@ public class SyrupPayTokenBuilderTest {
         String t = TokenHistories.VALIDATION_BACKWARD_OF_11ST.token;
         // @formatter:on
 
-        SyrupPayTokenBuilder.uncheckHeaderOfToken();
+        TokenBuilder.uncheckHeaderOfToken();
 
         // When
-        Token token = SyrupPayTokenBuilder.verify(t, TokenHistories.VALIDATION_BACKWARD_OF_11ST.key);
+        Token token = TokenBuilder.verify(t, TokenHistories.VALIDATION_BACKWARD_OF_11ST.key);
 
         // Then
         assertThat(token, is(notNullValue()));
@@ -826,13 +824,13 @@ public class SyrupPayTokenBuilderTest {
     public void README_테스트_코드() throws Exception {
         // @formatter:off
         String token =
-        new SyrupPayTokenBuilder().of("가맹점 ID")
+        new TokenBuilder().of("가맹점 ID")
             .login()
                 .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
                 .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력") // Optional
                 .withSsoCredential("발급 받은 SSO")
             .and()
-            .mapToSyrupPayUser() // Optional 사용자 개인정보를 이용하여 시럽페이 사용자와 동일 여부 검증 시 사용
+            .mapToUser() // Optional 사용자 개인정보를 이용하여 시럽페이 사용자와 동일 여부 검증 시 사용
                 .withType(MapToSyrupPayUserConfigurer.MappingType.ENCRYPTED_PERSONAL_INFO)
                 .withValue(new MapToSyrupPayUserConfigurer.Personal()
                         .setUsername("홍길동")
@@ -879,7 +877,7 @@ public class SyrupPayTokenBuilderTest {
         // @formatter:on
         System.out.printf(token);
         // When
-        Token t = SyrupPayTokenBuilder.verify(token, "가맹점의 전달한 비밀키");
+        Token t = TokenBuilder.verify(token, "가맹점의 전달한 비밀키");
 
         // Then
         assertThat(t, is(notNullValue()));
@@ -892,8 +890,8 @@ public class SyrupPayTokenBuilderTest {
     public void 개인정보_전달을위한_토큰규격_주민번호입력_6자리오류_테스트() throws Exception {
         // Given
         // @formatter:off
-        String t = syrupPayTokenBuilder.of("가맹점")
-                .mapToSyrupPayUser()
+        String t = tokenBuilder.of("가맹점")
+                .mapToUser()
                 .withType(MapToSyrupPayUserConfigurer.MappingType.ENCRYPTED_PERSONAL_INFO)
                 .withValue(new MapToSyrupPayUserConfigurer.Personal("사용자", "123456", "휴대폰번호"), "가맹점 ID", "가맹점에게 전달한 비밀")
                 .and()
@@ -901,7 +899,7 @@ public class SyrupPayTokenBuilderTest {
         // @formatter:on
         System.out.printf(t);
         // When
-        Token token = SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+        Token token = TokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
 
         // Then
         assertThat(token, is(notNullValue()));
@@ -914,7 +912,7 @@ public class SyrupPayTokenBuilderTest {
     public void 토큰_GETTER_테스트() throws Exception {
         // Given
         // @formatter:off
-        String t = syrupPayTokenBuilder.of("가맹점")
+        String t = tokenBuilder.of("가맹점")
                 .login()
                 .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
                 .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
@@ -924,7 +922,7 @@ public class SyrupPayTokenBuilderTest {
         // @formatter:on
         System.out.printf(t);
         // When
-        Token token = SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+        Token token = TokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
 
         // Then
         assertThat(token, is(notNullValue()));
@@ -937,10 +935,10 @@ public class SyrupPayTokenBuilderTest {
         String t = TokenHistories.OCB_BACKWARE_VERSION_1_3_8.token;
 
 
-        SyrupPayTokenBuilder.uncheckHeaderOfToken();
+        TokenBuilder.uncheckHeaderOfToken();
 
         // When
-        Token token = SyrupPayTokenBuilder.verify(t, TokenHistories.OCB_BACKWARE_VERSION_1_3_8.key);
+        Token token = TokenBuilder.verify(t, TokenHistories.OCB_BACKWARE_VERSION_1_3_8.key);
 
         // Then
         assertThat(token, is(notNullValue()));
@@ -970,7 +968,7 @@ public class SyrupPayTokenBuilderTest {
     public void 시럽페이_사용자_정보에_SSO정책_추가입력_v1_3_11() throws Exception {
         // Give
         // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
+        tokenBuilder.of("가맹점")
                 .login()
                     .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
                     .withExtraMerchantUserId("핸드폰과 같이 회원 별 추가 ID 체계가 존재할 경우 입력")
@@ -980,20 +978,20 @@ public class SyrupPayTokenBuilderTest {
 
         // @formatter:on
         // When
-        String t = syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
+        String t = tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
         System.out.println(t);
         // Then
         assertThat(t, is(notNullValue()));
         assertThat(t.length(), is(not(0)));
 
-        assertThat(SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키").getLoginInfo().getSsoPolicy(), is(notNullValue()));
+        assertThat(TokenBuilder.verify(t, "가맹점에게 전달한 비밀키").getLoginInfo().getSsoPolicy(), is(notNullValue()));
     }
 
     @Test
     public void 자동결제토큰_Serialization_동작여부() throws Exception {
         // Give
         // @formatter:off
-        syrupPayTokenBuilder.of("가맹점")
+        tokenBuilder.of("가맹점")
                 .subscription()
                 .withRestrictionOf(PayConfigurer.MatchedUser.CI_MATCHED_ONLY)
                 .and()
@@ -1003,17 +1001,17 @@ public class SyrupPayTokenBuilderTest {
                     .withSsoCredential("SSO 를 발급 받았을 경우 입력")
                     .isNotApplicableSso()
         .and()
-        .mapToSyrupPayUser()
+        .mapToUser()
         .withType(MapToSyrupPayUserConfigurer.MappingType.CI_MAPPED_KEY)
         .withValue("21o39812093")
         ;
 
         // @formatter:on
         // When
-        String t = syrupPayTokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
+        String t = tokenBuilder.generateTokenBy("가맹점에게 전달한 비밀키");
         System.out.println(t);
 
-        Token token = SyrupPayTokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
+        Token token = TokenBuilder.verify(t, "가맹점에게 전달한 비밀키");
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutput out = new ObjectOutputStream(bos);

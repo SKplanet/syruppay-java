@@ -375,11 +375,12 @@ public class MapToUserClaim<H extends Builder<H>> extends AbstractTokenClaim<Map
         return this;
     }
 
-    public MapToUserClaim<H> setAuthenticatedAt(DateTime when) {
+    public MapToUserClaim<H> setAuthenticatedAt(String when) {
         if (miscellaneous == null) {
             throw new IllegalArgumentException("call method this after this.withMisc() to init.");
         }
-        miscellaneous.put("authenticatedAt", when.withZone(DateTimeZone.UTC).toString());
+
+        miscellaneous.put("authenticatedAt", when);
         return this;
     }
 

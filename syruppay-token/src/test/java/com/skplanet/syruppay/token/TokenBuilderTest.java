@@ -72,6 +72,7 @@ import com.skplanet.syruppay.token.domain.TokenHistories;
 import com.skplanet.syruppay.token.jwt.SyrupPayToken;
 import com.skplanet.syruppay.token.jwt.Token;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -1048,7 +1049,7 @@ public class TokenBuilderTest {
                 .and()
                 .mapToUser()
                     .withMisc()
-                        .setAuthenticatedAt(DateTime.now())
+                        .setAuthenticatedAt(DateTime.now(DateTimeZone.UTC).toString())
                         .setAuthenticatedBy(MapToUserClaim.AuthMethod.CELLPHONE)
                         .setHasTransaction(false)
                 .and()
@@ -1075,7 +1076,7 @@ public class TokenBuilderTest {
                     .withMerchantUserId("가맹점의 회원 ID 또는 식별자")
                 .and()
                 .mapToUser()
-                        .setAuthenticatedAt(DateTime.now())
+                        .setAuthenticatedAt(DateTime.now(DateTimeZone.UTC).toString())
                         .setAuthenticatedBy(MapToUserClaim.AuthMethod.CELLPHONE)
                         .setHasTransaction(false)
                 .and()

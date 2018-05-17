@@ -28,8 +28,6 @@ import com.skplanet.jose.JoseBuilders;
 import com.skplanet.jose.JoseHeader;
 import com.skplanet.jose.jwa.Jwa;
 import com.skplanet.syruppay.token.Builder;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -169,7 +167,9 @@ public class MapToUserClaim<H extends Builder<H>> extends AbstractTokenClaim<Map
         private OperatorCode operatorCode;
         private String ssnFirst7Digit;
         private String email;
+        private String ci;
         private String ciHash;
+        private String di;
         private PayableCard payableCard;
 
         public Personal(final String username, final String ssnFirst7Digit, final String lineNumber) throws IllegalArgumentException {
@@ -232,6 +232,24 @@ public class MapToUserClaim<H extends Builder<H>> extends AbstractTokenClaim<Map
 
         public Personal setEmail(final String email) {
             this.email = email;
+            return this;
+        }
+
+        public String getDi() {
+            return di;
+        }
+
+        public Personal setDi(final String di) {
+            this.di = di;
+            return this;
+        }
+
+        public String getCi() {
+            return ci;
+        }
+
+        public Personal setCi(final String ci) {
+            this.ci = ci;
             return this;
         }
 

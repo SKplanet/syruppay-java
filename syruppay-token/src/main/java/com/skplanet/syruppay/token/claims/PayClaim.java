@@ -211,6 +211,12 @@ public final class PayClaim<H extends Builder<H>> extends AbstractTokenClaim<Pay
         return this;
     }
 
+    public PayClaim<H> withRestrictionOf(final SpecifiedPaymentMethods sp) {
+        paymentRestrictions.specifiedPaymentMethods = sp;
+        return this;
+    }
+
+
     @Deprecated
     public PayClaim<H> withPayableRuleWithCard(final PayableLocaleRule r) {
         paymentRestrictions.cardIssuerRegion = r.toCode();
@@ -556,6 +562,11 @@ public final class PayClaim<H extends Builder<H>> extends AbstractTokenClaim<Pay
             return isExchangeable;
         }
 
+        @JsonProperty("isExchangeable")
+        public void setIsExchangeable(boolean isExchangeable) {
+            this.isExchangeable = isExchangeable;
+        }
+
         public List<CardInstallmentInformation> getCardInfoList() {
             return Collections.unmodifiableList(cardInfoList);
         }
@@ -580,6 +591,7 @@ public final class PayClaim<H extends Builder<H>> extends AbstractTokenClaim<Pay
         private String cardIssuerRegion = "ALLOWED:KOR";
         private MatchedUser matchedUser;
         private String paymentType;
+        private SpecifiedPaymentMethods specifiedPaymentMethods;
 
         public String getCardIssuerRegion() {
             return cardIssuerRegion;
@@ -591,6 +603,10 @@ public final class PayClaim<H extends Builder<H>> extends AbstractTokenClaim<Pay
 
         public String getPaymentType() {
             return paymentType;
+        }
+
+        public SpecifiedPaymentMethods getSpecifiedPaymentMethods() {
+            return specifiedPaymentMethods;
         }
 
         @JsonIgnore
@@ -628,5 +644,24 @@ public final class PayClaim<H extends Builder<H>> extends AbstractTokenClaim<Pay
 
     public enum PaymentType {
         PAY, CHECKOUT, SUBSCRIPTION, AUTH_MEANS
+    }
+
+    public static class SpecifiedPaymentMethods implements Serializable {
+        private String paymentMethodId;
+
+        public SpecifiedPaymentMethods() {
+        }
+
+        public SpecifiedPaymentMethods(String paymentMethodId) {
+            this.paymentMethodId = paymentMethodId;
+        }
+
+        public String getPaymentMethodId() {
+            return paymentMethodId;
+        }
+
+        public void setPaymentMethodId(String paymentMethodId) {
+            this.paymentMethodId = paymentMethodId;
+        }
     }
 }

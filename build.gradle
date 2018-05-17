@@ -35,7 +35,7 @@ import org.ajoberstar.gradle.git.tasks.GitTag
 
 configure(allprojects) { project ->
     ext.javaVersion = '1.5'
-    ext.projectVersion = '1.4.1.BUILD-SHNAPSHOT.1'
+    ext.projectVersion = '1.4.2.BUILD_SNAPSHOT.13'
     ext.tagVersion = projectVersion
 
     version = projectVersion

@@ -125,4 +125,6 @@ public interface JwtToken {
      * @since 2015.06.12
      */
     public String getJti();
+
+    public String getSubIfNotExistGetIss();
 }

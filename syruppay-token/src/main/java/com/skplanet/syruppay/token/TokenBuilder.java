@@ -148,6 +148,17 @@ public final class TokenBuilder extends AbstractTokenBuilder<Jwt, TokenBuilder> 
     }
 
     /**
+     * 시럽페이 토큰 대상 주체를 설정한다.
+     *
+     * @param targetId 가맹점 ID
+     * @return <code>this</code>
+     */
+    public TokenBuilder to(final String targetId) {
+        this.sub = targetId;
+        return this;
+    }
+
+    /**
      * JWT 의 sub 에 해당하는 서브 주제를 설정한다.
      *
      * @param subject the subject

@@ -121,6 +121,10 @@ public class SyrupPayToken implements Token {
         return jti;
     }
 
+    public String getSubIfNotExistGetIss() {
+        return (this.sub != null && !this.sub.equals("")) ? this.sub : this.iss;
+    }
+
     /**
      * {@inheritDoc}
      */

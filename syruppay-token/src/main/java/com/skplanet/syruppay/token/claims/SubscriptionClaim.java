@@ -37,10 +37,25 @@ public class SubscriptionClaim<H extends Builder<H>> extends AbstractTokenClaim<
     private Plan plan;
     private String mctSubscriptionRequestId;
     private String promotionCode;
-
+    private String passphrase;
+    private SubscriptionTokenType subscriptionTokenType = SubscriptionTokenType.JWT;
 
     public SubscriptionClaim<H> withAutoPaymentId(final String autoPaymentId) {
         this.autoPaymentId = autoPaymentId;
+        return this;
+    }
+
+    public SubscriptionClaim<H> withSubscriptionTokenType(final SubscriptionTokenType subscriptionTokenType) {
+        this.subscriptionTokenType = subscriptionTokenType;
+        return this;
+    }
+
+    public SubscriptionTokenType getSubscriptionTokenType() {
+        return subscriptionTokenType;
+    }
+
+    public SubscriptionClaim<H> withPassphrase(final String passphrase) {
+        this.passphrase = passphrase;
         return this;
     }
 
@@ -76,6 +91,9 @@ public class SubscriptionClaim<H extends Builder<H>> extends AbstractTokenClaim<
         return mctSubscriptionRequestId;
     }
 
+    public String getPassphrase() {
+        return passphrase;
+    }
 
     public Plan getPlan() {
         return plan;
@@ -144,5 +162,9 @@ public class SubscriptionClaim<H extends Builder<H>> extends AbstractTokenClaim<
 
     public enum Interval {
         ONDEMAND, MONTHLY, WEEKLY, BIWEEKLY
+    }
+
+    public enum SubscriptionTokenType {
+        JWT, ENCRYPTION_KEY
     }
 }
